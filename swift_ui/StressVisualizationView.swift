@@ -31,6 +31,8 @@ struct StressVisualizationView: View {
                         .foregroundStyle(model.stressLevel.color)
                 }
             }
+            
+            StressForecastCard(forecast: model.prediction.forecast)
 
             // Stress Level Indicator
             HStack {

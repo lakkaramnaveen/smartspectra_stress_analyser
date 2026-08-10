@@ -65,6 +65,7 @@ final class AppModel: ObservableObject {
     private let credentialStore: CredentialStoring
     private let scoringEngine: StressScoringEngine
     private let sessionRecorder: SessionRecorder   // ← was missing as a stored property
+    let prediction: StressPredictionCoordinator
 
     // MARK: - Internal buffers / state not exposed directly to views
 
@@ -96,12 +97,14 @@ final class AppModel: ObservableObject {
         engine: BiometricEngineProviding = BiometricEngine(),
         credentialStore: CredentialStoring = KeychainCredentialStore(),
         scoringEngine: StressScoringEngine = StressScoringEngine(),
-        sessionRecorder: SessionRecorder? = nil
+        sessionRecorder: SessionRecorder? = nil,
+        prediction: StressPredictionCoordinator? = nil 
     ) {
         self.engine = engine
         self.credentialStore = credentialStore
         self.scoringEngine = scoringEngine
         self.sessionRecorder = sessionRecorder ?? SessionRecorder()
+        self.prediction = prediction ?? StressPredictionCoordinator()
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
@@ -200,7 +203,15 @@ final class AppModel: ObservableObject {
         biofeedbackResetTask?.cancel()
         isBiofeedbackActive = false
     }
-
+    
+    /// Starts a breathing intervention on the user's own initiative (e.g.
+    /// tapping "Start breathing" on a predictive alert), as opposed to
+    /// `triggerBiofeedback()` which fires automatically at the threshold.
+    func beginBreathingManually() {
+        prediction.dismissAlert()
+        triggerBiofeedback()
+    }
+    
     // MARK: - Private: Session Lifecycle
 
     private func resetSessionState() {
@@ -225,6 +236,7 @@ final class AppModel: ObservableObject {
         stressHistory = []
         emotionalState = .calm
         emotionIntensity = 0
+        prediction.reset()
 
         sessionStats = SessionStats(startedAt: Date())
     }
@@ -350,6 +362,11 @@ final class AppModel: ObservableObject {
             eda: latestEDA,
             emotionalState: state.label,
             gazeConfidence: gaze.confidence
+        )
+        
+        prediction.ingest(                                        // ← add
+            score: score,
+            interventionActive: isBiofeedbackActive
         )
 
         if scoringEngine.shouldTriggerIntervention(forStressScore: score), !isBiofeedbackActive {

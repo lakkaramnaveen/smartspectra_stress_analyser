@@ -13,7 +13,6 @@
 		183B7582302377A70078052F /* SharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757E302377A70078052F /* SharedComponents.swift */; };
 		183B7583302377A70078052F /* BalloonHuntGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7572302377A70078052F /* BalloonHuntGameView.swift */; };
 		183B7584302377A70078052F /* RollingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757D302377A70078052F /* RollingBuffer.swift */; };
-		183B7585302377A70078052F /* ContentView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7575302377A70078052F /* ContentView 2.swift */; };
 		183B7586302377A70078052F /* StressScoringEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757F302377A70078052F /* StressScoringEngine.swift */; };
 		183B7587302377A70078052F /* DomainModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7578302377A70078052F /* DomainModels.swift */; };
 		183B7588302377A70078052F /* ControlsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7576302377A70078052F /* ControlsTabView.swift */; };
@@ -28,6 +27,14 @@
 		183B75A3302A43580078052F /* SessionCSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759A302A43580078052F /* SessionCSVExporter.swift */; };
 		183B75A4302A43580078052F /* SessionRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759D302A43580078052F /* SessionRecorder.swift */; };
 		183B75A5302A43580078052F /* SessionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759C302A43580078052F /* SessionModels.swift */; };
+		183B75B1302A50660078052F /* StressForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AC302A50660078052F /* StressForecast.swift */; };
+		183B75B2302A50660078052F /* StressPredictionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AE302A50660078052F /* StressPredictionCoordinator.swift */; };
+		183B75B3302A50660078052F /* StressPredictionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AF302A50660078052F /* StressPredictionViews.swift */; };
+		183B75B4302A50660078052F /* StressTrendAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75B0302A50660078052F /* StressTrendAnalyzer.swift */; };
+		183B75B5302A50660078052F /* StressNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AD302A50660078052F /* StressNotificationService.swift */; };
+		183B75B6302A50660078052F /* InterventionAlertPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AB302A50660078052F /* InterventionAlertPolicy.swift */; };
+		183B75BA302A6E5F0078052F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75B9302A6E5F0078052F /* ContentView.swift */; };
+		183B75BB302A6E5F0078052F /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75B8302A6E5F0078052F /* AppModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,11 +46,9 @@
 		100000000000000000000208 /* smartspectra_swift_ui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = smartspectra_swift_ui.entitlements; sourceTree = SOURCE_ROOT; };
 		100000000000000000000212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		100000000000000000000213 /* smartspectra_swift_ui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = smartspectra_swift_ui.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		183B7571302377A70078052F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
 		183B7572302377A70078052F /* BalloonHuntGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonHuntGameView.swift; sourceTree = "<group>"; };
 		183B7573302377A70078052F /* BiometricEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricEngine.swift; sourceTree = "<group>"; };
 		183B7574302377A70078052F /* BreathingPacerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingPacerView.swift; sourceTree = "<group>"; };
-		183B7575302377A70078052F /* ContentView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView 2.swift"; sourceTree = "<group>"; };
 		183B7576302377A70078052F /* ControlsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsTabView.swift; sourceTree = "<group>"; };
 		183B7577302377A70078052F /* DEPLOYMENT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DEPLOYMENT.md; sourceTree = "<group>"; };
 		183B7578302377A70078052F /* DomainModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainModels.swift; sourceTree = "<group>"; };
@@ -55,15 +60,21 @@
 		183B757E302377A70078052F /* SharedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedComponents.swift; sourceTree = "<group>"; };
 		183B757F302377A70078052F /* StressScoringEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressScoringEngine.swift; sourceTree = "<group>"; };
 		183B7580302377A70078052F /* StressVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressVisualizationView.swift; sourceTree = "<group>"; };
-		183B75953027D29C0078052F /* BLINK_DETECTION_IMPLEMENTATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BLINK_DETECTION_IMPLEMENTATION.md; sourceTree = "<group>"; };
-		183B75963027D29C0078052F /* COMPLETE_STEP_BY_STEP_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = COMPLETE_STEP_BY_STEP_GUIDE.md; sourceTree = "<group>"; };
-		183B75973027D29C0078052F /* YOUR_PROJECT_FIXES_SUMMARY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = YOUR_PROJECT_FIXES_SUMMARY.md; sourceTree = "<group>"; };
 		183B759A302A43580078052F /* SessionCSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCSVExporter.swift; sourceTree = "<group>"; };
 		183B759B302A43580078052F /* SessionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionHistoryView.swift; sourceTree = "<group>"; };
 		183B759C302A43580078052F /* SessionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModels.swift; sourceTree = "<group>"; };
 		183B759D302A43580078052F /* SessionRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRecorder.swift; sourceTree = "<group>"; };
 		183B759E302A43580078052F /* SessionReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionReplayView.swift; sourceTree = "<group>"; };
 		183B759F302A43580078052F /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
+		183B75AB302A50660078052F /* InterventionAlertPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterventionAlertPolicy.swift; sourceTree = "<group>"; };
+		183B75AC302A50660078052F /* StressForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressForecast.swift; sourceTree = "<group>"; };
+		183B75AD302A50660078052F /* StressNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressNotificationService.swift; sourceTree = "<group>"; };
+		183B75AE302A50660078052F /* StressPredictionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressPredictionCoordinator.swift; sourceTree = "<group>"; };
+		183B75AF302A50660078052F /* StressPredictionViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressPredictionViews.swift; sourceTree = "<group>"; };
+		183B75B0302A50660078052F /* StressTrendAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressTrendAnalyzer.swift; sourceTree = "<group>"; };
+		183B75B7302A50730078052F /* INTEGRATION_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = INTEGRATION_GUIDE.md; sourceTree = "<group>"; };
+		183B75B8302A6E5F0078052F /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		183B75B9302A6E5F0078052F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +91,8 @@
 		100000000000000000000401 = {
 			isa = PBXGroup;
 			children = (
+				183B75B8302A6E5F0078052F /* AppModel.swift */,
+				183B75B9302A6E5F0078052F /* ContentView.swift */,
 				100000000000000000000402 /* swift_ui */,
 				100000000000000000000208 /* smartspectra_swift_ui.entitlements */,
 				100000000000000000000212 /* README.md */,
@@ -90,21 +103,17 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B75AA302A50450078052F /* forecast */,
 				183B75A6302A43FB0078052F /* SessionRecording */,
 				100000000000000000000201 /* SmartSpectraSwiftApp.swift */,
 				100000000000000000000204 /* SmartSpectraRunner.mm */,
 				100000000000000000000205 /* SmartSpectraRunner.h */,
 				100000000000000000000206 /* SmartSpectraSwiftBridge.h */,
 				100000000000000000000207 /* Info.plist */,
-				183B7571302377A70078052F /* ARCHITECTURE.md */,
 				183B7572302377A70078052F /* BalloonHuntGameView.swift */,
 				183B7573302377A70078052F /* BiometricEngine.swift */,
 				183B7574302377A70078052F /* BreathingPacerView.swift */,
-				183B7575302377A70078052F /* ContentView 2.swift */,
 				183B7576302377A70078052F /* ControlsTabView.swift */,
-				183B75953027D29C0078052F /* BLINK_DETECTION_IMPLEMENTATION.md */,
-				183B75963027D29C0078052F /* COMPLETE_STEP_BY_STEP_GUIDE.md */,
-				183B75973027D29C0078052F /* YOUR_PROJECT_FIXES_SUMMARY.md */,
 				183B7577302377A70078052F /* DEPLOYMENT.md */,
 				183B7578302377A70078052F /* DomainModels.swift */,
 				183B7579302377A70078052F /* EmotionalDetectorView.swift */,
@@ -138,6 +147,20 @@
 				183B759F302A43580078052F /* SessionStore.swift */,
 			);
 			path = SessionRecording;
+			sourceTree = "<group>";
+		};
+		183B75AA302A50450078052F /* forecast */ = {
+			isa = PBXGroup;
+			children = (
+				183B75AB302A50660078052F /* InterventionAlertPolicy.swift */,
+				183B75AC302A50660078052F /* StressForecast.swift */,
+				183B75AD302A50660078052F /* StressNotificationService.swift */,
+				183B75AE302A50660078052F /* StressPredictionCoordinator.swift */,
+				183B75AF302A50660078052F /* StressPredictionViews.swift */,
+				183B75B0302A50660078052F /* StressTrendAnalyzer.swift */,
+				183B75B7302A50730078052F /* INTEGRATION_GUIDE.md */,
+			);
+			path = forecast;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -228,9 +251,16 @@
 				183B75A4302A43580078052F /* SessionRecorder.swift in Sources */,
 				183B75A5302A43580078052F /* SessionModels.swift in Sources */,
 				183B7582302377A70078052F /* SharedComponents.swift in Sources */,
+				183B75B1302A50660078052F /* StressForecast.swift in Sources */,
+				183B75BA302A6E5F0078052F /* ContentView.swift in Sources */,
+				183B75BB302A6E5F0078052F /* AppModel.swift in Sources */,
+				183B75B2302A50660078052F /* StressPredictionCoordinator.swift in Sources */,
+				183B75B3302A50660078052F /* StressPredictionViews.swift in Sources */,
+				183B75B4302A50660078052F /* StressTrendAnalyzer.swift in Sources */,
+				183B75B5302A50660078052F /* StressNotificationService.swift in Sources */,
+				183B75B6302A50660078052F /* InterventionAlertPolicy.swift in Sources */,
 				183B7583302377A70078052F /* BalloonHuntGameView.swift in Sources */,
 				183B7584302377A70078052F /* RollingBuffer.swift in Sources */,
-				183B7585302377A70078052F /* ContentView 2.swift in Sources */,
 				183B7586302377A70078052F /* StressScoringEngine.swift in Sources */,
 				183B7587302377A70078052F /* DomainModels.swift in Sources */,
 				183B7588302377A70078052F /* ControlsTabView.swift in Sources */,

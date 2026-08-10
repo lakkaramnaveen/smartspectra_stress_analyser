@@ -19,6 +19,23 @@ struct ContentView: View {
                     .frame(maxWidth: 500)
                     .frame(minWidth: 300)
             }
+            
+            if let alert = model.prediction.activeAlert {
+                VStack {
+                    StressAlertBanner(
+                        alert: alert,
+                        onDismiss: { model.prediction.dismissAlert() },
+                        onStartBreathing: { model.beginBreathingManually() }
+                    )
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .frame(maxWidth: 520)
+
+                    Spacer()
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(500)
+            }
 
             // Game fullscreen overlay
             if showGameFullscreen {
@@ -29,6 +46,7 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut, value: showGameFullscreen)
+        .animation(.spring(response: 0.4), value: model.prediction.activeAlert)
     }
 
     // MARK: - Main Workspace
@@ -56,6 +74,7 @@ struct ContentView: View {
                 HStack {
                     validationPill
                     Spacer()
+                    StressTrendPill(forecast: model.prediction.forecast) 
                 }
                 .padding(18)
 
