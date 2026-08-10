@@ -1,0 +1,436 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		100000000000000000000101 /* SmartSpectraSwiftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000201 /* SmartSpectraSwiftApp.swift */; };
+		100000000000000000000104 /* SmartSpectraRunner.mm in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000204 /* SmartSpectraRunner.mm */; };
+		183B7581302377A70078052F /* EmotionalDetectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7579302377A70078052F /* EmotionalDetectorView.swift */; };
+		183B7582302377A70078052F /* SharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757E302377A70078052F /* SharedComponents.swift */; };
+		183B7583302377A70078052F /* BalloonHuntGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7572302377A70078052F /* BalloonHuntGameView.swift */; };
+		183B7584302377A70078052F /* RollingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757D302377A70078052F /* RollingBuffer.swift */; };
+		183B7585302377A70078052F /* ContentView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7575302377A70078052F /* ContentView 2.swift */; };
+		183B7586302377A70078052F /* StressScoringEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757F302377A70078052F /* StressScoringEngine.swift */; };
+		183B7587302377A70078052F /* DomainModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7578302377A70078052F /* DomainModels.swift */; };
+		183B7588302377A70078052F /* ControlsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7576302377A70078052F /* ControlsTabView.swift */; };
+		183B7589302377A70078052F /* GameTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757A302377A70078052F /* GameTabView.swift */; };
+		183B758A302377A70078052F /* StressVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7580302377A70078052F /* StressVisualizationView.swift */; };
+		183B758B302377A70078052F /* BreathingPacerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7574302377A70078052F /* BreathingPacerView.swift */; };
+		183B758C302377A70078052F /* KeychainCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757B302377A70078052F /* KeychainCredentialStore.swift */; };
+		183B758D302377A70078052F /* BiometricEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7573302377A70078052F /* BiometricEngine.swift */; };
+		183B75A0302A43580078052F /* SessionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759B302A43580078052F /* SessionHistoryView.swift */; };
+		183B75A1302A43580078052F /* SessionReplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759E302A43580078052F /* SessionReplayView.swift */; };
+		183B75A2302A43580078052F /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759F302A43580078052F /* SessionStore.swift */; };
+		183B75A3302A43580078052F /* SessionCSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759A302A43580078052F /* SessionCSVExporter.swift */; };
+		183B75A4302A43580078052F /* SessionRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759D302A43580078052F /* SessionRecorder.swift */; };
+		183B75A5302A43580078052F /* SessionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759C302A43580078052F /* SessionModels.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		100000000000000000000201 /* SmartSpectraSwiftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartSpectraSwiftApp.swift; sourceTree = "<group>"; };
+		100000000000000000000204 /* SmartSpectraRunner.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartSpectraRunner.mm; sourceTree = "<group>"; };
+		100000000000000000000205 /* SmartSpectraRunner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmartSpectraRunner.h; sourceTree = "<group>"; };
+		100000000000000000000206 /* SmartSpectraSwiftBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmartSpectraSwiftBridge.h; sourceTree = "<group>"; };
+		100000000000000000000207 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		100000000000000000000208 /* smartspectra_swift_ui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = smartspectra_swift_ui.entitlements; sourceTree = SOURCE_ROOT; };
+		100000000000000000000212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		100000000000000000000213 /* smartspectra_swift_ui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = smartspectra_swift_ui.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		183B7571302377A70078052F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
+		183B7572302377A70078052F /* BalloonHuntGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonHuntGameView.swift; sourceTree = "<group>"; };
+		183B7573302377A70078052F /* BiometricEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricEngine.swift; sourceTree = "<group>"; };
+		183B7574302377A70078052F /* BreathingPacerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingPacerView.swift; sourceTree = "<group>"; };
+		183B7575302377A70078052F /* ContentView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView 2.swift"; sourceTree = "<group>"; };
+		183B7576302377A70078052F /* ControlsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsTabView.swift; sourceTree = "<group>"; };
+		183B7577302377A70078052F /* DEPLOYMENT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DEPLOYMENT.md; sourceTree = "<group>"; };
+		183B7578302377A70078052F /* DomainModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainModels.swift; sourceTree = "<group>"; };
+		183B7579302377A70078052F /* EmotionalDetectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmotionalDetectorView.swift; sourceTree = "<group>"; };
+		183B757A302377A70078052F /* GameTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTabView.swift; sourceTree = "<group>"; };
+		183B757B302377A70078052F /* KeychainCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCredentialStore.swift; sourceTree = "<group>"; };
+		183B757C302377A70078052F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		183B757D302377A70078052F /* RollingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollingBuffer.swift; sourceTree = "<group>"; };
+		183B757E302377A70078052F /* SharedComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedComponents.swift; sourceTree = "<group>"; };
+		183B757F302377A70078052F /* StressScoringEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressScoringEngine.swift; sourceTree = "<group>"; };
+		183B7580302377A70078052F /* StressVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressVisualizationView.swift; sourceTree = "<group>"; };
+		183B75953027D29C0078052F /* BLINK_DETECTION_IMPLEMENTATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BLINK_DETECTION_IMPLEMENTATION.md; sourceTree = "<group>"; };
+		183B75963027D29C0078052F /* COMPLETE_STEP_BY_STEP_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = COMPLETE_STEP_BY_STEP_GUIDE.md; sourceTree = "<group>"; };
+		183B75973027D29C0078052F /* YOUR_PROJECT_FIXES_SUMMARY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = YOUR_PROJECT_FIXES_SUMMARY.md; sourceTree = "<group>"; };
+		183B759A302A43580078052F /* SessionCSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCSVExporter.swift; sourceTree = "<group>"; };
+		183B759B302A43580078052F /* SessionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionHistoryView.swift; sourceTree = "<group>"; };
+		183B759C302A43580078052F /* SessionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModels.swift; sourceTree = "<group>"; };
+		183B759D302A43580078052F /* SessionRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRecorder.swift; sourceTree = "<group>"; };
+		183B759E302A43580078052F /* SessionReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionReplayView.swift; sourceTree = "<group>"; };
+		183B759F302A43580078052F /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		100000000000000000000301 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		100000000000000000000401 = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000402 /* swift_ui */,
+				100000000000000000000208 /* smartspectra_swift_ui.entitlements */,
+				100000000000000000000212 /* README.md */,
+				100000000000000000000404 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		100000000000000000000402 /* swift_ui */ = {
+			isa = PBXGroup;
+			children = (
+				183B75A6302A43FB0078052F /* SessionRecording */,
+				100000000000000000000201 /* SmartSpectraSwiftApp.swift */,
+				100000000000000000000204 /* SmartSpectraRunner.mm */,
+				100000000000000000000205 /* SmartSpectraRunner.h */,
+				100000000000000000000206 /* SmartSpectraSwiftBridge.h */,
+				100000000000000000000207 /* Info.plist */,
+				183B7571302377A70078052F /* ARCHITECTURE.md */,
+				183B7572302377A70078052F /* BalloonHuntGameView.swift */,
+				183B7573302377A70078052F /* BiometricEngine.swift */,
+				183B7574302377A70078052F /* BreathingPacerView.swift */,
+				183B7575302377A70078052F /* ContentView 2.swift */,
+				183B7576302377A70078052F /* ControlsTabView.swift */,
+				183B75953027D29C0078052F /* BLINK_DETECTION_IMPLEMENTATION.md */,
+				183B75963027D29C0078052F /* COMPLETE_STEP_BY_STEP_GUIDE.md */,
+				183B75973027D29C0078052F /* YOUR_PROJECT_FIXES_SUMMARY.md */,
+				183B7577302377A70078052F /* DEPLOYMENT.md */,
+				183B7578302377A70078052F /* DomainModels.swift */,
+				183B7579302377A70078052F /* EmotionalDetectorView.swift */,
+				183B757A302377A70078052F /* GameTabView.swift */,
+				183B757B302377A70078052F /* KeychainCredentialStore.swift */,
+				183B757C302377A70078052F /* README.md */,
+				183B757D302377A70078052F /* RollingBuffer.swift */,
+				183B757E302377A70078052F /* SharedComponents.swift */,
+				183B757F302377A70078052F /* StressScoringEngine.swift */,
+				183B7580302377A70078052F /* StressVisualizationView.swift */,
+			);
+			path = swift_ui;
+			sourceTree = "<group>";
+		};
+		100000000000000000000404 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000213 /* smartspectra_swift_ui.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		183B75A6302A43FB0078052F /* SessionRecording */ = {
+			isa = PBXGroup;
+			children = (
+				183B759A302A43580078052F /* SessionCSVExporter.swift */,
+				183B759B302A43580078052F /* SessionHistoryView.swift */,
+				183B759C302A43580078052F /* SessionModels.swift */,
+				183B759D302A43580078052F /* SessionRecorder.swift */,
+				183B759E302A43580078052F /* SessionReplayView.swift */,
+				183B759F302A43580078052F /* SessionStore.swift */,
+			);
+			path = SessionRecording;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		100000000000000000000501 /* smartspectra_swift_ui */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 100000000000000000000601 /* Build configuration list for PBXNativeTarget "smartspectra_swift_ui" */;
+			buildPhases = (
+				100000000000000000000702 /* Validate Setup */,
+				100000000000000000000701 /* Sources */,
+				100000000000000000000301 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = smartspectra_swift_ui;
+			productName = smartspectra_swift_ui;
+			productReference = 100000000000000000000213 /* smartspectra_swift_ui.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		100000000000000000000801 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					100000000000000000000501 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+				};
+			};
+			buildConfigurationList = 100000000000000000000901 /* Build configuration list for PBXProject "smartspectra_swift_ui" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 100000000000000000000401;
+			productRefGroup = 100000000000000000000404 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				100000000000000000000501 /* smartspectra_swift_ui */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		100000000000000000000702 /* Validate Setup */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Validate Setup";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "set -euo pipefail\n\nfail() {\n  echo \"error: $1\" >&2\n  exit 1\n}\n\nsdk_root=\"${SMARTSPECTRA_SDK_ROOT:-}\"\nif [[ -z \"$sdk_root\" ]]; then\n  fail \"SmartSpectra SDK not found: SMARTSPECTRA_SDK_ROOT is empty. Set it to the Homebrew prefix that contains SmartSpectra, or to a local SDK install prefix.\"\nfi\n\nif [[ ! -d \"$sdk_root\" ]]; then\n  fail \"SmartSpectra SDK not found: SMARTSPECTRA_SDK_ROOT does not exist: $sdk_root\"\nfi\n\nif [[ ! -f \"$sdk_root/include/smartspectra/smartspectra.h\" ]]; then\n  fail \"SmartSpectra SDK not found at SMARTSPECTRA_SDK_ROOT=$sdk_root. Expected SDK header at $sdk_root/include/smartspectra/smartspectra.h.\"\nfi\n\nif [[ ! -d \"$sdk_root/include/smartspectra/interface\" ]]; then\n  fail \"SmartSpectra SDK not found at SMARTSPECTRA_SDK_ROOT=$sdk_root. Expected SDK interface headers at $sdk_root/include/smartspectra/interface.\"\nfi\n\nif [[ ! -f \"$sdk_root/lib/libsmartspectra.dylib\" ]]; then\n  fail \"SmartSpectra SDK not found at SMARTSPECTRA_SDK_ROOT=$sdk_root. Expected SDK library at $sdk_root/lib/libsmartspectra.dylib.\"\nfi\n\nopencv_include=\"${OPENCV_INCLUDE_DIR:-}\"\nif [[ -z \"$opencv_include\" || ! -f \"$opencv_include/opencv2/opencv.hpp\" ]]; then\n  fail \"Missing OpenCV headers under OPENCV_INCLUDE_DIR=$opencv_include. Install OpenCV with Homebrew or set HOMEBREW_PREFIX to the prefix that contains it.\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		100000000000000000000701 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				183B7581302377A70078052F /* EmotionalDetectorView.swift in Sources */,
+				183B75A0302A43580078052F /* SessionHistoryView.swift in Sources */,
+				183B75A1302A43580078052F /* SessionReplayView.swift in Sources */,
+				183B75A2302A43580078052F /* SessionStore.swift in Sources */,
+				183B75A3302A43580078052F /* SessionCSVExporter.swift in Sources */,
+				183B75A4302A43580078052F /* SessionRecorder.swift in Sources */,
+				183B75A5302A43580078052F /* SessionModels.swift in Sources */,
+				183B7582302377A70078052F /* SharedComponents.swift in Sources */,
+				183B7583302377A70078052F /* BalloonHuntGameView.swift in Sources */,
+				183B7584302377A70078052F /* RollingBuffer.swift in Sources */,
+				183B7585302377A70078052F /* ContentView 2.swift in Sources */,
+				183B7586302377A70078052F /* StressScoringEngine.swift in Sources */,
+				183B7587302377A70078052F /* DomainModels.swift in Sources */,
+				183B7588302377A70078052F /* ControlsTabView.swift in Sources */,
+				183B7589302377A70078052F /* GameTabView.swift in Sources */,
+				183B758A302377A70078052F /* StressVisualizationView.swift in Sources */,
+				183B758B302377A70078052F /* BreathingPacerView.swift in Sources */,
+				183B758C302377A70078052F /* KeychainCredentialStore.swift in Sources */,
+				183B758D302377A70078052F /* BiometricEngine.swift in Sources */,
+				100000000000000000000104 /* SmartSpectraRunner.mm in Sources */,
+				100000000000000000000101 /* SmartSpectraSwiftApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		100000000000000000001001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/native_build/$(CONFIGURATION)";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 252JVT44K7;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = swift_ui/Info.plist;
+				ONLY_ACTIVE_ARCH = YES;
+				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv5";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		100000000000000000001002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/native_build/$(CONFIGURATION)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 252JVT44K7;
+				ENABLE_TESTABILITY = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				INFOPLIST_FILE = swift_ui/Info.plist;
+				ONLY_ACTIVE_ARCH = NO;
+				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv5";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		100000000000000000001101 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = smartspectra_swift_ui.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "$(SMARTSPECTRA_DEVELOPMENT_TEAM)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					swift_ui,
+					"$(SMARTSPECTRA_INTERFACE_INCLUDE_DIR)",
+					"$(SMARTSPECTRA_INCLUDE_DIR)",
+					"$(OPENCV_INCLUDE_DIR)",
+				);
+				HOMEBREW_PREFIX = /opt/homebrew;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SMARTSPECTRA_LIB_DIR)",
+					"$(HOMEBREW_PREFIX)/lib",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SMARTSPECTRA_LIB_DIR)",
+					"$(OPENCV_LIB_DIR)",
+					"$(HOMEBREW_PREFIX)/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv4";
+				OPENCV_LIB_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/lib";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					AppKit,
+					"$(OPENCV_LIB_DIR)/libopencv_highgui.dylib",
+					"$(OPENCV_LIB_DIR)/libopencv_videoio.dylib",
+					"$(OPENCV_LIB_DIR)/libopencv_imgcodecs.dylib",
+					"$(OPENCV_LIB_DIR)/libopencv_imgproc.dylib",
+					"$(OPENCV_LIB_DIR)/libopencv_core.dylib",
+					"$(SMARTSPECTRA_LIB_DIR)/libsmartspectra.dylib",
+					"$(PROTOBUF_LIB_DIR)/libprotobuf.dylib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SMARTSPECTRA_BUNDLE_IDENTIFIER)";
+				PROTOBUF_LIB_DIR = "$(HOMEBREW_PREFIX)/opt/protobuf/lib";
+				SDKROOT = macosx;
+				SMARTSPECTRA_BUNDLE_IDENTIFIER = "com.presagetech.smartspectra-swift-ui";
+				SMARTSPECTRA_DEVELOPMENT_TEAM = "";
+				SMARTSPECTRA_INCLUDE_DIR = "$(SMARTSPECTRA_SDK_ROOT)/include";
+				SMARTSPECTRA_INTERFACE_INCLUDE_DIR = "$(SMARTSPECTRA_SDK_ROOT)/include/smartspectra/interface";
+				SMARTSPECTRA_LIB_DIR = "$(SMARTSPECTRA_SDK_ROOT)/lib";
+				SMARTSPECTRA_SDK_ROOT = "$(HOMEBREW_PREFIX)";
+				SWIFT_OBJC_BRIDGING_HEADER = swift_ui/SmartSpectraSwiftBridge.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		100000000000000000001102 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = smartspectra_swift_ui.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "$(SMARTSPECTRA_DEVELOPMENT_TEAM)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					swift_ui,
+					"$(SMARTSPECTRA_INTERFACE_INCLUDE_DIR)",
+					"$(SMARTSPECTRA_INCLUDE_DIR)",
+					"$(OPENCV_INCLUDE_DIR)",
+				);
+				HOMEBREW_PREFIX = /opt/homebrew;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SMARTSPECTRA_LIB_DIR)",
+					"$(HOMEBREW_PREFIX)/lib",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SMARTSPECTRA_LIB_DIR)",
+					"$(OPENCV_LIB_DIR)",
+					"$(HOMEBREW_PREFIX)/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv4";
+				OPENCV_LIB_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/lib";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					AppKit,
+					"$(OPENCV_LIB_DIR)/libopencv_highgui.dylib",
+					"$(OPENCV_LIB_DIR)/libopencv_videoio.dylib",
+					"$(OPENCV_LIB_DIR)/libopencv_imgcodecs.dylib",
+					"$(OPENCV_LIB_DIR)/libopencv_imgproc.dylib",
+					"$(OPENCV_LIB_DIR)/libopencv_core.dylib",
+					"$(SMARTSPECTRA_LIB_DIR)/libsmartspectra.dylib",
+					"$(PROTOBUF_LIB_DIR)/libprotobuf.dylib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SMARTSPECTRA_BUNDLE_IDENTIFIER)";
+				PROTOBUF_LIB_DIR = "$(HOMEBREW_PREFIX)/opt/protobuf/lib";
+				SDKROOT = macosx;
+				SMARTSPECTRA_BUNDLE_IDENTIFIER = "com.presagetech.smartspectra-swift-ui";
+				SMARTSPECTRA_DEVELOPMENT_TEAM = "";
+				SMARTSPECTRA_INCLUDE_DIR = "$(SMARTSPECTRA_SDK_ROOT)/include";
+				SMARTSPECTRA_INTERFACE_INCLUDE_DIR = "$(SMARTSPECTRA_SDK_ROOT)/include/smartspectra/interface";
+				SMARTSPECTRA_LIB_DIR = "$(SMARTSPECTRA_SDK_ROOT)/lib";
+				SMARTSPECTRA_SDK_ROOT = "$(HOMEBREW_PREFIX)";
+				SWIFT_OBJC_BRIDGING_HEADER = swift_ui/SmartSpectraSwiftBridge.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		100000000000000000000601 /* Build configuration list for PBXNativeTarget "smartspectra_swift_ui" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000001001 /* Debug */,
+				100000000000000000001002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		100000000000000000000901 /* Build configuration list for PBXProject "smartspectra_swift_ui" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000001101 /* Debug */,
+				100000000000000000001102 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 100000000000000000000801 /* Project object */;
+}
