@@ -85,7 +85,6 @@
 		183B75BF302A8E940078052F /* InsightModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightModels.swift; sourceTree = "<group>"; };
 		183B75C0302A8E940078052F /* InsightsDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsDashboardView.swift; sourceTree = "<group>"; };
 		183B75C1302A8E940078052F /* InsightsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsViewModel.swift; sourceTree = "<group>"; };
-		183B75C2302A8E940078052F /* INTEGRATION_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = INTEGRATION_GUIDE.md; sourceTree = "<group>"; };
 		183B75C3302A8E940078052F /* SessionAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionAggregator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -183,7 +182,6 @@
 				183B75BF302A8E940078052F /* InsightModels.swift */,
 				183B75C0302A8E940078052F /* InsightsDashboardView.swift */,
 				183B75C1302A8E940078052F /* InsightsViewModel.swift */,
-				183B75C2302A8E940078052F /* INTEGRATION_GUIDE.md */,
 				183B75C3302A8E940078052F /* SessionAggregator.swift */,
 			);
 			path = insights;
