@@ -66,6 +66,7 @@ final class AppModel: ObservableObject {
     private let scoringEngine: StressScoringEngine
     private let sessionRecorder: SessionRecorder   // ← was missing as a stored property
     let prediction: StressPredictionCoordinator
+    let goals: GoalsCoordinator
 
     // MARK: - Internal buffers / state not exposed directly to views
 
@@ -98,7 +99,8 @@ final class AppModel: ObservableObject {
         credentialStore: CredentialStoring = KeychainCredentialStore(),
         scoringEngine: StressScoringEngine = StressScoringEngine(),
         sessionRecorder: SessionRecorder? = nil,
-        prediction: StressPredictionCoordinator? = nil 
+        prediction: StressPredictionCoordinator? = nil,
+        goals: GoalsCoordinator? = nil 
     ) {
         self.engine = engine
         self.credentialStore = credentialStore
@@ -110,6 +112,7 @@ final class AppModel: ObservableObject {
         // have to re-enter their key every launch — but never store it
         // anywhere insecure ourselves.
         self.apiKeyInput = credentialStore.loadAPIKey() ?? ""
+        self.goals = goals ?? GoalsCoordinator()
 
         if let engine = engine as? BiometricEngine {
             engine.delegate = self
@@ -157,6 +160,9 @@ final class AppModel: ObservableObject {
         stopGame()
         stopSessionTimer()
         sessionRecorder.stop()
+        
+        let finished = sessionRecorder.stop()                 // ← capture it
+        goals.refresh(latestSession: finished)  
     }
 
     // MARK: - Game Controls

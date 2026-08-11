@@ -278,6 +278,7 @@ struct BreathingPacerView: View {
             breathCycleProgress = 0.0
 
             if cycleCount >= 6 {
+                model.goals.recordBreathingCompleted()  
                 stopBreathing()
             } else {
                 performBreathCycle()

@@ -41,6 +41,14 @@
 		183B75C7302A8E940078052F /* CorrelationAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75BD302A8E940078052F /* CorrelationAnalyzer.swift */; };
 		183B75C8302A8E940078052F /* InsightsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75C1302A8E940078052F /* InsightsViewModel.swift */; };
 		183B75C9302A8E940078052F /* SessionAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75C3302A8E940078052F /* SessionAggregator.swift */; };
+		183B75D4302B7AC70078052F /* ProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75D2302B7AC70078052F /* ProgressRing.swift */; };
+		183B75D5302B7AC70078052F /* StreakCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75D3302B7AC70078052F /* StreakCalculator.swift */; };
+		183B75D6302B7AC70078052F /* AchievementCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75CB302B7AC70078052F /* AchievementCatalog.swift */; };
+		183B75D7302B7AC70078052F /* GoalModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75CD302B7AC70078052F /* GoalModels.swift */; };
+		183B75D8302B7AC70078052F /* GoalsDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75CF302B7AC70078052F /* GoalsDashboardView.swift */; };
+		183B75D9302B7AC70078052F /* GoalsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75CE302B7AC70078052F /* GoalsCoordinator.swift */; };
+		183B75DA302B7AC70078052F /* GoalEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75CC302B7AC70078052F /* GoalEvaluator.swift */; };
+		183B75DB302B7AC70078052F /* GoalsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75D0302B7AC70078052F /* GoalsStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +94,15 @@
 		183B75C0302A8E940078052F /* InsightsDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsDashboardView.swift; sourceTree = "<group>"; };
 		183B75C1302A8E940078052F /* InsightsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsViewModel.swift; sourceTree = "<group>"; };
 		183B75C3302A8E940078052F /* SessionAggregator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionAggregator.swift; sourceTree = "<group>"; };
+		183B75CB302B7AC70078052F /* AchievementCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementCatalog.swift; sourceTree = "<group>"; };
+		183B75CC302B7AC70078052F /* GoalEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalEvaluator.swift; sourceTree = "<group>"; };
+		183B75CD302B7AC70078052F /* GoalModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalModels.swift; sourceTree = "<group>"; };
+		183B75CE302B7AC70078052F /* GoalsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsCoordinator.swift; sourceTree = "<group>"; };
+		183B75CF302B7AC70078052F /* GoalsDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsDashboardView.swift; sourceTree = "<group>"; };
+		183B75D0302B7AC70078052F /* GoalsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsStore.swift; sourceTree = "<group>"; };
+		183B75D1302B7AC70078052F /* INTEGRATION_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = INTEGRATION_GUIDE.md; sourceTree = "<group>"; };
+		183B75D2302B7AC70078052F /* ProgressRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRing.swift; sourceTree = "<group>"; };
+		183B75D3302B7AC70078052F /* StreakCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCalculator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +131,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B75CA302B7ABD0078052F /* goals */,
 				183B75BC302A8E6D0078052F /* insights */,
 				183B75AA302A50450078052F /* prediction */,
 				183B75A6302A43FB0078052F /* session */,
@@ -185,6 +203,22 @@
 				183B75C3302A8E940078052F /* SessionAggregator.swift */,
 			);
 			path = insights;
+			sourceTree = "<group>";
+		};
+		183B75CA302B7ABD0078052F /* goals */ = {
+			isa = PBXGroup;
+			children = (
+				183B75CB302B7AC70078052F /* AchievementCatalog.swift */,
+				183B75CC302B7AC70078052F /* GoalEvaluator.swift */,
+				183B75CD302B7AC70078052F /* GoalModels.swift */,
+				183B75CE302B7AC70078052F /* GoalsCoordinator.swift */,
+				183B75CF302B7AC70078052F /* GoalsDashboardView.swift */,
+				183B75D0302B7AC70078052F /* GoalsStore.swift */,
+				183B75D1302B7AC70078052F /* INTEGRATION_GUIDE.md */,
+				183B75D2302B7AC70078052F /* ProgressRing.swift */,
+				183B75D3302B7AC70078052F /* StreakCalculator.swift */,
+			);
+			path = goals;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -296,6 +330,14 @@
 				183B7588302377A70078052F /* ControlsTabView.swift in Sources */,
 				183B7589302377A70078052F /* GameTabView.swift in Sources */,
 				183B758A302377A70078052F /* StressVisualizationView.swift in Sources */,
+				183B75D4302B7AC70078052F /* ProgressRing.swift in Sources */,
+				183B75D5302B7AC70078052F /* StreakCalculator.swift in Sources */,
+				183B75D6302B7AC70078052F /* AchievementCatalog.swift in Sources */,
+				183B75D7302B7AC70078052F /* GoalModels.swift in Sources */,
+				183B75D8302B7AC70078052F /* GoalsDashboardView.swift in Sources */,
+				183B75D9302B7AC70078052F /* GoalsCoordinator.swift in Sources */,
+				183B75DA302B7AC70078052F /* GoalEvaluator.swift in Sources */,
+				183B75DB302B7AC70078052F /* GoalsStore.swift in Sources */,
 				183B758B302377A70078052F /* BreathingPacerView.swift in Sources */,
 				183B758C302377A70078052F /* KeychainCredentialStore.swift in Sources */,
 				183B758D302377A70078052F /* BiometricEngine.swift in Sources */,
