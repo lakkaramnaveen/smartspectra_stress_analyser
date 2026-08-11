@@ -67,6 +67,8 @@ final class AppModel: ObservableObject {
     private let sessionRecorder: SessionRecorder   // ← was missing as a stored property
     let prediction: StressPredictionCoordinator
     let goals: GoalsCoordinator
+    let breathing: BreathingCoordinator
+    let focus: FocusCoordinator 
 
     // MARK: - Internal buffers / state not exposed directly to views
 
@@ -100,19 +102,29 @@ final class AppModel: ObservableObject {
         scoringEngine: StressScoringEngine = StressScoringEngine(),
         sessionRecorder: SessionRecorder? = nil,
         prediction: StressPredictionCoordinator? = nil,
-        goals: GoalsCoordinator? = nil 
+        goals: GoalsCoordinator? = nil,
+        breathing: BreathingCoordinator? = nil,
+        focus: FocusCoordinator? = nil
     ) {
         self.engine = engine
         self.credentialStore = credentialStore
         self.scoringEngine = scoringEngine
         self.sessionRecorder = sessionRecorder ?? SessionRecorder()
         self.prediction = prediction ?? StressPredictionCoordinator()
+        self.focus = focus ?? FocusCoordinator()
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
         // anywhere insecure ourselves.
         self.apiKeyInput = credentialStore.loadAPIKey() ?? ""
         self.goals = goals ?? GoalsCoordinator()
+        self.breathing = breathing ?? BreathingCoordinator()
+
+        // Completing a technique feeds the goals system.
+        self.breathing.onTechniqueCompleted = { [weak self] in
+            self?.goals.recordBreathingCompleted()
+        }
+        
 
         if let engine = engine as? BiometricEngine {
             engine.delegate = self
@@ -208,6 +220,7 @@ final class AppModel: ObservableObject {
     func dismissBiofeedback() {
         biofeedbackResetTask?.cancel()
         isBiofeedbackActive = false
+        breathing.dismissActive() 
     }
     
     /// Starts a breathing intervention on the user's own initiative (e.g.
@@ -352,6 +365,7 @@ final class AppModel: ObservableObject {
         stressScore = score
         stressLevel = StressLevel.classify(score)
         recordStressSample(score)
+        focus.ingest(stressScore: score)
 
         let (state, intensity) = scoringEngine.emotionalState(
             pulseBPM: latestPulse,
@@ -375,6 +389,15 @@ final class AppModel: ObservableObject {
             interventionActive: isBiofeedbackActive
         )
 
+        
+        prediction.ingest(
+            score: score,
+            // A focus block counts as "already being handled" for alerting
+            // purposes — same suppression path an active breathing session
+            // already uses, so no new branch in the policy.
+            interventionActive: isBiofeedbackActive || focus.suppressesInterruptions
+        )
+
         if scoringEngine.shouldTriggerIntervention(forStressScore: score), !isBiofeedbackActive {
             triggerBiofeedback()
         }
@@ -392,6 +415,7 @@ final class AppModel: ObservableObject {
 
     private func triggerBiofeedback() {
         isBiofeedbackActive = true
+        breathing.beginSelected()  
         biofeedbackResetTask?.cancel()
         biofeedbackResetTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(60))
