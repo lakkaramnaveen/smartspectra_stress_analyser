@@ -154,6 +154,8 @@ struct ContentView: View {
                 .environmentObject(model)
         case .history:
             SessionHistoryView()
+        case .insights:
+            InsightsDashboardView()
         }
     }
 }
@@ -167,7 +169,7 @@ struct ContentView: View {
 /// body is what produced the "circular reference expanding macro" and the
 /// unrelated-looking `frame` errors.
 enum SidebarTab: String, CaseIterable {
-    case controls, stress, emotions, game, history
+    case controls, stress, emotions, game, history, insights
 
     var label: String { rawValue.capitalized }
 
@@ -178,6 +180,7 @@ enum SidebarTab: String, CaseIterable {
         case .emotions: return "brain.head.profile"
         case .game: return "gamecontroller.fill"
         case .history: return "clock.arrow.circlepath"
+        case .insights: return "lightbulb"
         }
     }
 }
