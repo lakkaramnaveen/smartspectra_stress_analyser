@@ -3,33 +3,84 @@ import SwiftUI
 /// Root view for the Composure workspace.
 ///
 /// Layout is a responsive two-pane split: camera workspace on the left,
-/// tabbed sidebar on the right. Three overlays sit above that split in
-/// the root `ZStack`, ordered by how much they should interrupt:
+/// tabbed sidebar on the right. Five overlays sit above that split in
+/// the root `ZStack`. `zIndex` — not declaration order — determines what
+/// covers what, ordered by how completely each should take over:
 ///
-///   1000 — Balloon Hunt (fullscreen, takes over completely)
-///    500 — Predictive stress alert (banner, non-blocking)
-///    100 — Breathing pacer (modal-ish, but dismissible)
+///   1000 — Balloon Hunt (fullscreen game)
+///    500 — Predictive stress alert (top banner, non-blocking)
+///    400 — Meditation player
+///    300 — Focus timer
+///    100 — Breathing pacer
 ///
-/// All logic lives in `AppModel` and the coordinators it composes;
-/// this file is layout and routing only.
+/// The alert sits deliberately *above* the practice overlays: it's a
+/// banner pinned to the top edge, so it can coexist with them rather
+/// than being buried. Everything else is mutually exclusive in practice.
+///
+/// All logic lives in `AppModel` and the coordinators it composes; this
+/// file is layout and routing only.
 struct ContentView: View {
     @EnvironmentObject private var model: AppModel
 
     @State private var showGameFullscreen = false
     @State private var activeSidebarTab: SidebarTab = .controls
+    @State private var activePracticeTab: PracticeTab = .breathing
 
     var body: some View {
         ZStack {
             splitLayout
+
             gameOverlay
+            alertOverlay
+            meditationOverlay
             focusOverlay
             breathingOverlay
-            alertOverlay
         }
         .animation(.easeInOut, value: showGameFullscreen)
         .animation(.spring(response: 0.4), value: model.prediction.activeAlert)
         .animation(.easeInOut, value: model.breathing.activeTechnique)
-        .animation(.easeInOut, value: model.focus.isActive) 
+        .animation(.easeInOut, value: model.focus.isActive)
+        .animation(.easeInOut, value: model.meditation.activeMeditation)
+        // Summary sheets live on the root, not on `mainWorkspace`.
+        // Attached to a subview they'd present from something that may
+        // be fully covered by an overlay at the moment the sheet fires.
+        .sheet(item: meditationSummaryBinding) { summary in
+            MeditationSummaryView(summary: summary) {
+                model.meditation.dismissSummary()
+            }
+        }
+        .sheet(item: focusSummaryBinding) { summary in
+            FocusSummaryView(summary: summary) {
+                model.focus.dismissSummary()
+            }
+        }
+    }
+
+    // MARK: - Bindings into child coordinators
+    //
+    // `$model.meditation.pendingSummary` doesn't compile: the coordinator
+    // properties on `AppModel` are `let`, so SwiftUI can't synthesise a
+    // write-back path through them — even though the property at the end
+    // of that path is perfectly settable.
+    //
+    // Making the coordinators `var` would silence the error but is the
+    // wrong fix. They're dependencies, not state: nothing should ever
+    // swap which coordinator the model points at, and `let` is what says
+    // so. An explicit `Binding` reads and writes the child directly and
+    // leaves that guarantee intact.
+
+    private var meditationSummaryBinding: Binding<MeditationSummary?> {
+        Binding(
+            get: { model.meditation.pendingSummary },
+            set: { model.meditation.pendingSummary = $0 }
+        )
+    }
+
+    private var focusSummaryBinding: Binding<FocusSummary?> {
+        Binding(
+            get: { model.focus.pendingSummary },
+            set: { model.focus.pendingSummary = $0 }
+        )
     }
 
     // MARK: - Split Layout
@@ -59,7 +110,39 @@ struct ContentView: View {
                 .zIndex(1000)
         }
     }
-    
+
+    /// Predictive stress alert. Deliberately a top banner rather than a
+    /// modal — it's a nudge, and a nudge that blocks the interface is
+    /// just an interruption.
+    @ViewBuilder
+    private var alertOverlay: some View {
+        if let alert = model.prediction.activeAlert {
+            VStack {
+                StressAlertBanner(
+                    alert: alert,
+                    onDismiss: { model.prediction.dismissAlert() },
+                    onStartBreathing: { model.beginBreathingManually() }
+                )
+                .frame(maxWidth: 520)
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+
+                Spacer()
+            }
+            .transition(.move(edge: .top).combined(with: .opacity))
+            .zIndex(500)
+        }
+    }
+
+    @ViewBuilder
+    private var meditationOverlay: some View {
+        if let active = model.meditation.activeMeditation {
+            MeditationPlayerView(coordinator: model.meditation, meditation: active)
+                .transition(.opacity)
+                .zIndex(400)
+        }
+    }
+
     @ViewBuilder
     private var focusOverlay: some View {
         if model.focus.isActive {
@@ -89,29 +172,6 @@ struct ContentView: View {
             .environmentObject(model)
             .transition(.opacity.combined(with: .scale(scale: 0.95)))
             .zIndex(100)
-        }
-    }
-
-    /// Predictive stress alert. Deliberately a top banner rather than a
-    /// modal — it's a nudge, and a nudge that blocks the interface is
-    /// just an interruption.
-    @ViewBuilder
-    private var alertOverlay: some View {
-        if let alert = model.prediction.activeAlert {
-            VStack {
-                StressAlertBanner(
-                    alert: alert,
-                    onDismiss: { model.prediction.dismissAlert() },
-                    onStartBreathing: { model.beginBreathingManually() }
-                )
-                .frame(maxWidth: 520)
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-
-                Spacer()
-            }
-            .transition(.move(edge: .top).combined(with: .opacity))
-            .zIndex(500)
         }
     }
 
@@ -178,8 +238,6 @@ struct ContentView: View {
 
     /// Horizontally scrolling tab strip.
     ///
-    /// Two things worth knowing about the sizing here:
-    ///
     /// **Fixed icon box.** SF Symbols have differing intrinsic aspect
     /// ratios — `chart.xyaxis.line` is far wider than `gearshape` at the
     /// same point size. A shared `.font(...)` normalises glyph *height*
@@ -187,12 +245,9 @@ struct ContentView: View {
     /// strip look subtly misaligned. Wrapping each glyph in a fixed
     /// square fixes it.
     ///
-    /// **Scrolling rather than squeezing.** Eight tabs divided into a
-    /// 320pt sidebar is ~34pt each, which crushes labels like "Controls"
-    /// and "Insights" even with `minimumScaleFactor`. Giving each tab a
-    /// real minimum width and letting the strip scroll keeps every label
-    /// legible at any sidebar width, and degrades gracefully if more
-    /// tabs get added later.
+    /// **Scrolling rather than squeezing.** Each tab gets a real minimum
+    /// width and the strip scrolls, so labels stay legible at any sidebar
+    /// width rather than being crushed by `minimumScaleFactor`.
     private var tabBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 4) {
@@ -260,8 +315,8 @@ struct ContentView: View {
                     .padding(12)
             }
 
-        case .breathing:
-            BreathingLibraryView(coordinator: model.breathing)
+        case .practice:
+            practicePane
 
         case .game:
             GameTabView(showGameFullscreen: $showGameFullscreen)
@@ -275,10 +330,40 @@ struct ContentView: View {
 
         case .history:
             SessionHistoryView()
-            
-        case .focus:
-            FocusTabView(coordinator: model.focus)
-            
+        }
+    }
+
+    // MARK: - Practice Pane
+
+    /// Breathing, meditation, and focus grouped behind one tab.
+    ///
+    /// Ten top-level tabs is past the point where a strip gets scanned
+    /// rather than read. These three are the same category from the
+    /// user's side — deliberate practices you choose to start — so a
+    /// segmented control inside one tab is both shorter and a better
+    /// match for how they're actually thought about.
+    private var practicePane: some View {
+        VStack(spacing: 0) {
+            Picker("", selection: $activePracticeTab) {
+                ForEach(PracticeTab.allCases, id: \.self) { tab in
+                    Text(tab.label).tag(tab)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+
+            Divider().opacity(0.3)
+
+            switch activePracticeTab {
+            case .breathing:
+                BreathingLibraryView(coordinator: model.breathing)
+            case .meditation:
+                MeditationLibraryView(coordinator: model.meditation)
+            case .focus:
+                FocusTabView(coordinator: model.focus)
+            }
         }
     }
 }
@@ -296,14 +381,29 @@ enum SidebarMetrics {
     static let tabMinWidth: CGFloat = 52
 }
 
+// MARK: - Practice Tab
+
+enum PracticeTab: String, CaseIterable {
+    case breathing
+    case meditation
+    case focus
+
+    var label: String {
+        switch self {
+        case .breathing:  return "Breathe"
+        case .meditation: return "Meditate"
+        case .focus:      return "Focus"
+        }
+    }
+}
+
 // MARK: - Sidebar Tab
 
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
     case emotions
-    case breathing
-    case focus
+    case practice
     case game
     case goals
     case insights
@@ -311,15 +411,14 @@ enum SidebarTab: String, CaseIterable {
 
     var label: String {
         switch self {
-        case .controls:  return "Controls"
-        case .stress:    return "Stress"
-        case .emotions:  return "Emotions"
-        case .breathing: return "Breathe"
-        case .focus: return "Focus"
-        case .game:      return "Game"
-        case .goals:     return "Goals"
-        case .insights:  return "Insights"
-        case .history:   return "History"
+        case .controls: return "Controls"
+        case .stress:   return "Stress"
+        case .emotions: return "Emotions"
+        case .practice: return "Practice"
+        case .game:     return "Game"
+        case .goals:    return "Goals"
+        case .insights: return "Insights"
+        case .history:  return "History"
         }
     }
 
@@ -327,36 +426,33 @@ enum SidebarTab: String, CaseIterable {
     /// discoverable without widening it.
     var helpText: String {
         switch self {
-        case .controls:  return "Session controls and API key"
-        case .stress:    return "Live stress trajectory"
-        case .emotions:  return "Detected emotional state"
-        case .breathing: return "Breathing techniques"
-        case .focus: return "timer"
-        case .game:      return "Balloon Hunt eye-tracking game"
-        case .goals:     return "Goals, streaks, and achievements"
-        case .insights:  return "Patterns across your sessions"
-        case .history:   return "Past session recordings"
+        case .controls: return "Session controls and API key"
+        case .stress:   return "Live stress trajectory"
+        case .emotions: return "Detected emotional state"
+        case .practice: return "Breathing, meditation, and focus blocks"
+        case .game:     return "Balloon Hunt eye-tracking game"
+        case .goals:    return "Goals, streaks, and achievements"
+        case .insights: return "Patterns across your sessions"
+        case .history:  return "Past session recordings"
         }
     }
 
-    /// Symbols chosen for consistent visual weight as well as meaning.
+    /// SF Symbol names.
     ///
-    /// Two deliberate substitutions: `chart.xyaxis.line` replaces
-    /// `chart.line.uptrend.xyaxis` (same concept, far closer in width to
-    /// its neighbours), and the set is uniformly outline-weight rather
-    /// than mixing filled and outline glyphs, which reads as
-    /// inconsistent when they sit side by side.
+    /// Every value here must be a real symbol name — an invalid string
+    /// renders as an empty gap with no compiler warning, which is easy
+    /// to miss in review. (That's exactly how the Focus tab ended up
+    /// blank: its `icon` was returning a sentence.)
     var icon: String {
         switch self {
-        case .controls:  return "gearshape"
-        case .stress:    return "chart.xyaxis.line"
-        case .emotions:  return "brain.head.profile"
-        case .breathing: return "wind"
-        case .focus: return "Timed work blocks with quiet monitoring"
-        case .game:      return "gamecontroller"
-        case .goals:     return "target"
-        case .insights:  return "lightbulb"
-        case .history:   return "clock.arrow.circlepath"
+        case .controls: return "gearshape"
+        case .stress:   return "chart.xyaxis.line"
+        case .emotions: return "brain.head.profile"
+        case .practice: return "figure.mind.and.body"
+        case .game:     return "gamecontroller"
+        case .goals:    return "target"
+        case .insights: return "lightbulb"
+        case .history:  return "clock.arrow.circlepath"
         }
     }
 }

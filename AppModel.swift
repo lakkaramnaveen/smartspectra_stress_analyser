@@ -10,12 +10,21 @@ import SwiftUI
 /// risky — touching the game logic could silently affect stress
 /// calculation thread-safety, for example.
 ///
-/// It's now a thin coordinator: parsing/formatting and orchestration live
-/// here, but the actual stress math lives in `StressScoringEngine` (pure,
-/// testable), SDK interop lives in `BiometricEngine` (mockable), the
-/// credential lives in `CredentialStoring` (secure, mockable), and session
-/// history lives in `SessionRecorder` (persisted, mockable). This class's
-/// job is just to wire those together and publish state for SwiftUI.
+/// It's now a thin coordinator. Parsing, formatting, and orchestration
+/// live here; everything else is a composed dependency:
+///
+///   - `StressScoringEngine`  — pure stress/emotion math
+///   - `BiometricEngine`      — SDK interop, mockable
+///   - `CredentialStoring`    — Keychain, mockable
+///   - `SessionRecorder`      — session history
+///   - `StressPredictionCoordinator` — trend forecasting & alerts
+///   - `GoalsCoordinator`     — streaks, achievements, records
+///   - `BreathingCoordinator` — technique library & pacer state
+///   - `FocusCoordinator`     — Pomodoro blocks
+///   - `MeditationCoordinator` — guided sittings
+///
+/// This class's job is to wire those together and publish state for
+/// SwiftUI.
 @MainActor
 final class AppModel: ObservableObject {
 
@@ -38,7 +47,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var stressHistory: [Double] = []
     @Published private(set) var emotionalState: EmotionalState = .calm
     @Published private(set) var emotionIntensity: Double = 0.0
-    @Published var isBiofeedbackActive = false
+    @Published private(set) var isBiofeedbackActive = false
 
     // Eye tracking
     @Published private(set) var gaze: GazePoint = .center
@@ -64,11 +73,20 @@ final class AppModel: ObservableObject {
     private let engine: BiometricEngineProviding
     private let credentialStore: CredentialStoring
     private let scoringEngine: StressScoringEngine
-    private let sessionRecorder: SessionRecorder   // ← was missing as a stored property
+    private let sessionRecorder: SessionRecorder
+
+    // Exposed so views can bind to them directly. `let`, because nothing
+    // should ever swap which coordinator the model points at — their
+    // *contents* change, not their identity.
     let prediction: StressPredictionCoordinator
     let goals: GoalsCoordinator
     let breathing: BreathingCoordinator
-    let focus: FocusCoordinator 
+    let focus: FocusCoordinator
+    let meditation: MeditationCoordinator
+
+    /// Subscriptions forwarding child coordinators' change notifications
+    /// into our own. See `forwardChildChanges()`.
+    private var childObservers: Set<AnyCancellable> = []
 
     // MARK: - Internal buffers / state not exposed directly to views
 
@@ -89,13 +107,13 @@ final class AppModel: ObservableObject {
 
     // MARK: - Init
 
-    /// `sessionRecorder` defaults to `nil` here (not `SessionRecorder()`)
-    /// deliberately: default-argument *expressions* are evaluated in a
-    /// non-isolated context even when the initializer they belong to is
-    /// `@MainActor`, and `SessionRecorder.init` is itself MainActor-isolated
-    /// (it's an `ObservableObject` meant to publish to SwiftUI). Passing
-    /// `nil` sidesteps that — the real instance is constructed inside the
-    /// init body below, which *does* run on the main actor.
+    /// Every coordinator parameter defaults to `nil` rather than to a
+    /// constructed instance, deliberately: default-argument *expressions*
+    /// evaluate in a non-isolated context even when the initializer they
+    /// belong to is `@MainActor`, and these types are all MainActor-bound
+    /// `ObservableObject`s. Building them inside the init body — which
+    /// does run on the main actor — sidesteps the isolation error while
+    /// keeping them injectable for tests.
     init(
         engine: BiometricEngineProviding = BiometricEngine(),
         credentialStore: CredentialStoring = KeychainCredentialStore(),
@@ -104,31 +122,37 @@ final class AppModel: ObservableObject {
         prediction: StressPredictionCoordinator? = nil,
         goals: GoalsCoordinator? = nil,
         breathing: BreathingCoordinator? = nil,
-        focus: FocusCoordinator? = nil
+        focus: FocusCoordinator? = nil,
+        meditation: MeditationCoordinator? = nil
     ) {
         self.engine = engine
         self.credentialStore = credentialStore
         self.scoringEngine = scoringEngine
+
         self.sessionRecorder = sessionRecorder ?? SessionRecorder()
         self.prediction = prediction ?? StressPredictionCoordinator()
+        self.goals = goals ?? GoalsCoordinator()
+        self.breathing = breathing ?? BreathingCoordinator()
         self.focus = focus ?? FocusCoordinator()
+        self.meditation = meditation ?? MeditationCoordinator()
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
         // anywhere insecure ourselves.
         self.apiKeyInput = credentialStore.loadAPIKey() ?? ""
-        self.goals = goals ?? GoalsCoordinator()
-        self.breathing = breathing ?? BreathingCoordinator()
 
-        // Completing a technique feeds the goals system.
+        // A completed breathing technique counts toward goals. Wired here
+        // rather than called from the pacer view, so every entry point
+        // into breathing feeds goals identically — and only once.
         self.breathing.onTechniqueCompleted = { [weak self] in
             self?.goals.recordBreathingCompleted()
         }
-        
 
         if let engine = engine as? BiometricEngine {
             engine.delegate = self
         }
+
+        forwardChildChanges()
     }
 
     deinit {
@@ -136,6 +160,46 @@ final class AppModel: ObservableObject {
         gameTimerTask?.cancel()
         blinkResetTask?.cancel()
         biofeedbackResetTask?.cancel()
+        // `childObservers` cancels itself on deallocation.
+    }
+
+    // MARK: - Nested Observation
+
+    /// Re-publishes child coordinators' changes as changes to `AppModel`.
+    ///
+    /// SwiftUI does **not** observe nested `ObservableObject`s. A view
+    /// holding `@EnvironmentObject var model: AppModel` and reading
+    /// `model.meditation.activeMeditation` will never re-render when that
+    /// property changes, because `AppModel` itself published nothing —
+    /// the change happened one level down.
+    ///
+    /// This is the classic silent failure of composed view models: the
+    /// code looks obviously correct, the state genuinely updates, and the
+    /// UI simply never moves. Forwarding each child's `objectWillChange`
+    /// makes `model.<child>.<property>` reads behave the way anyone
+    /// reading `ContentView` would assume they do.
+    ///
+    /// Trade-off: this re-renders any view observing `AppModel` on *any*
+    /// child update, including ones it doesn't read. Cheap at this size.
+    /// If the root view ever becomes expensive to evaluate, the more
+    /// precise alternative is giving each view its own `@ObservedObject`
+    /// for the coordinator it actually needs — which several views
+    /// (`GoalsDashboardView`, `BreathingLibraryView`) already do.
+    private func forwardChildChanges() {
+        let children: [any ObservableObject] = [
+            prediction, goals, breathing, focus, meditation
+        ]
+
+        for child in children {
+            guard let publisher = child.objectWillChange as? ObservableObjectPublisher else {
+                continue
+            }
+
+            publisher
+                .receive(on: RunLoop.main)
+                .sink { [weak self] _ in self?.objectWillChange.send() }
+                .store(in: &childObservers)
+        }
     }
 
     // MARK: - Lifecycle Controls
@@ -168,13 +232,22 @@ final class AppModel: ObservableObject {
         engine.stop()
         isRunning = false
         processingStatus = "stopped"
-        isBiofeedbackActive = false
+
         stopGame()
         stopSessionTimer()
-        sessionRecorder.stop()
-        
-        let finished = sessionRecorder.stop()                 // ← capture it
-        goals.refresh(latestSession: finished)  
+
+        // Tear the breathing overlay down properly rather than only
+        // clearing the flag — the pacer is driven by
+        // `breathing.activeTechnique`, so setting `isBiofeedbackActive`
+        // alone would leave it on screen after the session ended.
+        dismissBiofeedback()
+
+        // `stop()` is called exactly once and its return value is the
+        // finished recording. Calling it twice returns nil the second
+        // time, which would hand `goals.refresh` no session and silently
+        // drop that session's personal records.
+        let finished = sessionRecorder.stop()
+        goals.refresh(latestSession: finished)
     }
 
     // MARK: - Game Controls
@@ -217,20 +290,26 @@ final class AppModel: ObservableObject {
         }
     }
 
+    // MARK: - Breathing
+
+    /// Single teardown path for a breathing intervention, however it
+    /// started. Both the flag and the overlay state are cleared here, so
+    /// no caller has to remember to do both.
     func dismissBiofeedback() {
         biofeedbackResetTask?.cancel()
+        biofeedbackResetTask = nil
         isBiofeedbackActive = false
-        breathing.dismissActive() 
+        breathing.dismissActive()
     }
-    
+
     /// Starts a breathing intervention on the user's own initiative (e.g.
     /// tapping "Start breathing" on a predictive alert), as opposed to
-    /// `triggerBiofeedback()` which fires automatically at the threshold.
+    /// `triggerBiofeedback()` firing automatically at the threshold.
     func beginBreathingManually() {
         prediction.dismissAlert()
         triggerBiofeedback()
     }
-    
+
     // MARK: - Private: Session Lifecycle
 
     private func resetSessionState() {
@@ -249,12 +328,15 @@ final class AppModel: ObservableObject {
         latestBreathing = 0
         latestEDA = 0
 
-        isBiofeedbackActive = false
+        dismissBiofeedback()
         stressScore = 0
         stressLevel = .calm
         stressHistory = []
         emotionalState = .calm
         emotionIntensity = 0
+
+        // Clear the trend window so the tail of the previous session
+        // doesn't leak into the new one's slope.
         prediction.reset()
 
         sessionStats = SessionStats(startedAt: Date())
@@ -357,6 +439,13 @@ final class AppModel: ObservableObject {
 
     // MARK: - Private: Stress & Emotion
 
+    /// Single fan-out point for a fresh stress score.
+    ///
+    /// Every consumer is fed exactly once here. That matters most for
+    /// `prediction`: it holds a rolling window and fits a regression
+    /// against sample timestamps, so feeding it the same score twice
+    /// halves the effective window and pushes two points onto the same
+    /// instant, distorting the slope.
     private func recomputeDerivedState() {
         guard let score = scoringEngine.stressScore(eda: latestEDA, breathingRPM: latestBreathing) else {
             return
@@ -365,7 +454,6 @@ final class AppModel: ObservableObject {
         stressScore = score
         stressLevel = StressLevel.classify(score)
         recordStressSample(score)
-        focus.ingest(stressScore: score)
 
         let (state, intensity) = scoringEngine.emotionalState(
             pulseBPM: latestPulse,
@@ -375,6 +463,10 @@ final class AppModel: ObservableObject {
         emotionalState = state
         emotionIntensity = intensity
 
+        // Practice-mode tracking. Both no-op when inactive.
+        focus.ingest(stressScore: score)
+        meditation.ingest(stressScore: score)
+
         sessionRecorder.capture(
             stressScore: score,
             heartRate: latestPulse,
@@ -383,19 +475,16 @@ final class AppModel: ObservableObject {
             emotionalState: state.label,
             gazeConfidence: gaze.confidence
         )
-        
-        prediction.ingest(                                        // ← add
-            score: score,
-            interventionActive: isBiofeedbackActive
-        )
 
-        
+        // One call, with the full suppression picture. An earlier
+        // unsuppressed call would defeat focus/meditation quiet mode
+        // entirely — the alert would already have fired by the time the
+        // suppressed call ran.
         prediction.ingest(
             score: score,
-            // A focus block counts as "already being handled" for alerting
-            // purposes — same suppression path an active breathing session
-            // already uses, so no new branch in the policy.
-            interventionActive: isBiofeedbackActive || focus.suppressesInterruptions
+            interventionActive: isBiofeedbackActive
+                || focus.suppressesInterruptions
+                || meditation.engine.isRunning
         )
 
         if scoringEngine.shouldTriggerIntervention(forStressScore: score), !isBiofeedbackActive {
@@ -415,12 +504,15 @@ final class AppModel: ObservableObject {
 
     private func triggerBiofeedback() {
         isBiofeedbackActive = true
-        breathing.beginSelected()  
+        breathing.beginSelected()
+
         biofeedbackResetTask?.cancel()
         biofeedbackResetTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(60))
             guard !Task.isCancelled else { return }
-            self?.isBiofeedbackActive = false
+            // Full teardown, not just the flag — otherwise the pacer
+            // overlay stays on screen indefinitely after the timeout.
+            self?.dismissBiofeedback()
         }
     }
 }

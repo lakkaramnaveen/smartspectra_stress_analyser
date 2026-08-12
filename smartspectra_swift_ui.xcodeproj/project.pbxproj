@@ -58,6 +58,12 @@
 		183B75F1302B8D050078052F /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75EB302B8D050078052F /* FocusSession.swift */; };
 		183B75F2302B8D050078052F /* FocusTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75ED302B8D050078052F /* FocusTabView.swift */; };
 		183B75F3302B8D050078052F /* FocusCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75E9302B8D050078052F /* FocusCoordinator.swift */; };
+		183B75FC302CDBFA0078052F /* MeditationSessionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75FA302CDBFA0078052F /* MeditationSessionEngine.swift */; };
+		183B75FD302CDBFA0078052F /* MeditationStressComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75FB302CDBFA0078052F /* MeditationStressComparison.swift */; };
+		183B75FE302CDBFA0078052F /* MeditationLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75F8302CDBFA0078052F /* MeditationLibraryView.swift */; };
+		183B75FF302CDBFA0078052F /* Meditation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75F6302CDBFA0078052F /* Meditation.swift */; };
+		183B7600302CDBFA0078052F /* MeditationPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75F9302CDBFA0078052F /* MeditationPlayerView.swift */; };
+		183B7601302CDBFA0078052F /* MeditationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75F7302CDBFA0078052F /* MeditationCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -120,6 +126,12 @@
 		183B75EB302B8D050078052F /* FocusSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSession.swift; sourceTree = "<group>"; };
 		183B75EC302B8D050078052F /* FocusSessionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSessionEngine.swift; sourceTree = "<group>"; };
 		183B75ED302B8D050078052F /* FocusTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTabView.swift; sourceTree = "<group>"; };
+		183B75F6302CDBFA0078052F /* Meditation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meditation.swift; sourceTree = "<group>"; };
+		183B75F7302CDBFA0078052F /* MeditationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationCoordinator.swift; sourceTree = "<group>"; };
+		183B75F8302CDBFA0078052F /* MeditationLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationLibraryView.swift; sourceTree = "<group>"; };
+		183B75F9302CDBFA0078052F /* MeditationPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationPlayerView.swift; sourceTree = "<group>"; };
+		183B75FA302CDBFA0078052F /* MeditationSessionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationSessionEngine.swift; sourceTree = "<group>"; };
+		183B75FB302CDBFA0078052F /* MeditationStressComparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationStressComparison.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +160,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B75F4302CDBEC0078052F /* meditate */,
 				183B75E8302B8CFA0078052F /* focus */,
 				183B75DC302B7E9E0078052F /* breathing */,
 				183B75CA302B7ABD0078052F /* goals */,
@@ -260,6 +273,19 @@
 				183B75ED302B8D050078052F /* FocusTabView.swift */,
 			);
 			path = focus;
+			sourceTree = "<group>";
+		};
+		183B75F4302CDBEC0078052F /* meditate */ = {
+			isa = PBXGroup;
+			children = (
+				183B75F6302CDBFA0078052F /* Meditation.swift */,
+				183B75F7302CDBFA0078052F /* MeditationCoordinator.swift */,
+				183B75F8302CDBFA0078052F /* MeditationLibraryView.swift */,
+				183B75F9302CDBFA0078052F /* MeditationPlayerView.swift */,
+				183B75FA302CDBFA0078052F /* MeditationSessionEngine.swift */,
+				183B75FB302CDBFA0078052F /* MeditationStressComparison.swift */,
+			);
+			path = meditate;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -390,6 +416,12 @@
 				183B75E5302B7ED00078052F /* BreathingCoordinator.swift in Sources */,
 				183B75E6302B7ED00078052F /* BreathingLibraryView.swift in Sources */,
 				183B75E7302B7ED00078052F /* BreathingSessionEngine.swift in Sources */,
+				183B75FC302CDBFA0078052F /* MeditationSessionEngine.swift in Sources */,
+				183B75FD302CDBFA0078052F /* MeditationStressComparison.swift in Sources */,
+				183B75FE302CDBFA0078052F /* MeditationLibraryView.swift in Sources */,
+				183B75FF302CDBFA0078052F /* Meditation.swift in Sources */,
+				183B7600302CDBFA0078052F /* MeditationPlayerView.swift in Sources */,
+				183B7601302CDBFA0078052F /* MeditationCoordinator.swift in Sources */,
 				183B758D302377A70078052F /* BiometricEngine.swift in Sources */,
 				100000000000000000000104 /* SmartSpectraRunner.mm in Sources */,
 				100000000000000000000101 /* SmartSpectraSwiftApp.swift in Sources */,
