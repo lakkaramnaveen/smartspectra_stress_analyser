@@ -3,19 +3,21 @@ import SwiftUI
 /// Root view for the Composure workspace.
 ///
 /// Layout is a responsive two-pane split: camera workspace on the left,
-/// tabbed sidebar on the right. Five overlays sit above that split in
+/// tabbed sidebar on the right. Seven overlays sit above that split in
 /// the root `ZStack`. `zIndex` — not declaration order — determines what
 /// covers what, ordered by how completely each should take over:
 ///
 ///   1000 — Balloon Hunt (fullscreen game)
-///    500 — Predictive stress alert (top banner, non-blocking)
-///    400 — Meditation player
-///    300 — Focus timer
-///    100 — Breathing pacer
+///    500 — Predictive stress alert (top banner)
+///    400 — Meditation player (full)
+///    300 — Focus timer (full)
+///    250 — Desk-habit nudge (bottom-centre card)
+///    200 — Recovery panel (bottom-trailing card)
+///    100 — Breathing pacer (full)
 ///
-/// The alert sits deliberately *above* the practice overlays: it's a
-/// banner pinned to the top edge, so it can coexist with them rather
-/// than being buried. Everything else is mutually exclusive in practice.
+/// The three cards (alert, nudge, recovery) are non-blocking and occupy
+/// different screen edges, so they can coexist without collision. The
+/// full overlays are mutually exclusive in practice.
 ///
 /// All logic lives in `AppModel` and the coordinators it composes; this
 /// file is layout and routing only.
@@ -30,10 +32,16 @@ struct ContentView: View {
         ZStack {
             splitLayout
 
+            // Every overlay must be listed here. A `@ViewBuilder`
+            // property that's declared but never composed compiles
+            // cleanly and silently renders nothing — an easy thing to
+            // miss when adding a feature.
             gameOverlay
             alertOverlay
             meditationOverlay
             focusOverlay
+            ergonomicsOverlay
+            recoveryOverlay
             breathingOverlay
         }
         .animation(.easeInOut, value: showGameFullscreen)
@@ -41,6 +49,8 @@ struct ContentView: View {
         .animation(.easeInOut, value: model.breathing.activeTechnique)
         .animation(.easeInOut, value: model.focus.isActive)
         .animation(.easeInOut, value: model.meditation.activeMeditation)
+        .animation(.spring(response: 0.4), value: model.ergonomics.activeNudge)
+        .animation(.spring(response: 0.45), value: model.recovery.state)
         // Summary sheets live on the root, not on `mainWorkspace`.
         // Attached to a subview they'd present from something that may
         // be fully covered by an overlay at the moment the sheet fires.
@@ -94,25 +104,6 @@ struct ContentView: View {
 
             sidebarPanel
                 .frame(minWidth: 320, maxWidth: 500)
-        }
-    }
-    
-    @ViewBuilder
-    private var ergonomicsOverlay: some View {
-        if let nudge = model.ergonomics.activeNudge {
-            VStack {
-                Spacer()
-                ErgonomicsNudgeBanner(
-                    nudge: nudge,
-                    onDismiss: { model.ergonomics.dismissNudge() },
-                    onBreakTaken: { model.ergonomics.markBreakTaken() }
-                )
-                .frame(maxWidth: 460)
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
-            }
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-            .zIndex(250)
         }
     }
 
@@ -171,15 +162,62 @@ struct ContentView: View {
         }
     }
 
+    /// Desk-habit nudge. Bottom-centre, so it doesn't compete with the
+    /// stress alert at the top or the recovery panel at the trailing
+    /// edge.
+    @ViewBuilder
+    private var ergonomicsOverlay: some View {
+        if let nudge = model.ergonomics.activeNudge {
+            VStack {
+                Spacer()
+                ErgonomicsNudgeBanner(
+                    nudge: nudge,
+                    onDismiss: { model.ergonomics.dismissNudge() },
+                    onBreakTaken: { model.ergonomics.markBreakTaken() }
+                )
+                .frame(maxWidth: 460)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
+            }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .zIndex(250)
+        }
+    }
+
+    /// Recovery panel. A card rather than a modal on purpose — it
+    /// appears shortly after a breathing session ends, and a second
+    /// full-screen takeover there would be one interruption too many.
+    @ViewBuilder
+    private var recoveryOverlay: some View {
+        if let state = model.recovery.state {
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    RecoveryPanel(
+                        state: state,
+                        hasSettled: model.recovery.hasSettled,
+                        onDismiss: { model.recovery.dismiss() },
+                        onStartBreathing: { model.beginBreathingManually() }
+                    )
+                    .padding(.trailing, 24)
+                    .padding(.bottom, 24)
+                }
+            }
+            .transition(.move(edge: .trailing).combined(with: .opacity))
+            .zIndex(200)
+        }
+    }
+
     /// Guided breathing pacer.
     ///
     /// Driven entirely by `model.breathing.activeTechnique`, which is the
     /// single entry point for every way a session can begin: the
     /// automatic stress-threshold trigger, "Start breathing" on a
-    /// predictive alert, and "Try it" in the technique library all set
-    /// that one property. Routing them through a single source of truth
-    /// avoids the classic bug where one path shows the overlay and
-    /// another silently doesn't.
+    /// predictive alert or the recovery panel, and "Try it" in the
+    /// technique library all set that one property. Routing them through
+    /// a single source of truth avoids the classic bug where one path
+    /// shows the overlay and another silently doesn't.
     @ViewBuilder
     private var breathingOverlay: some View {
         if let technique = model.breathing.activeTechnique {
@@ -334,6 +372,9 @@ struct ContentView: View {
                     .padding(12)
             }
 
+        case .desk:
+            ErgonomicsTabView(coordinator: model.ergonomics)
+
         case .practice:
             practicePane
 
@@ -356,11 +397,10 @@ struct ContentView: View {
 
     /// Breathing, meditation, and focus grouped behind one tab.
     ///
-    /// Ten top-level tabs is past the point where a strip gets scanned
-    /// rather than read. These three are the same category from the
-    /// user's side — deliberate practices you choose to start — so a
-    /// segmented control inside one tab is both shorter and a better
-    /// match for how they're actually thought about.
+    /// These three are the same category from the user's side —
+    /// deliberate practices you choose to start — so a segmented control
+    /// inside one tab is both shorter and a better match for how they're
+    /// actually thought about than three top-level entries.
     private var practicePane: some View {
         VStack(spacing: 0) {
             Picker("", selection: $activePracticeTab) {
@@ -418,10 +458,19 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
+/// Nine tabs, ordered roughly live → deliberate → retrospective:
+/// Controls, Stress, Emotions and Desk are things happening now;
+/// Practice and Game are things you start; Goals, Insights and History
+/// look backwards.
+///
+/// If this grows further, the next consolidation is grouping Stress,
+/// Emotions and Desk behind a single "Signals" tab the way Practice
+/// already groups its three.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
     case emotions
+    case desk
     case practice
     case game
     case goals
@@ -433,6 +482,7 @@ enum SidebarTab: String, CaseIterable {
         case .controls: return "Controls"
         case .stress:   return "Stress"
         case .emotions: return "Emotions"
+        case .desk:     return "Desk"
         case .practice: return "Practice"
         case .game:     return "Game"
         case .goals:    return "Goals"
@@ -448,6 +498,7 @@ enum SidebarTab: String, CaseIterable {
         case .controls: return "Session controls and API key"
         case .stress:   return "Live stress trajectory"
         case .emotions: return "Detected emotional state"
+        case .desk:     return "Screen time and neck-strain reminders"
         case .practice: return "Breathing, meditation, and focus blocks"
         case .game:     return "Balloon Hunt eye-tracking game"
         case .goals:    return "Goals, streaks, and achievements"
@@ -467,6 +518,7 @@ enum SidebarTab: String, CaseIterable {
         case .controls: return "gearshape"
         case .stress:   return "chart.xyaxis.line"
         case .emotions: return "brain.head.profile"
+        case .desk:     return "figure.seated.side"
         case .practice: return "figure.mind.and.body"
         case .game:     return "gamecontroller"
         case .goals:    return "target"

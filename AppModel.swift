@@ -23,6 +23,7 @@ import SwiftUI
 ///   - `FocusCoordinator`            — Pomodoro blocks
 ///   - `MeditationCoordinator`       — guided sittings
 ///   - `ErgonomicsCoordinator`       — screen time & neck-strain nudges
+///   - `RecoveryCoordinator`         — post-peak descent tracking
 ///
 /// This class's job is to wire those together and publish state for
 /// SwiftUI.
@@ -75,6 +76,7 @@ final class AppModel: ObservableObject {
     private let credentialStore: CredentialStoring
     private let scoringEngine: StressScoringEngine
     private let sessionRecorder: SessionRecorder
+    private let sessionStore: SessionStoring
 
     // Exposed so views can bind to them directly. `let`, because nothing
     // should ever swap which coordinator the model points at — their
@@ -85,10 +87,14 @@ final class AppModel: ObservableObject {
     let focus: FocusCoordinator
     let meditation: MeditationCoordinator
     let ergonomics: ErgonomicsCoordinator
+    let recovery: RecoveryCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
     private var childObservers: Set<AnyCancellable> = []
+
+    /// Baseline seeding is done once per launch, lazily on first start.
+    private var hasSeededRecoveryBaseline = false
 
     // MARK: - Internal buffers / state not exposed directly to views
 
@@ -121,12 +127,14 @@ final class AppModel: ObservableObject {
         credentialStore: CredentialStoring = KeychainCredentialStore(),
         scoringEngine: StressScoringEngine = StressScoringEngine(),
         sessionRecorder: SessionRecorder? = nil,
+        sessionStore: SessionStoring? = nil,
         prediction: StressPredictionCoordinator? = nil,
         goals: GoalsCoordinator? = nil,
         breathing: BreathingCoordinator? = nil,
         focus: FocusCoordinator? = nil,
         meditation: MeditationCoordinator? = nil,
-        ergonomics: ErgonomicsCoordinator? = nil
+        ergonomics: ErgonomicsCoordinator? = nil,
+        recovery: RecoveryCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -144,12 +152,14 @@ final class AppModel: ObservableObject {
         self.scoringEngine = scoringEngine
 
         self.sessionRecorder = sessionRecorder ?? SessionRecorder()
+        self.sessionStore = sessionStore ?? FileSessionStore()
         self.prediction = prediction ?? StressPredictionCoordinator()
         self.goals = goals ?? GoalsCoordinator()
         self.breathing = breathing ?? BreathingCoordinator()
         self.focus = focus ?? FocusCoordinator()
         self.meditation = meditation ?? MeditationCoordinator()
         self.ergonomics = ergonomics ?? ErgonomicsCoordinator()
+        self.recovery = recovery ?? RecoveryCoordinator()
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
@@ -158,6 +168,11 @@ final class AppModel: ObservableObject {
 
         // ---------------------------------------------------------------
         // Phase 2 — wiring. `self` is now safe to use.
+        //
+        // Kept to cheap in-memory work only. No disk reads here: `init`
+        // runs during window construction, and a synchronous read of
+        // twenty session files would sit directly in app launch. Anything
+        // needing storage is deferred to `start()`.
         // ---------------------------------------------------------------
 
         // A completed breathing technique counts toward goals. Wired here
@@ -219,7 +234,7 @@ final class AppModel: ObservableObject {
     /// state changes will silently fail to reach the UI.
     private func forwardChildChanges() {
         let children: [any ObservableObject] = [
-            prediction, goals, breathing, focus, meditation, ergonomics
+            prediction, goals, breathing, focus, meditation, ergonomics, recovery
         ]
 
         for child in children {
@@ -259,6 +274,9 @@ final class AppModel: ObservableObject {
         startSessionTimer()
         sessionRecorder.start(difficulty: gameDifficulty.label)
         ergonomics.startSession()
+        recovery.startSession()
+
+        seedRecoveryBaselineIfNeeded()
     }
 
     func stop() {
@@ -283,6 +301,25 @@ final class AppModel: ObservableObject {
         goals.refresh(latestSession: finished)
 
         ergonomics.endSession()
+        recovery.endSession()
+    }
+
+    /// Reads recent history to establish the user's typical stress level,
+    /// so recovery has a meaningful "usual range" from the first spike
+    /// rather than waiting for this session to accumulate calm samples.
+    ///
+    /// Deferred out of `init` and run once per launch: this touches disk,
+    /// and doing it during window construction puts file reads directly
+    /// in the app's launch path.
+    private func seedRecoveryBaselineIfNeeded() {
+        guard !hasSeededRecoveryBaseline else { return }
+        hasSeededRecoveryBaseline = true
+
+        let recent = sessionStore.loadSummaries()
+            .prefix(20)
+            .compactMap { try? sessionStore.load(id: $0.id) }
+
+        recovery.seedBaseline(from: Array(recent))
     }
 
     // MARK: - Game Controls
@@ -332,18 +369,26 @@ final class AppModel: ObservableObject {
     // MARK: - Breathing
 
     /// Single teardown path for a breathing intervention, however it
-    /// started. Both the flag and the overlay state are cleared here, so
-    /// no caller has to remember to do both.
+    /// started. The flag, the overlay state, and the recovery quiet
+    /// period are all handled here, so no caller has to remember all
+    /// three.
     func dismissBiofeedback() {
         biofeedbackResetTask?.cancel()
         biofeedbackResetTask = nil
         isBiofeedbackActive = false
         breathing.dismissActive()
+
+        // Starts recovery's quiet period. Readings drop sharply right
+        // after a breathing session, which is exactly when the recovery
+        // panel would otherwise fire — turning one intervention into two
+        // back-to-back interruptions.
+        recovery.noteInterventionEnded()
     }
 
     /// Starts a breathing intervention on the user's own initiative (e.g.
-    /// tapping "Start breathing" on a predictive alert), as opposed to
-    /// `triggerBiofeedback()` firing automatically at the threshold.
+    /// tapping "Start breathing" on a predictive alert or the recovery
+    /// panel), as opposed to `triggerBiofeedback()` firing automatically
+    /// at the threshold.
     func beginBreathingManually() {
         prediction.dismissAlert()
         triggerBiofeedback()
@@ -481,10 +526,9 @@ final class AppModel: ObservableObject {
     /// Single fan-out point for a fresh stress score.
     ///
     /// Every consumer is fed exactly once here. That matters most for
-    /// `prediction`: it holds a rolling window and fits a regression
-    /// against sample timestamps, so feeding it the same score twice
-    /// halves the effective window and pushes two points onto the same
-    /// instant, distorting the slope.
+    /// `prediction` and `recovery`: both hold rolling windows keyed on
+    /// sample timestamps, so feeding either the same score twice halves
+    /// the effective window and pushes two points onto the same instant.
     private func recomputeDerivedState() {
         guard let score = scoringEngine.stressScore(eda: latestEDA, breathingRPM: latestBreathing) else {
             return
@@ -515,16 +559,16 @@ final class AppModel: ObservableObject {
             gazeConfidence: gaze.confidence
         )
 
-        // One call, with the full suppression picture. An earlier
-        // unsuppressed call would defeat focus/meditation quiet mode
-        // entirely — the alert would already have fired by the time the
-        // suppressed call ran.
-        prediction.ingest(
-            score: score,
-            interventionActive: isBiofeedbackActive
-                || focus.suppressesInterruptions
-                || meditation.engine.isRunning
-        )
+        // Computed once and shared: prediction and recovery use the same
+        // definition of "the user is already being attended to", and
+        // letting them drift apart is how one ends up interrupting
+        // during a session the other correctly stayed quiet for.
+        let attentionOccupied = isBiofeedbackActive
+            || focus.suppressesInterruptions
+            || meditation.engine.isRunning
+
+        prediction.ingest(score: score, interventionActive: attentionOccupied)
+        recovery.ingest(score: score, suppressed: attentionOccupied)
 
         if scoringEngine.shouldTriggerIntervention(forStressScore: score), !isBiofeedbackActive {
             triggerBiofeedback()

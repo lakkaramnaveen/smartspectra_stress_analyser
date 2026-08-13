@@ -69,6 +69,10 @@
 		183B760B302D71F80078052F /* GazePostureAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7607302D71F80078052F /* GazePostureAnalyzer.swift */; };
 		183B760C302D71F80078052F /* ErgonomicsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7603302D71F80078052F /* ErgonomicsCoordinator.swift */; };
 		183B760D302D71F80078052F /* ErgonomicsNudgePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7605302D71F80078052F /* ErgonomicsNudgePolicy.swift */; };
+		183B7614302DFB320078052F /* RecoveryCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7610302DFB320078052F /* RecoveryCoordinator.swift */; };
+		183B7615302DFB320078052F /* RecoveryModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7612302DFB320078052F /* RecoveryModels.swift */; };
+		183B7616302DFB320078052F /* RecoveryPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7613302DFB320078052F /* RecoveryPanel.swift */; };
+		183B7617302DFB320078052F /* RecoveryDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7611302DFB320078052F /* RecoveryDetector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -142,6 +146,10 @@
 		183B7605302D71F80078052F /* ErgonomicsNudgePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgonomicsNudgePolicy.swift; sourceTree = "<group>"; };
 		183B7606302D71F80078052F /* ErgonomicsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgonomicsViews.swift; sourceTree = "<group>"; };
 		183B7607302D71F80078052F /* GazePostureAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GazePostureAnalyzer.swift; sourceTree = "<group>"; };
+		183B7610302DFB320078052F /* RecoveryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryCoordinator.swift; sourceTree = "<group>"; };
+		183B7611302DFB320078052F /* RecoveryDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryDetector.swift; sourceTree = "<group>"; };
+		183B7612302DFB320078052F /* RecoveryModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryModels.swift; sourceTree = "<group>"; };
+		183B7613302DFB320078052F /* RecoveryPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryPanel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,6 +178,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B760E302DFB270078052F /* recovery */,
 				183B7602302D71D60078052F /* ergonomics */,
 				183B75F4302CDBEC0078052F /* meditate */,
 				183B75E8302B8CFA0078052F /* focus */,
@@ -309,6 +318,17 @@
 				183B7607302D71F80078052F /* GazePostureAnalyzer.swift */,
 			);
 			path = ergonomics;
+			sourceTree = "<group>";
+		};
+		183B760E302DFB270078052F /* recovery */ = {
+			isa = PBXGroup;
+			children = (
+				183B7610302DFB320078052F /* RecoveryCoordinator.swift */,
+				183B7611302DFB320078052F /* RecoveryDetector.swift */,
+				183B7612302DFB320078052F /* RecoveryModels.swift */,
+				183B7613302DFB320078052F /* RecoveryPanel.swift */,
+			);
+			path = recovery;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -453,6 +473,10 @@
 				183B758D302377A70078052F /* BiometricEngine.swift in Sources */,
 				100000000000000000000104 /* SmartSpectraRunner.mm in Sources */,
 				100000000000000000000101 /* SmartSpectraSwiftApp.swift in Sources */,
+				183B7614302DFB320078052F /* RecoveryCoordinator.swift in Sources */,
+				183B7615302DFB320078052F /* RecoveryModels.swift in Sources */,
+				183B7616302DFB320078052F /* RecoveryPanel.swift in Sources */,
+				183B7617302DFB320078052F /* RecoveryDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
