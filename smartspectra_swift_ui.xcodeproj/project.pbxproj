@@ -170,7 +170,6 @@
 		183B7626302E38FE0078052F /* HRVCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HRVCoordinator.swift; sourceTree = "<group>"; };
 		183B7627302E38FE0078052F /* HRVModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HRVModels.swift; sourceTree = "<group>"; };
 		183B7628302E38FE0078052F /* HRVTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HRVTabView.swift; sourceTree = "<group>"; };
-		183B7629302E38FE0078052F /* INTEGRATION_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = INTEGRATION_GUIDE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -374,7 +373,6 @@
 				183B7626302E38FE0078052F /* HRVCoordinator.swift */,
 				183B7627302E38FE0078052F /* HRVModels.swift */,
 				183B7628302E38FE0078052F /* HRVTabView.swift */,
-				183B7629302E38FE0078052F /* INTEGRATION_GUIDE.md */,
 			);
 			path = hrv;
 			sourceTree = "<group>";
