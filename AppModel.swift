@@ -4,14 +4,8 @@ import SwiftUI
 
 /// Root view model for the Composure workspace.
 ///
-/// Design note: this used to be a single ~400-line class that mixed SDK
-/// delegate handling, stress math, emotion classification, eye-tracking
-/// state, game state, and session bookkeeping. That made every change
-/// risky — touching the game logic could silently affect stress
-/// calculation thread-safety, for example.
-///
-/// It's now a thin coordinator. Parsing, formatting, and orchestration
-/// live here; everything else is a composed dependency:
+/// A thin coordinator. Parsing, formatting, and orchestration live here;
+/// everything else is a composed dependency:
 ///
 ///   - `StressScoringEngine`         — pure stress/emotion math
 ///   - `BiometricEngine`             — SDK interop, mockable
@@ -24,6 +18,7 @@ import SwiftUI
 ///   - `MeditationCoordinator`       — guided sittings
 ///   - `ErgonomicsCoordinator`       — screen time & neck-strain nudges
 ///   - `RecoveryCoordinator`         — post-peak descent tracking
+///   - `SleepCoordinator`            — rest log & its association with stress
 ///
 /// This class's job is to wire those together and publish state for
 /// SwiftUI.
@@ -88,6 +83,8 @@ final class AppModel: ObservableObject {
     let meditation: MeditationCoordinator
     let ergonomics: ErgonomicsCoordinator
     let recovery: RecoveryCoordinator
+    let sleep: SleepCoordinator
+    let hrv: HRVCoordinator    
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -134,7 +131,9 @@ final class AppModel: ObservableObject {
         focus: FocusCoordinator? = nil,
         meditation: MeditationCoordinator? = nil,
         ergonomics: ErgonomicsCoordinator? = nil,
-        recovery: RecoveryCoordinator? = nil
+        recovery: RecoveryCoordinator? = nil,
+        sleep: SleepCoordinator? = nil,
+        hrv: HRVCoordinator? = nil   
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -143,9 +142,8 @@ final class AppModel: ObservableObject {
         // set: Swift forbids using `self` in an initializer until the
         // instance is fully formed. Assigning a coordinator *after*
         // something like `engine.delegate = self` is a compile error, and
-        // an easy one to introduce when adding a new dependency, so
-        // keeping every assignment together in one block is the simplest
-        // way to make that mistake impossible.
+        // an easy one to introduce when adding a dependency, so keeping
+        // every assignment together makes that mistake impossible.
         // ---------------------------------------------------------------
         self.engine = engine
         self.credentialStore = credentialStore
@@ -160,6 +158,8 @@ final class AppModel: ObservableObject {
         self.meditation = meditation ?? MeditationCoordinator()
         self.ergonomics = ergonomics ?? ErgonomicsCoordinator()
         self.recovery = recovery ?? RecoveryCoordinator()
+        self.sleep = sleep ?? SleepCoordinator()
+        self.hrv = hrv ?? HRVCoordinator() 
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
@@ -169,15 +169,14 @@ final class AppModel: ObservableObject {
         // ---------------------------------------------------------------
         // Phase 2 — wiring. `self` is now safe to use.
         //
-        // Kept to cheap in-memory work only. No disk reads here: `init`
-        // runs during window construction, and a synchronous read of
-        // twenty session files would sit directly in app launch. Anything
-        // needing storage is deferred to `start()`.
+        // Cheap in-memory work only. No disk reads: `init` runs during
+        // window construction, so anything touching storage is deferred
+        // to `start()` or to the view's `.task`.
         // ---------------------------------------------------------------
 
         // A completed breathing technique counts toward goals. Wired here
-        // rather than called from the pacer view, so every entry point
-        // into breathing feeds goals identically — and only once.
+        // rather than from the pacer view, so every entry point into
+        // breathing feeds goals identically — and only once.
         self.breathing.onTechniqueCompleted = { [weak self] in
             self?.goals.recordBreathingCompleted()
         }
@@ -219,22 +218,20 @@ final class AppModel: ObservableObject {
     ///
     /// This is the classic silent failure of composed view models: the
     /// code looks obviously correct, the state genuinely updates, and the
-    /// UI simply never moves. Forwarding each child's `objectWillChange`
-    /// makes `model.<child>.<property>` reads behave the way anyone
-    /// reading `ContentView` would assume they do.
+    /// UI simply never moves.
     ///
     /// Trade-off: this re-renders any view observing `AppModel` on *any*
     /// child update, including ones it doesn't read. Cheap at this size.
     /// If the root view ever becomes expensive to evaluate, the more
     /// precise alternative is giving each view its own `@ObservedObject`
-    /// for the coordinator it actually needs — which several views
-    /// (`GoalsDashboardView`, `BreathingLibraryView`) already do.
+    /// for the coordinator it needs — which several views already do.
     ///
     /// Any new coordinator must be added to `children` below, or its
     /// state changes will silently fail to reach the UI.
     private func forwardChildChanges() {
         let children: [any ObservableObject] = [
-            prediction, goals, breathing, focus, meditation, ergonomics, recovery
+            prediction, goals, breathing, focus,
+            meditation, ergonomics, recovery, sleep, hrv
         ]
 
         for child in children {
@@ -277,6 +274,7 @@ final class AppModel: ObservableObject {
         recovery.startSession()
 
         seedRecoveryBaselineIfNeeded()
+        hrv.startSession()  
     }
 
     func stop() {
@@ -302,6 +300,11 @@ final class AppModel: ObservableObject {
 
         ergonomics.endSession()
         recovery.endSession()
+        hrv.endSession()     
+
+        // A new session gives the sleep association fresh data to join
+        // against, so refresh it once the recording has landed.
+        Task { await sleep.analyse() }
     }
 
     /// Reads recent history to establish the user's typical stress level,
@@ -511,6 +514,10 @@ final class AppModel: ObservableObject {
         if !breathing.isEmpty || !arterialPressure.isEmpty || !eda.isEmpty {
             hasLiveMetrics = true
         }
+        
+        if !arterialPressure.isEmpty {
+            hrv.ingestWaveform(arterialPressure)   // ← add
+        }
     }
 
     private func formattedInt(_ value: Double) -> String {
@@ -549,6 +556,7 @@ final class AppModel: ObservableObject {
         // Practice-mode tracking. Both no-op when inactive.
         focus.ingest(stressScore: score)
         meditation.ingest(stressScore: score)
+        hrv.noteStress(score) 
 
         sessionRecorder.capture(
             stressScore: score,
@@ -561,8 +569,8 @@ final class AppModel: ObservableObject {
 
         // Computed once and shared: prediction and recovery use the same
         // definition of "the user is already being attended to", and
-        // letting them drift apart is how one ends up interrupting
-        // during a session the other correctly stayed quiet for.
+        // letting them drift apart is how one ends up interrupting during
+        // a session the other correctly stayed quiet for.
         let attentionOccupied = isBiofeedbackActive
             || focus.suppressesInterruptions
             || meditation.engine.isRunning
@@ -573,6 +581,8 @@ final class AppModel: ObservableObject {
         if scoringEngine.shouldTriggerIntervention(forStressScore: score), !isBiofeedbackActive {
             triggerBiofeedback()
         }
+        
+        
     }
 
     private func recordStressSample(_ value: Double) {
