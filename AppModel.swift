@@ -13,15 +13,16 @@ import SwiftUI
 /// It's now a thin coordinator. Parsing, formatting, and orchestration
 /// live here; everything else is a composed dependency:
 ///
-///   - `StressScoringEngine`  — pure stress/emotion math
-///   - `BiometricEngine`      — SDK interop, mockable
-///   - `CredentialStoring`    — Keychain, mockable
-///   - `SessionRecorder`      — session history
+///   - `StressScoringEngine`         — pure stress/emotion math
+///   - `BiometricEngine`             — SDK interop, mockable
+///   - `CredentialStoring`           — Keychain, mockable
+///   - `SessionRecorder`             — session history
 ///   - `StressPredictionCoordinator` — trend forecasting & alerts
-///   - `GoalsCoordinator`     — streaks, achievements, records
-///   - `BreathingCoordinator` — technique library & pacer state
-///   - `FocusCoordinator`     — Pomodoro blocks
-///   - `MeditationCoordinator` — guided sittings
+///   - `GoalsCoordinator`            — streaks, achievements, records
+///   - `BreathingCoordinator`        — technique library & pacer state
+///   - `FocusCoordinator`            — Pomodoro blocks
+///   - `MeditationCoordinator`       — guided sittings
+///   - `ErgonomicsCoordinator`       — screen time & neck-strain nudges
 ///
 /// This class's job is to wire those together and publish state for
 /// SwiftUI.
@@ -83,6 +84,7 @@ final class AppModel: ObservableObject {
     let breathing: BreathingCoordinator
     let focus: FocusCoordinator
     let meditation: MeditationCoordinator
+    let ergonomics: ErgonomicsCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -123,8 +125,20 @@ final class AppModel: ObservableObject {
         goals: GoalsCoordinator? = nil,
         breathing: BreathingCoordinator? = nil,
         focus: FocusCoordinator? = nil,
-        meditation: MeditationCoordinator? = nil
+        meditation: MeditationCoordinator? = nil,
+        ergonomics: ErgonomicsCoordinator? = nil
     ) {
+        // ---------------------------------------------------------------
+        // Phase 1 — assign EVERY stored property.
+        //
+        // Nothing below this block may touch `self` until all of them are
+        // set: Swift forbids using `self` in an initializer until the
+        // instance is fully formed. Assigning a coordinator *after*
+        // something like `engine.delegate = self` is a compile error, and
+        // an easy one to introduce when adding a new dependency, so
+        // keeping every assignment together in one block is the simplest
+        // way to make that mistake impossible.
+        // ---------------------------------------------------------------
         self.engine = engine
         self.credentialStore = credentialStore
         self.scoringEngine = scoringEngine
@@ -135,17 +149,32 @@ final class AppModel: ObservableObject {
         self.breathing = breathing ?? BreathingCoordinator()
         self.focus = focus ?? FocusCoordinator()
         self.meditation = meditation ?? MeditationCoordinator()
+        self.ergonomics = ergonomics ?? ErgonomicsCoordinator()
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
         // anywhere insecure ourselves.
         self.apiKeyInput = credentialStore.loadAPIKey() ?? ""
 
+        // ---------------------------------------------------------------
+        // Phase 2 — wiring. `self` is now safe to use.
+        // ---------------------------------------------------------------
+
         // A completed breathing technique counts toward goals. Wired here
         // rather than called from the pacer view, so every entry point
         // into breathing feeds goals identically — and only once.
         self.breathing.onTechniqueCompleted = { [weak self] in
             self?.goals.recordBreathingCompleted()
+        }
+
+        // Reuse the existing suppression concept rather than adding a
+        // second one — no desk nudges during focus, meditation, or a
+        // breathing exercise.
+        self.ergonomics.isSuppressed = { [weak self] in
+            guard let self else { return true }
+            return self.isBiofeedbackActive
+                || self.focus.suppressesInterruptions
+                || self.meditation.engine.isRunning
         }
 
         if let engine = engine as? BiometricEngine {
@@ -185,9 +214,12 @@ final class AppModel: ObservableObject {
     /// precise alternative is giving each view its own `@ObservedObject`
     /// for the coordinator it actually needs — which several views
     /// (`GoalsDashboardView`, `BreathingLibraryView`) already do.
+    ///
+    /// Any new coordinator must be added to `children` below, or its
+    /// state changes will silently fail to reach the UI.
     private func forwardChildChanges() {
         let children: [any ObservableObject] = [
-            prediction, goals, breathing, focus, meditation
+            prediction, goals, breathing, focus, meditation, ergonomics
         ]
 
         for child in children {
@@ -226,6 +258,7 @@ final class AppModel: ObservableObject {
         isRunning = true
         startSessionTimer()
         sessionRecorder.start(difficulty: gameDifficulty.label)
+        ergonomics.startSession()
     }
 
     func stop() {
@@ -248,6 +281,8 @@ final class AppModel: ObservableObject {
         // drop that session's personal records.
         let finished = sessionRecorder.stop()
         goals.refresh(latestSession: finished)
+
+        ergonomics.endSession()
     }
 
     // MARK: - Game Controls
@@ -278,6 +313,10 @@ final class AppModel: ObservableObject {
             y: y.clamped(to: 0...1),
             confidence: confidence.clamped(to: 0...1)
         )
+
+        // Single fan-out point for gaze, mirroring `recomputeDerivedState`
+        // for stress. No-ops when no ergonomics session is running.
+        ergonomics.ingest(gaze: gaze)
     }
 
     func registerBlink() {

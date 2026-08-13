@@ -96,11 +96,14 @@ final class FocusSessionEngine: ObservableObject {
 
     private func startTicking() {
         tickTask?.cancel()
+        // `Task { }` inside a @MainActor type inherits main-actor isolation,
+        // so `tick()` is called directly — no `await`, because there's no
+        // actor hop to suspend on. Only `Task.sleep` actually suspends here.
         tickTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .milliseconds(250))
                 guard !Task.isCancelled else { return }
-                await self?.tick()
+                self?.tick()
             }
         }
     }

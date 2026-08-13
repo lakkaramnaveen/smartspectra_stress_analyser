@@ -96,6 +96,25 @@ struct ContentView: View {
                 .frame(minWidth: 320, maxWidth: 500)
         }
     }
+    
+    @ViewBuilder
+    private var ergonomicsOverlay: some View {
+        if let nudge = model.ergonomics.activeNudge {
+            VStack {
+                Spacer()
+                ErgonomicsNudgeBanner(
+                    nudge: nudge,
+                    onDismiss: { model.ergonomics.dismissNudge() },
+                    onBreakTaken: { model.ergonomics.markBreakTaken() }
+                )
+                .frame(maxWidth: 460)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
+            }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .zIndex(250)
+        }
+    }
 
     // MARK: - Overlays
 

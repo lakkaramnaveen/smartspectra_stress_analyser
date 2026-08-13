@@ -64,6 +64,11 @@
 		183B75FF302CDBFA0078052F /* Meditation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75F6302CDBFA0078052F /* Meditation.swift */; };
 		183B7600302CDBFA0078052F /* MeditationPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75F9302CDBFA0078052F /* MeditationPlayerView.swift */; };
 		183B7601302CDBFA0078052F /* MeditationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75F7302CDBFA0078052F /* MeditationCoordinator.swift */; };
+		183B7609302D71F80078052F /* ErgonomicsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7604302D71F80078052F /* ErgonomicsModels.swift */; };
+		183B760A302D71F80078052F /* ErgonomicsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7606302D71F80078052F /* ErgonomicsViews.swift */; };
+		183B760B302D71F80078052F /* GazePostureAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7607302D71F80078052F /* GazePostureAnalyzer.swift */; };
+		183B760C302D71F80078052F /* ErgonomicsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7603302D71F80078052F /* ErgonomicsCoordinator.swift */; };
+		183B760D302D71F80078052F /* ErgonomicsNudgePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7605302D71F80078052F /* ErgonomicsNudgePolicy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -132,6 +137,11 @@
 		183B75F9302CDBFA0078052F /* MeditationPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationPlayerView.swift; sourceTree = "<group>"; };
 		183B75FA302CDBFA0078052F /* MeditationSessionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationSessionEngine.swift; sourceTree = "<group>"; };
 		183B75FB302CDBFA0078052F /* MeditationStressComparison.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeditationStressComparison.swift; sourceTree = "<group>"; };
+		183B7603302D71F80078052F /* ErgonomicsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgonomicsCoordinator.swift; sourceTree = "<group>"; };
+		183B7604302D71F80078052F /* ErgonomicsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgonomicsModels.swift; sourceTree = "<group>"; };
+		183B7605302D71F80078052F /* ErgonomicsNudgePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgonomicsNudgePolicy.swift; sourceTree = "<group>"; };
+		183B7606302D71F80078052F /* ErgonomicsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgonomicsViews.swift; sourceTree = "<group>"; };
+		183B7607302D71F80078052F /* GazePostureAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GazePostureAnalyzer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +170,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B7602302D71D60078052F /* ergonomics */,
 				183B75F4302CDBEC0078052F /* meditate */,
 				183B75E8302B8CFA0078052F /* focus */,
 				183B75DC302B7E9E0078052F /* breathing */,
@@ -288,6 +299,18 @@
 			path = meditate;
 			sourceTree = "<group>";
 		};
+		183B7602302D71D60078052F /* ergonomics */ = {
+			isa = PBXGroup;
+			children = (
+				183B7603302D71F80078052F /* ErgonomicsCoordinator.swift */,
+				183B7604302D71F80078052F /* ErgonomicsModels.swift */,
+				183B7605302D71F80078052F /* ErgonomicsNudgePolicy.swift */,
+				183B7606302D71F80078052F /* ErgonomicsViews.swift */,
+				183B7607302D71F80078052F /* GazePostureAnalyzer.swift */,
+			);
+			path = ergonomics;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -409,6 +432,11 @@
 				183B75D8302B7AC70078052F /* GoalsDashboardView.swift in Sources */,
 				183B75D9302B7AC70078052F /* GoalsCoordinator.swift in Sources */,
 				183B75DA302B7AC70078052F /* GoalEvaluator.swift in Sources */,
+				183B7609302D71F80078052F /* ErgonomicsModels.swift in Sources */,
+				183B760A302D71F80078052F /* ErgonomicsViews.swift in Sources */,
+				183B760B302D71F80078052F /* GazePostureAnalyzer.swift in Sources */,
+				183B760C302D71F80078052F /* ErgonomicsCoordinator.swift in Sources */,
+				183B760D302D71F80078052F /* ErgonomicsNudgePolicy.swift in Sources */,
 				183B75DB302B7AC70078052F /* GoalsStore.swift in Sources */,
 				183B758C302377A70078052F /* KeychainCredentialStore.swift in Sources */,
 				183B75E3302B7ED00078052F /* BreathingPacerView.swift in Sources */,
