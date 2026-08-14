@@ -372,8 +372,14 @@ struct ContentView: View {
                     .padding(12)
             }
 
+        case .heart:
+            HRVTabView(coordinator: model.hrv)
+
         case .desk:
             ErgonomicsTabView(coordinator: model.ergonomics)
+
+        case .rest:
+            SleepTabView(coordinator: model.sleep)
 
         case .practice:
             practicePane
@@ -458,19 +464,23 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Nine tabs, ordered roughly live → deliberate → retrospective:
-/// Controls, Stress, Emotions and Desk are things happening now;
-/// Practice and Game are things you start; Goals, Insights and History
-/// look backwards.
+/// Eleven tabs, ordered roughly live → deliberate → retrospective:
+/// Controls, Stress, Emotions, Heart, Desk and Rest are things happening
+/// now; Practice and Game are things you start; Goals, Insights and
+/// History look backwards.
 ///
-/// If this grows further, the next consolidation is grouping Stress,
-/// Emotions and Desk behind a single "Signals" tab the way Practice
-/// already groups its three.
+/// This is past the point where a strip gets scanned rather than read.
+/// The consolidation worth doing is grouping Stress, Emotions, Heart,
+/// Desk and Rest behind a single "Signals" tab the way Practice already
+/// groups its three — that would bring the strip back to seven entries
+/// without hiding anything.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
     case emotions
+    case heart
     case desk
+    case rest
     case practice
     case game
     case goals
@@ -482,7 +492,9 @@ enum SidebarTab: String, CaseIterable {
         case .controls: return "Controls"
         case .stress:   return "Stress"
         case .emotions: return "Emotions"
+        case .heart:    return "Heart"
         case .desk:     return "Desk"
+        case .rest:     return "Rest"
         case .practice: return "Practice"
         case .game:     return "Game"
         case .goals:    return "Goals"
@@ -498,7 +510,9 @@ enum SidebarTab: String, CaseIterable {
         case .controls: return "Session controls and API key"
         case .stress:   return "Live stress trajectory"
         case .emotions: return "Detected emotional state"
+        case .heart:    return "Beat-to-beat variability from the pulse waveform"
         case .desk:     return "Screen time and neck-strain reminders"
+        case .rest:     return "Sleep log and how it lines up with your readings"
         case .practice: return "Breathing, meditation, and focus blocks"
         case .game:     return "Balloon Hunt eye-tracking game"
         case .goals:    return "Goals, streaks, and achievements"
@@ -518,7 +532,9 @@ enum SidebarTab: String, CaseIterable {
         case .controls: return "gearshape"
         case .stress:   return "chart.xyaxis.line"
         case .emotions: return "brain.head.profile"
+        case .heart:    return "heart.text.square"
         case .desk:     return "figure.seated.side"
+        case .rest:     return "moon.zzz"
         case .practice: return "figure.mind.and.body"
         case .game:     return "gamecontroller"
         case .goals:    return "target"

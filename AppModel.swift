@@ -19,6 +19,7 @@ import SwiftUI
 ///   - `ErgonomicsCoordinator`       — screen time & neck-strain nudges
 ///   - `RecoveryCoordinator`         — post-peak descent tracking
 ///   - `SleepCoordinator`            — rest log & its association with stress
+///   - `HRVCoordinator`              — beat variability from the pulse waveform
 ///
 /// This class's job is to wire those together and publish state for
 /// SwiftUI.
@@ -84,7 +85,7 @@ final class AppModel: ObservableObject {
     let ergonomics: ErgonomicsCoordinator
     let recovery: RecoveryCoordinator
     let sleep: SleepCoordinator
-    let hrv: HRVCoordinator    
+    let hrv: HRVCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -133,7 +134,7 @@ final class AppModel: ObservableObject {
         ergonomics: ErgonomicsCoordinator? = nil,
         recovery: RecoveryCoordinator? = nil,
         sleep: SleepCoordinator? = nil,
-        hrv: HRVCoordinator? = nil   
+        hrv: HRVCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -159,7 +160,7 @@ final class AppModel: ObservableObject {
         self.ergonomics = ergonomics ?? ErgonomicsCoordinator()
         self.recovery = recovery ?? RecoveryCoordinator()
         self.sleep = sleep ?? SleepCoordinator()
-        self.hrv = hrv ?? HRVCoordinator() 
+        self.hrv = hrv ?? HRVCoordinator()
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
@@ -274,7 +275,7 @@ final class AppModel: ObservableObject {
         recovery.startSession()
 
         seedRecoveryBaselineIfNeeded()
-        hrv.startSession()  
+        hrv.startSession()
     }
 
     func stop() {
@@ -300,7 +301,7 @@ final class AppModel: ObservableObject {
 
         ergonomics.endSession()
         recovery.endSession()
-        hrv.endSession()     
+        hrv.endSession()
 
         // A new session gives the sleep association fresh data to join
         // against, so refresh it once the recording has landed.
@@ -556,7 +557,7 @@ final class AppModel: ObservableObject {
         // Practice-mode tracking. Both no-op when inactive.
         focus.ingest(stressScore: score)
         meditation.ingest(stressScore: score)
-        hrv.noteStress(score) 
+        hrv.noteStress(score)
 
         sessionRecorder.capture(
             stressScore: score,
