@@ -101,6 +101,14 @@
 		183B765830321AF60078052F /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765230321AF60078052F /* ProfileStore.swift */; };
 		183B765A30321AF60078052F /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765030321AF60078052F /* ProfileCoordinator.swift */; };
 		183B765B30321AF60078052F /* ProfileSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765330321AF60078052F /* ProfileSwitcherView.swift */; };
+		183B766330321ECF0078052F /* OuraOAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765F30321ECF0078052F /* OuraOAuthClient.swift */; };
+		183B766430321ECF0078052F /* OuraCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765E30321ECF0078052F /* OuraCredentialStore.swift */; };
+		183B766530321ECF0078052F /* WearableModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766130321ECF0078052F /* WearableModels.swift */; };
+		183B766630321ECF0078052F /* OuraAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765D30321ECF0078052F /* OuraAPIClient.swift */; };
+		183B766730321ECF0078052F /* WearableCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766030321ECF0078052F /* WearableCoordinator.swift */; };
+		183B766830321ECF0078052F /* WearableTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766230321ECF0078052F /* WearableTabView.swift */; };
+		183B766B30321ED80078052F /* AppleWatchImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766930321ED80078052F /* AppleWatchImporter.swift */; };
+		183B766C30321ED80078052F /* BiometricFusionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766A30321ED80078052F /* BiometricFusionEngine.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -206,6 +214,14 @@
 		183B765130321AF60078052F /* ProfileModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModels.swift; sourceTree = "<group>"; };
 		183B765230321AF60078052F /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		183B765330321AF60078052F /* ProfileSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSwitcherView.swift; sourceTree = "<group>"; };
+		183B765D30321ECF0078052F /* OuraAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OuraAPIClient.swift; sourceTree = "<group>"; };
+		183B765E30321ECF0078052F /* OuraCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OuraCredentialStore.swift; sourceTree = "<group>"; };
+		183B765F30321ECF0078052F /* OuraOAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OuraOAuthClient.swift; sourceTree = "<group>"; };
+		183B766030321ECF0078052F /* WearableCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearableCoordinator.swift; sourceTree = "<group>"; };
+		183B766130321ECF0078052F /* WearableModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearableModels.swift; sourceTree = "<group>"; };
+		183B766230321ECF0078052F /* WearableTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearableTabView.swift; sourceTree = "<group>"; };
+		183B766930321ED80078052F /* AppleWatchImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWatchImporter.swift; sourceTree = "<group>"; };
+		183B766A30321ED80078052F /* BiometricFusionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricFusionEngine.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,6 +250,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B765C30321EB90078052F /* wearable */,
 				183B764D30321ADB0078052F /* profile */,
 				183B764030316DF70078052F /* health */,
 				183B762F303168030078052F /* coach */,
@@ -455,6 +472,21 @@
 			path = profile;
 			sourceTree = "<group>";
 		};
+		183B765C30321EB90078052F /* wearable */ = {
+			isa = PBXGroup;
+			children = (
+				183B765D30321ECF0078052F /* OuraAPIClient.swift */,
+				183B765E30321ECF0078052F /* OuraCredentialStore.swift */,
+				183B765F30321ECF0078052F /* OuraOAuthClient.swift */,
+				183B766030321ECF0078052F /* WearableCoordinator.swift */,
+				183B766130321ECF0078052F /* WearableModels.swift */,
+				183B766230321ECF0078052F /* WearableTabView.swift */,
+				183B766930321ED80078052F /* AppleWatchImporter.swift */,
+				183B766A30321ED80078052F /* BiometricFusionEngine.swift */,
+			);
+			path = wearable;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -594,6 +626,8 @@
 				183B762B302E38FE0078052F /* HRVCoordinator.swift in Sources */,
 				183B762C302E38FE0078052F /* BeatDetector.swift in Sources */,
 				183B762D302E38FE0078052F /* HRVModels.swift in Sources */,
+				183B766B30321ED80078052F /* AppleWatchImporter.swift in Sources */,
+				183B766C30321ED80078052F /* BiometricFusionEngine.swift in Sources */,
 				183B762E302E38FE0078052F /* HRVTabView.swift in Sources */,
 				183B75D8302B7AC70078052F /* GoalsDashboardView.swift in Sources */,
 				183B75D9302B7AC70078052F /* GoalsCoordinator.swift in Sources */,
@@ -624,6 +658,12 @@
 				183B765830321AF60078052F /* ProfileStore.swift in Sources */,
 				183B765A30321AF60078052F /* ProfileCoordinator.swift in Sources */,
 				183B765B30321AF60078052F /* ProfileSwitcherView.swift in Sources */,
+				183B766330321ECF0078052F /* OuraOAuthClient.swift in Sources */,
+				183B766430321ECF0078052F /* OuraCredentialStore.swift in Sources */,
+				183B766530321ECF0078052F /* WearableModels.swift in Sources */,
+				183B766630321ECF0078052F /* OuraAPIClient.swift in Sources */,
+				183B766730321ECF0078052F /* WearableCoordinator.swift in Sources */,
+				183B766830321ECF0078052F /* WearableTabView.swift in Sources */,
 				100000000000000000000101 /* SmartSpectraSwiftApp.swift in Sources */,
 				183B7614302DFB320078052F /* RecoveryCoordinator.swift in Sources */,
 				183B7615302DFB320078052F /* RecoveryModels.swift in Sources */,

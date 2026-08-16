@@ -457,6 +457,9 @@ struct ContentView: View {
 
         case .health:
             HealthSyncView(coordinator: model.healthSync)
+
+        case .wearables:
+            WearableTabView(coordinator: model.wearable, sessionStore: model.sessionStore)
         }
     }
 
@@ -525,18 +528,17 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Thirteen tabs, ordered roughly live → deliberate → retrospective:
+/// Fourteen tabs, ordered roughly live → deliberate → retrospective:
 /// Controls, Stress, Emotions, Heart, Desk and Rest are things happening
 /// now; Practice and Game are things you start; Coach, Goals, Insights,
-/// History and Health look backwards at what's already happened, or —
-/// in Health's case — prepare it to leave the app.
+/// History, Health and Wearables look backwards, or prepare data to
+/// leave the app.
 ///
-/// This is well past the point where a strip gets scanned rather than
-/// read, and it's the third feature in a row to note the same fix
-/// without anyone taking it: grouping Stress, Emotions, Heart, Desk and
-/// Rest behind a single "Signals" tab the way Practice already groups
-/// its three would bring this from thirteen entries to nine without
-/// hiding anything a user can currently reach.
+/// This is the fourth feature running to note the same unaddressed fix:
+/// grouping Stress, Emotions, Heart, Desk and Rest behind a single
+/// "Signals" tab the way Practice already groups its three would bring
+/// this from fourteen entries to ten without hiding anything a user can
+/// currently reach.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
@@ -551,22 +553,24 @@ enum SidebarTab: String, CaseIterable {
     case insights
     case history
     case health
+    case wearables
 
     var label: String {
         switch self {
-        case .controls: return "Controls"
-        case .stress:   return "Stress"
-        case .emotions: return "Emotions"
-        case .heart:    return "Heart"
-        case .desk:     return "Desk"
-        case .rest:     return "Rest"
-        case .practice: return "Practice"
-        case .game:     return "Game"
-        case .coach:    return "Coach"
-        case .goals:    return "Goals"
-        case .insights: return "Insights"
-        case .history:  return "History"
-        case .health:   return "Health"
+        case .controls:  return "Controls"
+        case .stress:    return "Stress"
+        case .emotions:  return "Emotions"
+        case .heart:     return "Heart"
+        case .desk:      return "Desk"
+        case .rest:      return "Rest"
+        case .practice:  return "Practice"
+        case .game:      return "Game"
+        case .coach:     return "Coach"
+        case .goals:     return "Goals"
+        case .insights:  return "Insights"
+        case .history:   return "History"
+        case .health:    return "Health"
+        case .wearables: return "Wearables"
         }
     }
 
@@ -587,6 +591,7 @@ enum SidebarTab: String, CaseIterable {
         case .insights: return "Patterns across your sessions"
         case .history:  return "Past session recordings"
         case .health:   return "Prepare data for Apple Health export"
+        case .wearables: return "Cross-check against Oura or Apple Watch"
         }
     }
 
@@ -611,6 +616,7 @@ enum SidebarTab: String, CaseIterable {
         case .insights: return "lightbulb"
         case .history:  return "clock.arrow.circlepath"
         case .health:   return "tray.and.arrow.up"
+        case .wearables: return "applewatch"
         }
     }
 }

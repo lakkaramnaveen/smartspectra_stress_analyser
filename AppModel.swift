@@ -22,6 +22,7 @@ import SwiftUI
 ///   - `HRVCoordinator`              — beat variability from the pulse waveform
 ///   - `CoachCoordinator`            — technique effectiveness, ranked from real usage
 ///   - `HealthSyncCoordinator`       — buffers data for export toward Apple Health
+///   - `WearableCoordinator`         — cross-checks camera readings against Oura/Watch
 ///
 /// One thing this class does *not* own: which profile is active.
 /// `AppModel` is now scoped to a single `UserProfile` at construction
@@ -114,6 +115,7 @@ final class AppModel: ObservableObject {
     let hrv: HRVCoordinator
     let coach: CoachCoordinator
     let healthSync: HealthSyncCoordinator
+    let wearable: WearableCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -174,7 +176,8 @@ final class AppModel: ObservableObject {
         sleep: SleepCoordinator? = nil,
         hrv: HRVCoordinator? = nil,
         coach: CoachCoordinator? = nil,
-        healthSync: HealthSyncCoordinator? = nil
+        healthSync: HealthSyncCoordinator? = nil,
+        wearable: WearableCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -237,6 +240,12 @@ final class AppModel: ObservableObject {
         )
         self.healthSync = healthSync ?? HealthSyncCoordinator(
             store: FileHealthSyncStore(appSupportSubdirectory: profile.storageRoot)
+        )
+        // Keychain, not a file store — namespaced per profile the same
+        // way, since an Oura ring is worn by one specific person, not
+        // shared like the SmartSpectra device license.
+        self.wearable = wearable ?? WearableCoordinator(
+            credentialStore: KeychainOuraCredentialStore(profileID: profile.id)
         )
 
         // Deliberately NOT profile-scoped. The SmartSpectra API key is a
@@ -315,7 +324,7 @@ final class AppModel: ObservableObject {
     private func forwardChildChanges() {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
-            meditation, ergonomics, recovery, sleep, hrv, coach, healthSync
+            meditation, ergonomics, recovery, sleep, hrv, coach, healthSync, wearable
         ]
 
         for child in children {
@@ -382,6 +391,16 @@ final class AppModel: ObservableObject {
         // drop that session's personal records.
         let finished = sessionRecorder.stop()
         goals.refresh(latestSession: finished)
+
+        // Reconciliation is pull-based and only meaningful once a
+        // session has a defined end — unlike every other coordinator
+        // fed through `recomputeDerivedState`, this has no live per-tick
+        // role. No-ops internally if Oura isn't connected and there's no
+        // imported Watch data in range, so this is safe to fire
+        // unconditionally rather than gating on connection state here.
+        if let finished {
+            Task { await wearable.reconcile(session: finished) }
+        }
 
         ergonomics.endSession()
         recovery.endSession()
