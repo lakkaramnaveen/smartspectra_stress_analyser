@@ -388,6 +388,9 @@ struct ContentView: View {
             GameTabView(showGameFullscreen: $showGameFullscreen)
                 .environmentObject(model)
 
+        case .coach:
+            CoachTabView(coordinator: model.coach)
+
         case .goals:
             GoalsDashboardView(coordinator: model.goals)
 
@@ -464,16 +467,18 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Eleven tabs, ordered roughly live → deliberate → retrospective:
+/// Twelve tabs, ordered roughly live → deliberate → retrospective:
 /// Controls, Stress, Emotions, Heart, Desk and Rest are things happening
-/// now; Practice and Game are things you start; Goals, Insights and
-/// History look backwards.
+/// now; Practice and Game are things you start; Coach, Goals, Insights
+/// and History look backwards at what's already happened.
 ///
-/// This is past the point where a strip gets scanned rather than read.
-/// The consolidation worth doing is grouping Stress, Emotions, Heart,
+/// This is well past the point where a strip gets scanned rather than
+/// read. The consolidation worth doing — flagged here for two features
+/// running now and still not done — is grouping Stress, Emotions, Heart,
 /// Desk and Rest behind a single "Signals" tab the way Practice already
-/// groups its three — that would bring the strip back to seven entries
-/// without hiding anything.
+/// groups its three. That alone would bring the strip from twelve
+/// entries back to eight without hiding anything a user can currently
+/// reach.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
@@ -483,6 +488,7 @@ enum SidebarTab: String, CaseIterable {
     case rest
     case practice
     case game
+    case coach
     case goals
     case insights
     case history
@@ -497,6 +503,7 @@ enum SidebarTab: String, CaseIterable {
         case .rest:     return "Rest"
         case .practice: return "Practice"
         case .game:     return "Game"
+        case .coach:    return "Coach"
         case .goals:    return "Goals"
         case .insights: return "Insights"
         case .history:  return "History"
@@ -515,6 +522,7 @@ enum SidebarTab: String, CaseIterable {
         case .rest:     return "Sleep log and how it lines up with your readings"
         case .practice: return "Breathing, meditation, and focus blocks"
         case .game:     return "Balloon Hunt eye-tracking game"
+        case .coach:    return "Which techniques have actually worked for you"
         case .goals:    return "Goals, streaks, and achievements"
         case .insights: return "Patterns across your sessions"
         case .history:  return "Past session recordings"
@@ -537,6 +545,7 @@ enum SidebarTab: String, CaseIterable {
         case .rest:     return "moon.zzz"
         case .practice: return "figure.mind.and.body"
         case .game:     return "gamecontroller"
+        case .coach:    return "wand.and.stars"
         case .goals:    return "target"
         case .insights: return "lightbulb"
         case .history:  return "clock.arrow.circlepath"

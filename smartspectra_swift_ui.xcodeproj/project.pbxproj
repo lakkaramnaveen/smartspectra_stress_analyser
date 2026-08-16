@@ -83,6 +83,12 @@
 		183B762C302E38FE0078052F /* BeatDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7624302E38FE0078052F /* BeatDetector.swift */; };
 		183B762D302E38FE0078052F /* HRVModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7627302E38FE0078052F /* HRVModels.swift */; };
 		183B762E302E38FE0078052F /* HRVTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7628302E38FE0078052F /* HRVTabView.swift */; };
+		183B76393031680B0078052F /* CoachEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76323031680B0078052F /* CoachEngine.swift */; };
+		183B763A3031680B0078052F /* CoachStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76343031680B0078052F /* CoachStore.swift */; };
+		183B763B3031680B0078052F /* CoachModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76333031680B0078052F /* CoachModels.swift */; };
+		183B763C3031680B0078052F /* CoachCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76313031680B0078052F /* CoachCoordinator.swift */; };
+		183B763D3031680B0078052F /* InterventionEffectivenessAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76373031680B0078052F /* InterventionEffectivenessAnalyzer.swift */; };
+		183B763E3031680B0078052F /* CoachTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76353031680B0078052F /* CoachTabView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -170,6 +176,12 @@
 		183B7626302E38FE0078052F /* HRVCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HRVCoordinator.swift; sourceTree = "<group>"; };
 		183B7627302E38FE0078052F /* HRVModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HRVModels.swift; sourceTree = "<group>"; };
 		183B7628302E38FE0078052F /* HRVTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HRVTabView.swift; sourceTree = "<group>"; };
+		183B76313031680B0078052F /* CoachCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachCoordinator.swift; sourceTree = "<group>"; };
+		183B76323031680B0078052F /* CoachEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachEngine.swift; sourceTree = "<group>"; };
+		183B76333031680B0078052F /* CoachModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachModels.swift; sourceTree = "<group>"; };
+		183B76343031680B0078052F /* CoachStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachStore.swift; sourceTree = "<group>"; };
+		183B76353031680B0078052F /* CoachTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachTabView.swift; sourceTree = "<group>"; };
+		183B76373031680B0078052F /* InterventionEffectivenessAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterventionEffectivenessAnalyzer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +210,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B762F303168030078052F /* coach */,
 				183B7623302E38E60078052F /* hrv */,
 				183B7618302E34A20078052F /* sleep */,
 				183B760E302DFB270078052F /* recovery */,
@@ -377,6 +390,19 @@
 			path = hrv;
 			sourceTree = "<group>";
 		};
+		183B762F303168030078052F /* coach */ = {
+			isa = PBXGroup;
+			children = (
+				183B76313031680B0078052F /* CoachCoordinator.swift */,
+				183B76323031680B0078052F /* CoachEngine.swift */,
+				183B76333031680B0078052F /* CoachModels.swift */,
+				183B76343031680B0078052F /* CoachStore.swift */,
+				183B76353031680B0078052F /* CoachTabView.swift */,
+				183B76373031680B0078052F /* InterventionEffectivenessAnalyzer.swift */,
+			);
+			path = coach;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -486,6 +512,12 @@
 				183B7583302377A70078052F /* BalloonHuntGameView.swift in Sources */,
 				183B7584302377A70078052F /* RollingBuffer.swift in Sources */,
 				183B7586302377A70078052F /* StressScoringEngine.swift in Sources */,
+				183B76393031680B0078052F /* CoachEngine.swift in Sources */,
+				183B763A3031680B0078052F /* CoachStore.swift in Sources */,
+				183B763B3031680B0078052F /* CoachModels.swift in Sources */,
+				183B763C3031680B0078052F /* CoachCoordinator.swift in Sources */,
+				183B763D3031680B0078052F /* InterventionEffectivenessAnalyzer.swift in Sources */,
+				183B763E3031680B0078052F /* CoachTabView.swift in Sources */,
 				183B75C4302A8E940078052F /* InsightModels.swift in Sources */,
 				183B75C5302A8E940078052F /* InsightGenerator.swift in Sources */,
 				183B75C6302A8E940078052F /* InsightsDashboardView.swift in Sources */,

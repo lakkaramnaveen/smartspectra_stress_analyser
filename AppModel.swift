@@ -20,6 +20,7 @@ import SwiftUI
 ///   - `RecoveryCoordinator`         — post-peak descent tracking
 ///   - `SleepCoordinator`            — rest log & its association with stress
 ///   - `HRVCoordinator`              — beat variability from the pulse waveform
+///   - `CoachCoordinator`            — technique effectiveness, ranked from real usage
 ///
 /// This class's job is to wire those together and publish state for
 /// SwiftUI.
@@ -86,6 +87,7 @@ final class AppModel: ObservableObject {
     let recovery: RecoveryCoordinator
     let sleep: SleepCoordinator
     let hrv: HRVCoordinator
+    let coach: CoachCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -134,7 +136,8 @@ final class AppModel: ObservableObject {
         ergonomics: ErgonomicsCoordinator? = nil,
         recovery: RecoveryCoordinator? = nil,
         sleep: SleepCoordinator? = nil,
-        hrv: HRVCoordinator? = nil
+        hrv: HRVCoordinator? = nil,
+        coach: CoachCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -161,6 +164,7 @@ final class AppModel: ObservableObject {
         self.recovery = recovery ?? RecoveryCoordinator()
         self.sleep = sleep ?? SleepCoordinator()
         self.hrv = hrv ?? HRVCoordinator()
+        self.coach = coach ?? CoachCoordinator()
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
@@ -232,7 +236,7 @@ final class AppModel: ObservableObject {
     private func forwardChildChanges() {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
-            meditation, ergonomics, recovery, sleep, hrv
+            meditation, ergonomics, recovery, sleep, hrv, coach
         ]
 
         for child in children {
@@ -302,6 +306,11 @@ final class AppModel: ObservableObject {
         ergonomics.endSession()
         recovery.endSession()
         hrv.endSession()
+
+        // If a breathing or meditation session was still mid-flight when
+        // monitoring stopped, close it out rather than silently drop the
+        // partial data — a session cut short by "Stop" still happened.
+        coach.flush()
 
         // A new session gives the sleep association fresh data to join
         // against, so refresh it once the recording has landed.
@@ -515,9 +524,9 @@ final class AppModel: ObservableObject {
         if !breathing.isEmpty || !arterialPressure.isEmpty || !eda.isEmpty {
             hasLiveMetrics = true
         }
-        
+
         if !arterialPressure.isEmpty {
-            hrv.ingestWaveform(arterialPressure)   // ← add
+            hrv.ingestWaveform(arterialPressure)
         }
     }
 
@@ -534,9 +543,10 @@ final class AppModel: ObservableObject {
     /// Single fan-out point for a fresh stress score.
     ///
     /// Every consumer is fed exactly once here. That matters most for
-    /// `prediction` and `recovery`: both hold rolling windows keyed on
-    /// sample timestamps, so feeding either the same score twice halves
-    /// the effective window and pushes two points onto the same instant.
+    /// `prediction`, `recovery`, and `coach`: all three hold rolling
+    /// windows keyed on sample timestamps or sample order, so feeding
+    /// any of them the same score twice halves the effective window and
+    /// pushes two points onto the same instant.
     private func recomputeDerivedState() {
         guard let score = scoringEngine.stressScore(eda: latestEDA, breathingRPM: latestBreathing) else {
             return
@@ -554,7 +564,7 @@ final class AppModel: ObservableObject {
         emotionalState = state
         emotionIntensity = intensity
 
-        // Practice-mode tracking. Both no-op when inactive.
+        // Practice-mode tracking. All no-op when inactive.
         focus.ingest(stressScore: score)
         meditation.ingest(stressScore: score)
         hrv.noteStress(score)
@@ -579,11 +589,26 @@ final class AppModel: ObservableObject {
         prediction.ingest(score: score, interventionActive: attentionOccupied)
         recovery.ingest(score: score, suppressed: attentionOccupied)
 
+        // Coach needs to know *which* intervention is running, not just
+        // whether one is — it's measuring per-technique effectiveness,
+        // not gating an alert. Breathing is checked first: the two
+        // overlays are mutually exclusive in the UI in practice, but
+        // nothing enforces that at the type level, so a deterministic
+        // tie-break is worth having.
+        let activeIntervention: InterventionKind? = {
+            if let technique = breathing.activeTechnique {
+                return .breathing(id: technique.id, name: technique.name)
+            }
+            if let activeMeditation = meditation.activeMeditation {
+                return .meditation(id: activeMeditation.id, name: activeMeditation.title)
+            }
+            return nil
+        }()
+        coach.ingest(score: score, activeIntervention: activeIntervention)
+
         if scoringEngine.shouldTriggerIntervention(forStressScore: score), !isBiofeedbackActive {
             triggerBiofeedback()
         }
-        
-        
     }
 
     private func recordStressSample(_ value: Double) {
