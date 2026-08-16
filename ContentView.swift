@@ -23,6 +23,7 @@ import SwiftUI
 /// file is layout and routing only.
 struct ContentView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var profiles: ProfileCoordinator
 
     @State private var showGameFullscreen = false
     @State private var activeSidebarTab: SidebarTab = .controls
@@ -283,6 +284,10 @@ struct ContentView: View {
 
     private var sidebarPanel: some View {
         VStack(spacing: 0) {
+            profileBar
+
+            Divider()
+
             tabBar
 
             Divider()
@@ -291,6 +296,50 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(BrandColor.slate)
+    }
+
+    /// Slim header identifying whose data is currently active, with a
+    /// direct way back to the switcher. Kept intentionally minimal — a
+    /// name, a colour, one button — since this sits above every tab and
+    /// shouldn't compete with them for attention.
+    private var profileBar: some View {
+        HStack(spacing: Spacing.sm) {
+            Circle()
+                .fill(model.profile.colorTag.color.opacity(0.3))
+                .frame(width: 20, height: 20)
+                .overlay(
+                    Text(model.profile.initial)
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(model.profile.colorTag.color)
+                )
+
+            Text(model.profile.name)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.75))
+                .lineLimit(1)
+
+            Spacer()
+
+            Button(action: switchProfile) {
+                Text("Switch")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(BrandColor.teal)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+    }
+
+    /// Ends any active session before handing off — switching profiles
+    /// mid-session would otherwise leave a running camera engine and a
+    /// live pacer overlay attached to a model the next profile's screen
+    /// is about to replace out from under them.
+    private func switchProfile() {
+        if model.isRunning {
+            model.stop()
+        }
+        profiles.requestSwitch()
     }
 
     /// Horizontally scrolling tab strip.
@@ -395,10 +444,19 @@ struct ContentView: View {
             GoalsDashboardView(coordinator: model.goals)
 
         case .insights:
-            InsightsDashboardView()
+            // Passing `model.sessionStore` explicitly rather than
+            // letting this default its own `FileSessionStore()` — the
+            // default resolves to the unnamespaced "Composure/Sessions"
+            // root, which is only correct for `UserProfile.default`. For
+            // any other profile it would silently show the wrong
+            // person's session history.
+            InsightsDashboardView(store: model.sessionStore)
 
         case .history:
-            SessionHistoryView()
+            SessionHistoryView(store: model.sessionStore)
+
+        case .health:
+            HealthSyncView(coordinator: model.healthSync)
         }
     }
 
@@ -467,18 +525,18 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Twelve tabs, ordered roughly live → deliberate → retrospective:
+/// Thirteen tabs, ordered roughly live → deliberate → retrospective:
 /// Controls, Stress, Emotions, Heart, Desk and Rest are things happening
-/// now; Practice and Game are things you start; Coach, Goals, Insights
-/// and History look backwards at what's already happened.
+/// now; Practice and Game are things you start; Coach, Goals, Insights,
+/// History and Health look backwards at what's already happened, or —
+/// in Health's case — prepare it to leave the app.
 ///
 /// This is well past the point where a strip gets scanned rather than
-/// read. The consolidation worth doing — flagged here for two features
-/// running now and still not done — is grouping Stress, Emotions, Heart,
-/// Desk and Rest behind a single "Signals" tab the way Practice already
-/// groups its three. That alone would bring the strip from twelve
-/// entries back to eight without hiding anything a user can currently
-/// reach.
+/// read, and it's the third feature in a row to note the same fix
+/// without anyone taking it: grouping Stress, Emotions, Heart, Desk and
+/// Rest behind a single "Signals" tab the way Practice already groups
+/// its three would bring this from thirteen entries to nine without
+/// hiding anything a user can currently reach.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
@@ -492,6 +550,7 @@ enum SidebarTab: String, CaseIterable {
     case goals
     case insights
     case history
+    case health
 
     var label: String {
         switch self {
@@ -507,6 +566,7 @@ enum SidebarTab: String, CaseIterable {
         case .goals:    return "Goals"
         case .insights: return "Insights"
         case .history:  return "History"
+        case .health:   return "Health"
         }
     }
 
@@ -526,6 +586,7 @@ enum SidebarTab: String, CaseIterable {
         case .goals:    return "Goals, streaks, and achievements"
         case .insights: return "Patterns across your sessions"
         case .history:  return "Past session recordings"
+        case .health:   return "Prepare data for Apple Health export"
         }
     }
 
@@ -549,6 +610,7 @@ enum SidebarTab: String, CaseIterable {
         case .goals:    return "target"
         case .insights: return "lightbulb"
         case .history:  return "clock.arrow.circlepath"
+        case .health:   return "tray.and.arrow.up"
         }
     }
 }
@@ -559,6 +621,7 @@ enum SidebarTab: String, CaseIterable {
 #Preview {
     ContentView()
         .environmentObject(AppModel())
+        .environmentObject(ProfileCoordinator())
         .frame(width: 1100, height: 720)
 }
 #endif

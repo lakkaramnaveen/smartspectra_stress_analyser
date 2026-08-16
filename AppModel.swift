@@ -21,6 +21,18 @@ import SwiftUI
 ///   - `SleepCoordinator`            — rest log & its association with stress
 ///   - `HRVCoordinator`              — beat variability from the pulse waveform
 ///   - `CoachCoordinator`            — technique effectiveness, ranked from real usage
+///   - `HealthSyncCoordinator`       — buffers data for export toward Apple Health
+///
+/// One thing this class does *not* own: which profile is active.
+/// `AppModel` is now scoped to a single `UserProfile` at construction
+/// time — every coordinator above with its own on-disk store is rooted
+/// under that profile's storage directory, decided once in `init` and
+/// fixed for this instance's lifetime. Switching to a different family
+/// member is handled one layer up, by discarding this `AppModel`
+/// entirely and constructing a fresh one for the new profile — see the
+/// note on `ProfileScopedContentView` in the app entry point for why
+/// that's the right boundary rather than trying to hot-swap a dozen
+/// coordinators' stores in place.
 ///
 /// This class's job is to wire those together and publish state for
 /// SwiftUI.
@@ -69,11 +81,24 @@ final class AppModel: ObservableObject {
 
     // MARK: - Dependencies (injected — see init)
 
+    /// The family member this instance belongs to. Determines the
+    /// storage root every coordinator below resolves its files under —
+    /// see `UserProfile.storageRoot`.
+    let profile: UserProfile
+
     private let engine: BiometricEngineProviding
     private let credentialStore: CredentialStoring
     private let scoringEngine: StressScoringEngine
     private let sessionRecorder: SessionRecorder
-    private let sessionStore: SessionStoring
+
+    // Was `private` — now internal so `ContentView` can hand the same
+    // store to `SessionHistoryView` and `InsightsDashboardView`, which
+    // otherwise default to an *unnamespaced* `FileSessionStore()` of
+    // their own and would silently read the wrong profile's data (or,
+    // pre-profiles, a redundant-but-harmless second instance pointed at
+    // the same folder). Multiple views must share the one store the
+    // active profile actually resolved to, not each construct their own.
+    let sessionStore: SessionStoring
 
     // Exposed so views can bind to them directly. `let`, because nothing
     // should ever swap which coordinator the model points at — their
@@ -88,6 +113,7 @@ final class AppModel: ObservableObject {
     let sleep: SleepCoordinator
     let hrv: HRVCoordinator
     let coach: CoachCoordinator
+    let healthSync: HealthSyncCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -122,7 +148,17 @@ final class AppModel: ObservableObject {
     /// `ObservableObject`s. Building them inside the init body — which
     /// does run on the main actor — sidesteps the isolation error while
     /// keeping them injectable for tests.
+    ///
+    /// `profile` defaults to `.default`, whose `storageRoot` is literally
+    /// `"Composure"` — the exact path every store already used before
+    /// profiles existed. Every pre-existing call site in this codebase
+    /// (every `#Preview`, every test) constructs `AppModel()` with no
+    /// `profile` argument and keeps working, reading and writing exactly
+    /// where it always did. Profile-scoped storage only kicks in once a
+    /// caller passes a real, non-default profile — see
+    /// `ProfileScopedContentView`.
     init(
+        profile: UserProfile = .default,
         engine: BiometricEngineProviding = BiometricEngine(),
         credentialStore: CredentialStoring = KeychainCredentialStore(),
         scoringEngine: StressScoringEngine = StressScoringEngine(),
@@ -137,7 +173,8 @@ final class AppModel: ObservableObject {
         recovery: RecoveryCoordinator? = nil,
         sleep: SleepCoordinator? = nil,
         hrv: HRVCoordinator? = nil,
-        coach: CoachCoordinator? = nil
+        coach: CoachCoordinator? = nil,
+        healthSync: HealthSyncCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -149,23 +186,65 @@ final class AppModel: ObservableObject {
         // an easy one to introduce when adding a dependency, so keeping
         // every assignment together makes that mistake impossible.
         // ---------------------------------------------------------------
+        self.profile = profile
         self.engine = engine
         self.credentialStore = credentialStore
         self.scoringEngine = scoringEngine
 
-        self.sessionRecorder = sessionRecorder ?? SessionRecorder()
-        self.sessionStore = sessionStore ?? FileSessionStore()
-        self.prediction = prediction ?? StressPredictionCoordinator()
-        self.goals = goals ?? GoalsCoordinator()
-        self.breathing = breathing ?? BreathingCoordinator()
-        self.focus = focus ?? FocusCoordinator()
-        self.meditation = meditation ?? MeditationCoordinator()
-        self.ergonomics = ergonomics ?? ErgonomicsCoordinator()
-        self.recovery = recovery ?? RecoveryCoordinator()
-        self.sleep = sleep ?? SleepCoordinator()
-        self.hrv = hrv ?? HRVCoordinator()
-        self.coach = coach ?? CoachCoordinator()
+        // One shared session store, rooted under this profile, handed to
+        // every coordinator that needs to read or write session history
+        // — rather than each defaulting to its own instance and hoping
+        // they all land on the same path by coincidence of matching
+        // default strings, which is what happened before profiles
+        // existed (harmless there, since `FileSessionStore` is stateless
+        // between instances, but no longer harmless once the path itself
+        // varies per profile).
+        let resolvedSessionStore = sessionStore ?? FileSessionStore(
+            appSupportSubdirectory: "\(profile.storageRoot)/Sessions"
+        )
+        self.sessionStore = resolvedSessionStore
+        self.sessionRecorder = sessionRecorder ?? SessionRecorder(store: resolvedSessionStore)
 
+        self.prediction = prediction ?? StressPredictionCoordinator()
+        self.goals = goals ?? GoalsCoordinator(
+            store: FileGoalsStore(appSupportSubdirectory: profile.storageRoot),
+            sessionStore: resolvedSessionStore
+        )
+        self.breathing = breathing ?? BreathingCoordinator(
+            store: FileBreathingPreferencesStore(appSupportSubdirectory: profile.storageRoot)
+        )
+        self.focus = focus ?? FocusCoordinator()
+        self.meditation = meditation ?? MeditationCoordinator(
+            store: FileMeditationPreferencesStore(appSupportSubdirectory: profile.storageRoot)
+        )
+        self.ergonomics = ergonomics ?? ErgonomicsCoordinator(
+            store: FileErgonomicsConfigStore(appSupportSubdirectory: profile.storageRoot)
+        )
+        // No store of its own — `recovery` seeds its baseline by reading
+        // `resolvedSessionStore` directly in `seedRecoveryBaselineIfNeeded()`,
+        // so it's automatically profile-correct with no changes here.
+        self.recovery = recovery ?? RecoveryCoordinator()
+        self.sleep = sleep ?? SleepCoordinator(
+            store: FileSleepStore(appSupportSubdirectory: profile.storageRoot),
+            sessionStore: resolvedSessionStore
+        )
+        self.hrv = hrv ?? HRVCoordinator(
+            store: FileHRVStore(appSupportSubdirectory: profile.storageRoot)
+        )
+        self.coach = coach ?? CoachCoordinator(
+            store: FileCoachStore(appSupportSubdirectory: profile.storageRoot),
+            sessionStore: resolvedSessionStore
+        )
+        self.healthSync = healthSync ?? HealthSyncCoordinator(
+            store: FileHealthSyncStore(appSupportSubdirectory: profile.storageRoot)
+        )
+
+        // Deliberately NOT profile-scoped. The SmartSpectra API key is a
+        // household/device license, not personal data — every family
+        // member sharing this Mac shares the same subscription, so it
+        // stays in the one Keychain entry `KeychainCredentialStore`
+        // already used before profiles existed.
+        //
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
         // anywhere insecure ourselves.
@@ -236,7 +315,7 @@ final class AppModel: ObservableObject {
     private func forwardChildChanges() {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
-            meditation, ergonomics, recovery, sleep, hrv, coach
+            meditation, ergonomics, recovery, sleep, hrv, coach, healthSync
         ]
 
         for child in children {
@@ -280,6 +359,7 @@ final class AppModel: ObservableObject {
 
         seedRecoveryBaselineIfNeeded()
         hrv.startSession()
+        healthSync.startSession()
     }
 
     func stop() {
@@ -311,6 +391,7 @@ final class AppModel: ObservableObject {
         // monitoring stopped, close it out rather than silently drop the
         // partial data — a session cut short by "Stop" still happened.
         coach.flush()
+        healthSync.endSession()
 
         // A new session gives the sleep association fresh data to join
         // against, so refresh it once the recording has landed.
@@ -492,11 +573,17 @@ final class AppModel: ObservableObject {
                 vitalsDisplay.pulseConfidence = parsed.confidence ?? ""
                 pulseTrendHistory.append(parsed.value)
                 latestPulse = parsed.value
+                // Fed here rather than in `recomputeDerivedState`: this
+                // is the actual SDK-reported reading, not the derived
+                // stress score, so it belongs at the point where the SDK
+                // value itself becomes available.
+                healthSync.noteHeartRate(parsed.value)
                 recomputeDerivedState()
             } else if line.hasPrefix("Breathing rate:"), let parsed = parseRate(line) {
                 vitalsDisplay.breathingRPM = formattedInt(parsed.value)
                 vitalsDisplay.breathingConfidence = parsed.confidence ?? ""
                 latestBreathing = parsed.value
+                healthSync.noteRespiratoryRate(parsed.value)
                 recomputeDerivedState()
             } else if line.hasPrefix("EDA level:"), let parsed = parseRate(line) {
                 vitalsDisplay.edaLevel = formattedEDA(parsed.value)
@@ -605,6 +692,15 @@ final class AppModel: ObservableObject {
             return nil
         }()
         coach.ingest(score: score, activeIntervention: activeIntervention)
+
+        // Same activity signal Coach just used, reused rather than
+        // independently re-derived — "a mindful practice is active" has
+        // exactly one definition in this app, and computing it twice
+        // would be a second place for that definition to drift.
+        healthSync.noteMindfulBoundary(
+            active: activeIntervention != nil,
+            source: activeIntervention?.name
+        )
 
         if scoringEngine.shouldTriggerIntervention(forStressScore: score), !isBiofeedbackActive {
             triggerBiofeedback()

@@ -89,6 +89,18 @@
 		183B763C3031680B0078052F /* CoachCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76313031680B0078052F /* CoachCoordinator.swift */; };
 		183B763D3031680B0078052F /* InterventionEffectivenessAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76373031680B0078052F /* InterventionEffectivenessAnalyzer.swift */; };
 		183B763E3031680B0078052F /* CoachTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76353031680B0078052F /* CoachTabView.swift */; };
+		183B764730316E0B0078052F /* HealthSyncStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B764530316E0B0078052F /* HealthSyncStore.swift */; };
+		183B764830316E0B0078052F /* HealthSyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B764330316E0B0078052F /* HealthSyncCoordinator.swift */; };
+		183B764930316E0B0078052F /* HealthSyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B764630316E0B0078052F /* HealthSyncView.swift */; };
+		183B764A30316E0B0078052F /* HealthIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B764130316E0B0078052F /* HealthIdentifier.swift */; };
+		183B764B30316E0B0078052F /* HealthSyncBatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B764230316E0B0078052F /* HealthSyncBatcher.swift */; };
+		183B764C30316E0B0078052F /* HealthSyncModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B764430316E0B0078052F /* HealthSyncModels.swift */; };
+		183B765530321AF60078052F /* ProfileModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765130321AF60078052F /* ProfileModels.swift */; };
+		183B765630321AF60078052F /* FamilyDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B764F30321AF60078052F /* FamilyDashboardView.swift */; };
+		183B765730321AF60078052F /* FamilyDashboardCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B764E30321AF60078052F /* FamilyDashboardCoordinator.swift */; };
+		183B765830321AF60078052F /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765230321AF60078052F /* ProfileStore.swift */; };
+		183B765A30321AF60078052F /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765030321AF60078052F /* ProfileCoordinator.swift */; };
+		183B765B30321AF60078052F /* ProfileSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765330321AF60078052F /* ProfileSwitcherView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -182,6 +194,18 @@
 		183B76343031680B0078052F /* CoachStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachStore.swift; sourceTree = "<group>"; };
 		183B76353031680B0078052F /* CoachTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachTabView.swift; sourceTree = "<group>"; };
 		183B76373031680B0078052F /* InterventionEffectivenessAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterventionEffectivenessAnalyzer.swift; sourceTree = "<group>"; };
+		183B764130316E0B0078052F /* HealthIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthIdentifier.swift; sourceTree = "<group>"; };
+		183B764230316E0B0078052F /* HealthSyncBatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSyncBatcher.swift; sourceTree = "<group>"; };
+		183B764330316E0B0078052F /* HealthSyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSyncCoordinator.swift; sourceTree = "<group>"; };
+		183B764430316E0B0078052F /* HealthSyncModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSyncModels.swift; sourceTree = "<group>"; };
+		183B764530316E0B0078052F /* HealthSyncStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSyncStore.swift; sourceTree = "<group>"; };
+		183B764630316E0B0078052F /* HealthSyncView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSyncView.swift; sourceTree = "<group>"; };
+		183B764E30321AF60078052F /* FamilyDashboardCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyDashboardCoordinator.swift; sourceTree = "<group>"; };
+		183B764F30321AF60078052F /* FamilyDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyDashboardView.swift; sourceTree = "<group>"; };
+		183B765030321AF60078052F /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
+		183B765130321AF60078052F /* ProfileModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModels.swift; sourceTree = "<group>"; };
+		183B765230321AF60078052F /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
+		183B765330321AF60078052F /* ProfileSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSwitcherView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +234,8 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B764D30321ADB0078052F /* profile */,
+				183B764030316DF70078052F /* health */,
 				183B762F303168030078052F /* coach */,
 				183B7623302E38E60078052F /* hrv */,
 				183B7618302E34A20078052F /* sleep */,
@@ -403,6 +429,32 @@
 			path = coach;
 			sourceTree = "<group>";
 		};
+		183B764030316DF70078052F /* health */ = {
+			isa = PBXGroup;
+			children = (
+				183B764130316E0B0078052F /* HealthIdentifier.swift */,
+				183B764230316E0B0078052F /* HealthSyncBatcher.swift */,
+				183B764330316E0B0078052F /* HealthSyncCoordinator.swift */,
+				183B764430316E0B0078052F /* HealthSyncModels.swift */,
+				183B764530316E0B0078052F /* HealthSyncStore.swift */,
+				183B764630316E0B0078052F /* HealthSyncView.swift */,
+			);
+			path = health;
+			sourceTree = "<group>";
+		};
+		183B764D30321ADB0078052F /* profile */ = {
+			isa = PBXGroup;
+			children = (
+				183B764E30321AF60078052F /* FamilyDashboardCoordinator.swift */,
+				183B764F30321AF60078052F /* FamilyDashboardView.swift */,
+				183B765030321AF60078052F /* ProfileCoordinator.swift */,
+				183B765130321AF60078052F /* ProfileModels.swift */,
+				183B765230321AF60078052F /* ProfileStore.swift */,
+				183B765330321AF60078052F /* ProfileSwitcherView.swift */,
+			);
+			path = profile;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -530,6 +582,12 @@
 				183B758A302377A70078052F /* StressVisualizationView.swift in Sources */,
 				183B75D4302B7AC70078052F /* ProgressRing.swift in Sources */,
 				183B75D5302B7AC70078052F /* StreakCalculator.swift in Sources */,
+				183B764730316E0B0078052F /* HealthSyncStore.swift in Sources */,
+				183B764830316E0B0078052F /* HealthSyncCoordinator.swift in Sources */,
+				183B764930316E0B0078052F /* HealthSyncView.swift in Sources */,
+				183B764A30316E0B0078052F /* HealthIdentifier.swift in Sources */,
+				183B764B30316E0B0078052F /* HealthSyncBatcher.swift in Sources */,
+				183B764C30316E0B0078052F /* HealthSyncModels.swift in Sources */,
 				183B75D6302B7AC70078052F /* AchievementCatalog.swift in Sources */,
 				183B75D7302B7AC70078052F /* GoalModels.swift in Sources */,
 				183B762A302E38FE0078052F /* HRVAnalyzer.swift in Sources */,
@@ -560,6 +618,12 @@
 				183B7601302CDBFA0078052F /* MeditationCoordinator.swift in Sources */,
 				183B758D302377A70078052F /* BiometricEngine.swift in Sources */,
 				100000000000000000000104 /* SmartSpectraRunner.mm in Sources */,
+				183B765530321AF60078052F /* ProfileModels.swift in Sources */,
+				183B765630321AF60078052F /* FamilyDashboardView.swift in Sources */,
+				183B765730321AF60078052F /* FamilyDashboardCoordinator.swift in Sources */,
+				183B765830321AF60078052F /* ProfileStore.swift in Sources */,
+				183B765A30321AF60078052F /* ProfileCoordinator.swift in Sources */,
+				183B765B30321AF60078052F /* ProfileSwitcherView.swift in Sources */,
 				100000000000000000000101 /* SmartSpectraSwiftApp.swift in Sources */,
 				183B7614302DFB320078052F /* RecoveryCoordinator.swift in Sources */,
 				183B7615302DFB320078052F /* RecoveryModels.swift in Sources */,
