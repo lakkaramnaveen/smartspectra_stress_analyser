@@ -460,6 +460,12 @@ struct ContentView: View {
 
         case .wearables:
             WearableTabView(coordinator: model.wearable, sessionStore: model.sessionStore)
+
+        case .providerReport:
+            TherapistReportView(
+                reportCoordinator: model.therapistReport,
+                notesCoordinator: model.sessionNotes
+            )
         }
     }
 
@@ -528,17 +534,21 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Fourteen tabs, ordered roughly live → deliberate → retrospective:
+/// Fifteen tabs, ordered roughly live → deliberate → retrospective:
 /// Controls, Stress, Emotions, Heart, Desk and Rest are things happening
 /// now; Practice and Game are things you start; Coach, Goals, Insights,
-/// History, Health and Wearables look backwards, or prepare data to
-/// leave the app.
+/// History, Health, Wearables and Provider Report look backwards, or
+/// prepare data to leave the app.
 ///
-/// This is the fourth feature running to note the same unaddressed fix:
-/// grouping Stress, Emotions, Heart, Desk and Rest behind a single
-/// "Signals" tab the way Practice already groups its three would bring
-/// this from fourteen entries to ten without hiding anything a user can
-/// currently reach.
+/// Provider Report itself folds two things (report config, personal
+/// notes) behind one internal picker rather than adding a second
+/// top-level entry — the same restraint Practice already applied to
+/// three sub-features. That keeps this from being worse than it is, but
+/// this is the fifth feature running to flag the fix that actually
+/// matters: grouping Stress, Emotions, Heart, Desk and Rest behind a
+/// single "Signals" tab the way Practice groups its three would bring
+/// this from fifteen entries to eleven without hiding anything a user
+/// can currently reach.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
@@ -554,23 +564,25 @@ enum SidebarTab: String, CaseIterable {
     case history
     case health
     case wearables
+    case providerReport
 
     var label: String {
         switch self {
-        case .controls:  return "Controls"
-        case .stress:    return "Stress"
-        case .emotions:  return "Emotions"
-        case .heart:     return "Heart"
-        case .desk:      return "Desk"
-        case .rest:      return "Rest"
-        case .practice:  return "Practice"
-        case .game:      return "Game"
-        case .coach:     return "Coach"
-        case .goals:     return "Goals"
-        case .insights:  return "Insights"
-        case .history:   return "History"
-        case .health:    return "Health"
-        case .wearables: return "Wearables"
+        case .controls:       return "Controls"
+        case .stress:         return "Stress"
+        case .emotions:       return "Emotions"
+        case .heart:          return "Heart"
+        case .desk:           return "Desk"
+        case .rest:           return "Rest"
+        case .practice:       return "Practice"
+        case .game:           return "Game"
+        case .coach:          return "Coach"
+        case .goals:          return "Goals"
+        case .insights:       return "Insights"
+        case .history:        return "History"
+        case .health:         return "Health"
+        case .wearables:      return "Wearables"
+        case .providerReport: return "Provider"
         }
     }
 
@@ -592,6 +604,7 @@ enum SidebarTab: String, CaseIterable {
         case .history:  return "Past session recordings"
         case .health:   return "Prepare data for Apple Health export"
         case .wearables: return "Cross-check against Oura or Apple Watch"
+        case .providerReport: return "Prepare a summary to share with your provider"
         }
     }
 
@@ -617,6 +630,7 @@ enum SidebarTab: String, CaseIterable {
         case .history:  return "clock.arrow.circlepath"
         case .health:   return "tray.and.arrow.up"
         case .wearables: return "applewatch"
+        case .providerReport: return "person.text.rectangle"
         }
     }
 }
