@@ -123,6 +123,13 @@
 		183B7688303366BE0078052F /* AppUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7682303366BE0078052F /* AppUsageMonitor.swift */; };
 		183B7689303366BE0078052F /* AppUsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7683303366BE0078052F /* AppUsageStore.swift */; };
 		183B768A303366BE0078052F /* AppUsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7681303366BE0078052F /* AppUsageModels.swift */; };
+		183B7697303399280078052F /* EnvironmentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7691303399280078052F /* EnvironmentModels.swift */; };
+		183B7698303399280078052F /* EnvironmentCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7690303399280078052F /* EnvironmentCoordinator.swift */; };
+		183B769B303399280078052F /* EnvironmentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7693303399280078052F /* EnvironmentStore.swift */; };
+		183B769C303399280078052F /* EnvironmentStressAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7694303399280078052F /* EnvironmentStressAnalyzer.swift */; };
+		183B769D303399280078052F /* NoiseLevelMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7696303399280078052F /* NoiseLevelMonitor.swift */; };
+		183B769F303399280078052F /* LightingAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7695303399280078052F /* LightingAnalyzer.swift */; };
+		183B76A1303399280078052F /* EnvironmentSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7692303399280078052F /* EnvironmentSectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -250,6 +257,13 @@
 		183B7682303366BE0078052F /* AppUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageMonitor.swift; sourceTree = "<group>"; };
 		183B7683303366BE0078052F /* AppUsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageStore.swift; sourceTree = "<group>"; };
 		183B7684303366BE0078052F /* AppUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageView.swift; sourceTree = "<group>"; };
+		183B7690303399280078052F /* EnvironmentCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentCoordinator.swift; sourceTree = "<group>"; };
+		183B7691303399280078052F /* EnvironmentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentModels.swift; sourceTree = "<group>"; };
+		183B7692303399280078052F /* EnvironmentSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentSectionView.swift; sourceTree = "<group>"; };
+		183B7693303399280078052F /* EnvironmentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentStore.swift; sourceTree = "<group>"; };
+		183B7694303399280078052F /* EnvironmentStressAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentStressAnalyzer.swift; sourceTree = "<group>"; };
+		183B7695303399280078052F /* LightingAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightingAnalyzer.swift; sourceTree = "<group>"; };
+		183B7696303399280078052F /* NoiseLevelMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseLevelMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,6 +292,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B768B3033990F0078052F /* environ */,
 				183B767E303366B00078052F /* usage */,
 				183B766D3032AB5F0078052F /* rap */,
 				183B765C30321EB90078052F /* wearable */,
@@ -545,6 +560,20 @@
 			path = usage;
 			sourceTree = "<group>";
 		};
+		183B768B3033990F0078052F /* environ */ = {
+			isa = PBXGroup;
+			children = (
+				183B7690303399280078052F /* EnvironmentCoordinator.swift */,
+				183B7691303399280078052F /* EnvironmentModels.swift */,
+				183B7692303399280078052F /* EnvironmentSectionView.swift */,
+				183B7693303399280078052F /* EnvironmentStore.swift */,
+				183B7694303399280078052F /* EnvironmentStressAnalyzer.swift */,
+				183B7695303399280078052F /* LightingAnalyzer.swift */,
+				183B7696303399280078052F /* NoiseLevelMonitor.swift */,
+			);
+			path = environ;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -715,6 +744,13 @@
 				183B7600302CDBFA0078052F /* MeditationPlayerView.swift in Sources */,
 				183B7601302CDBFA0078052F /* MeditationCoordinator.swift in Sources */,
 				183B758D302377A70078052F /* BiometricEngine.swift in Sources */,
+				183B7697303399280078052F /* EnvironmentModels.swift in Sources */,
+				183B7698303399280078052F /* EnvironmentCoordinator.swift in Sources */,
+				183B769B303399280078052F /* EnvironmentStore.swift in Sources */,
+				183B769C303399280078052F /* EnvironmentStressAnalyzer.swift in Sources */,
+				183B769D303399280078052F /* NoiseLevelMonitor.swift in Sources */,
+				183B769F303399280078052F /* LightingAnalyzer.swift in Sources */,
+				183B76A1303399280078052F /* EnvironmentSectionView.swift in Sources */,
 				100000000000000000000104 /* SmartSpectraRunner.mm in Sources */,
 				183B765530321AF60078052F /* ProfileModels.swift in Sources */,
 				183B765630321AF60078052F /* FamilyDashboardView.swift in Sources */,

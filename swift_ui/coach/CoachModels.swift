@@ -13,11 +13,18 @@ import SwiftUI
 enum InterventionKind: Codable, Equatable, Sendable, Hashable {
     case breathing(id: String, name: String)
     case meditation(id: String, name: String)
+    /// Added when this app started tracking Balloon Hunt as a real
+    /// intervention rather than only breathing and meditation — "the
+    /// game distracts me best from stress" is a real, checkable claim
+    /// once the game's sessions feed the same effectiveness pipeline
+    /// everything else does.
+    case game(difficulty: String)
 
     var name: String {
         switch self {
         case .breathing(_, let name): return name
         case .meditation(_, let name): return name
+        case .game(let difficulty): return "Balloon Hunt (\(difficulty))"
         }
     }
 
@@ -25,6 +32,7 @@ enum InterventionKind: Codable, Equatable, Sendable, Hashable {
         switch self {
         case .breathing: return "wind"
         case .meditation: return "moon"
+        case .game: return "gamecontroller"
         }
     }
 
@@ -34,8 +42,45 @@ enum InterventionKind: Codable, Equatable, Sendable, Hashable {
         switch self {
         case .breathing(let id, _): return "breathing.\(id)"
         case .meditation(let id, _): return "meditation.\(id)"
+        case .game(let difficulty): return "game.\(difficulty)"
         }
     }
+
+    /// Which broad category this belongs to — the basis for
+    /// "meditation has worked better than breathing for you"
+    /// comparisons, which operate on the category as a whole rather
+    /// than any single technique inside it.
+    var category: InterventionCategory {
+        switch self {
+        case .breathing: return .breathing
+        case .meditation: return .meditation
+        case .game: return .game
+        }
+    }
+}
+
+// MARK: - Category
+
+enum InterventionCategory: String, Sendable, CaseIterable, Hashable {
+    case breathing, meditation, game
+
+    var label: String {
+        switch self {
+        case .breathing: return "Breathing"
+        case .meditation: return "Meditation"
+        case .game: return "The game"
+        }
+    }
+}
+
+/// Aggregate statistics for one *category* — every breathing technique
+/// pooled together, every meditation pooled together, and so on.
+struct CategoryEffectiveness: Identifiable, Sendable {
+    var id: InterventionCategory { category }
+    let category: InterventionCategory
+    let attempts: Int
+    let averageDelta: Double
+    let confidence: CoachConfidence
 }
 
 // MARK: - Effectiveness Record
@@ -137,6 +182,14 @@ struct CoachRecommendation: Identifiable, Sendable {
     enum Kind: Sendable {
         case bestTechnique(TechniqueEffectiveness)
         case timeOfDay(hour: Int, averageStress: Double)
+        /// "Meditation has tended to help more than breathing for you"
+        /// — the comparison the original spec asked for, without the
+        /// multiplier. See `CoachEngine.categoryComparison` for why a
+        /// precise "2x better" ratio isn't reported: a ratio between two
+        /// small, noisy sample averages is *less* stable than either
+        /// average alone, so this shows both point-deltas side by side
+        /// instead of collapsing them into one number.
+        case categoryComparison(better: InterventionCategory, worse: InterventionCategory, betterPoints: Double, worsePoints: Double)
     }
 
     let id = UUID()
@@ -149,6 +202,7 @@ struct CoachRecommendation: Identifiable, Sendable {
         switch kind {
         case .bestTechnique: return "star.fill"
         case .timeOfDay: return "clock.fill"
+        case .categoryComparison: return "arrow.left.arrow.right"
         }
     }
 }

@@ -26,6 +26,7 @@ import SwiftUI
 ///   - `SessionNotesCoordinator`     — personal journaling
 ///   - `TherapistReportCoordinator`  — assembles and exports a provider-facing summary
 ///   - `AppUsageCoordinator`         — opt-in, session-scoped app-focus tracking
+///   - `EnvironmentCoordinator`      — lighting always-on, noise opt-in, correlated with stress
 ///
 /// One thing this class does *not* own: which profile is active.
 /// `AppModel` is now scoped to a single `UserProfile` at construction
@@ -122,6 +123,7 @@ final class AppModel: ObservableObject {
     let sessionNotes: SessionNotesCoordinator
     let therapistReport: TherapistReportCoordinator
     let appUsage: AppUsageCoordinator
+    let environment: EnvironmentCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -186,7 +188,8 @@ final class AppModel: ObservableObject {
         wearable: WearableCoordinator? = nil,
         sessionNotes: SessionNotesCoordinator? = nil,
         therapistReport: TherapistReportCoordinator? = nil,
-        appUsage: AppUsageCoordinator? = nil
+        appUsage: AppUsageCoordinator? = nil,
+        environment: EnvironmentCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -275,6 +278,11 @@ final class AppModel: ObservableObject {
             sessionStore: resolvedSessionStore
         )
 
+        self.environment = environment ?? EnvironmentCoordinator(
+            store: FileEnvironmentStore(appSupportSubdirectory: profile.storageRoot),
+            sessionStore: resolvedSessionStore
+        )
+
         // Deliberately NOT profile-scoped. The SmartSpectra API key is a
         // household/device license, not personal data — every family
         // member sharing this Mac shares the same subscription, so it
@@ -352,7 +360,7 @@ final class AppModel: ObservableObject {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
             meditation, ergonomics, recovery, sleep, hrv, coach, healthSync, wearable,
-            sessionNotes, therapistReport, appUsage
+            sessionNotes, therapistReport, appUsage, environment
         ]
 
         for child in children {
@@ -402,6 +410,7 @@ final class AppModel: ObservableObject {
         // why this is tied to Composure's own session lifecycle rather
         // than running independently.
         appUsage.startMonitoring()
+        environment.startSession()
     }
 
     func stop() {
@@ -445,6 +454,7 @@ final class AppModel: ObservableObject {
         coach.flush()
         healthSync.endSession()
         appUsage.stopMonitoring()
+        environment.endSession()
 
         // A new session gives the sleep association fresh data to join
         // against, so refresh it once the recording has landed.
@@ -731,11 +741,19 @@ final class AppModel: ObservableObject {
 
         // Coach needs to know *which* intervention is running, not just
         // whether one is — it's measuring per-technique effectiveness,
-        // not gating an alert. Breathing is checked first: the two
-        // overlays are mutually exclusive in the UI in practice, but
-        // nothing enforces that at the type level, so a deterministic
-        // tie-break is worth having.
-        let activeIntervention: InterventionKind? = {
+        // not gating an alert. Checked in a fixed order: the overlays
+        // are mutually exclusive in the UI in practice, but nothing
+        // enforces that at the type level, so a deterministic tie-break
+        // is worth having.
+        //
+        // Split into two locals rather than one shared value: Coach
+        // legitimately treats the game as a real intervention worth
+        // ranking, but HealthKit's `mindfulSession` category means
+        // meditation- or breathing-style practice specifically — a
+        // distraction game isn't that, and widening `activeIntervention`
+        // to include the game must not silently widen what gets
+        // exported as a "mindful minute" too.
+        let activeMindfulPractice: InterventionKind? = {
             if let technique = breathing.activeTechnique {
                 return .breathing(id: technique.id, name: technique.name)
             }
@@ -744,15 +762,24 @@ final class AppModel: ObservableObject {
             }
             return nil
         }()
+
+        let activeIntervention: InterventionKind? = activeMindfulPractice ?? {
+            // Balloon Hunt counts as a real intervention now, not just a
+            // biofeedback game — "the game distracts me best from
+            // stress" only becomes a checkable claim once its sessions
+            // feed the same before/after tracking everything else does.
+            // Deliberately excluded from `activeMindfulPractice` above.
+            guard isGameActive else { return nil }
+            return .game(difficulty: gameDifficulty.label)
+        }()
         coach.ingest(score: score, activeIntervention: activeIntervention)
 
-        // Same activity signal Coach just used, reused rather than
-        // independently re-derived — "a mindful practice is active" has
-        // exactly one definition in this app, and computing it twice
-        // would be a second place for that definition to drift.
+        // Uses the narrower signal, not `activeIntervention` — see the
+        // note above. Playing the game must not be recorded as a
+        // mindful minute in the exported Health data.
         healthSync.noteMindfulBoundary(
-            active: activeIntervention != nil,
-            source: activeIntervention?.name
+            active: activeMindfulPractice != nil,
+            source: activeMindfulPractice?.name
         )
 
         if scoringEngine.shouldTriggerIntervention(forStressScore: score), !isBiofeedbackActive {
@@ -789,7 +816,13 @@ final class AppModel: ObservableObject {
 
 extension AppModel: BiometricEngineDelegate {
     nonisolated func biometricEngine(_ engine: BiometricEngine, didCaptureFrame image: NSImage) {
-        Task { @MainActor in self.frame = image }
+        Task { @MainActor in
+            self.frame = image
+            // Throttled internally — safe to call on every frame.
+            // Analyzes a frame already flowing through the app for the
+            // core feature; no new capture happens here.
+            self.environment.ingestFrame(image)
+        }
     }
 
     nonisolated func biometricEngine(

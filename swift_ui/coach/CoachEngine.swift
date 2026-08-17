@@ -42,6 +42,93 @@ struct CoachEngine: Sendable {
         .sorted { $0.averageDelta < $1.averageDelta }
     }
 
+    // MARK: - Category ranking
+
+    /// Every technique in a category pooled together — "meditation as a
+    /// whole" rather than any one specific meditation. This is what a
+    /// category-vs-category comparison needs: an individual technique
+    /// might have too few uses to rank on its own while the category it
+    /// belongs to has plenty.
+    func categoryEffectiveness(from records: [EffectivenessRecord]) -> [CategoryEffectiveness] {
+        let grouped = Dictionary(grouping: records) { $0.kind.category }
+
+        return grouped.compactMap { category, records -> CategoryEffectiveness? in
+            guard records.count >= minimumAttempts else { return nil }
+            return CategoryEffectiveness(
+                category: category,
+                attempts: records.count,
+                averageDelta: records.map(\.delta).average,
+                confidence: .forSampleCount(records.count)
+            )
+        }
+        .sorted { $0.averageDelta < $1.averageDelta }
+    }
+
+    /// A comparison like "meditation has tended to help more than
+    /// breathing for you" — the specific claim the original spec asked
+    /// for ("meditation works 2x better than breathing"), deliberately
+    /// without the multiplier.
+    ///
+    /// A ratio of two averages is the easiest number in this file to
+    /// state with more confidence than it deserves: two small, noisy
+    /// sample means can produce a dramatic-looking ratio purely from
+    /// noise, and a ratio near 1 isn't worth reporting as a comparison
+    /// at all. Reporting "1.3x" still implies a precision neither
+    /// average actually has. An ordinal comparison — which one helped
+    /// more, by how many points each — survives that noise in a way a
+    /// multiplier doesn't, so that's what this reports instead. Every
+    /// gate below exists to keep even that more modest claim honest:
+    ///
+    ///   - both categories must individually clear the confidence bar
+    ///     (not just the pair together)
+    ///   - both must show a genuine net-calming effect — comparing the
+    ///     "less bad of two unhelpful options" would be misleading
+    ///     framed as one being "better"
+    ///   - the point gap between them must be large enough to be a real
+    ///     difference, not noise dressed as one
+    func categoryComparison(from categories: [CategoryEffectiveness]) -> CoachRecommendation? {
+        let eligible = categories.filter { $0.confidence >= .moderate && $0.averageDelta < -0.02 }
+        guard eligible.count >= 2 else { return nil }
+
+        let sorted = eligible.sorted { $0.averageDelta < $1.averageDelta }
+        guard let best = sorted.first, let second = sorted.dropFirst().first else { return nil }
+
+        // Points, not a ratio — see the note above. A gap under ~4
+        // points is well within the noise two small samples can produce
+        // and isn't worth reporting as a difference at all.
+        let gapPoints = (second.averageDelta - best.averageDelta) * 100
+        guard gapPoints >= 4 else { return nil }
+
+        return CoachRecommendation(
+            kind: .categoryComparison(
+                better: best.category,
+                worse: second.category,
+                betterPoints: -best.averageDelta * 100,
+                worsePoints: -second.averageDelta * 100
+            ),
+            headline: "\(best.category.label) has tended to help more than \(second.category.label.lowercased()) for you",
+            detail: String(
+                format: "%@ averaged about %.0f points off; %@ averaged about %.0f points off, across %d and %d uses.",
+                best.category.label, -best.averageDelta * 100,
+                second.category.label, -second.averageDelta * 100,
+                best.attempts, second.attempts
+            ),
+            confidence: min(best.confidence, second.confidence)
+        )
+    }
+
+    /// Ranks by how quickly a technique's sessions tended to run,
+    /// restricted to techniques that measurably helped at all — ranking
+    /// something by how fast it doesn't work isn't a useful comparison,
+    /// so a technique needs a real stress drop before speed is worth
+    /// ranking it on. Reuses `effectiveness(from:)` rather than
+    /// re-deriving the join and evidence gates a second way.
+    func fastestRecovery(from records: [EffectivenessRecord]) -> [TechniqueEffectiveness] {
+        effectiveness(from: records)
+            .filter { $0.averageDelta < -0.03 }
+            .sorted { $0.averageDuration < $1.averageDuration }
+    }
+
     // MARK: - Recommendations
 
     /// Builds the recommendation list shown on the Coach tab.
@@ -68,6 +155,10 @@ struct CoachEngine: Sendable {
                     confidence: best.confidence
                 )
             )
+        }
+
+        if let comparison = categoryComparison(from: categoryEffectiveness(from: records)) {
+            results.append(comparison)
         }
 
         // Same thresholds Insights uses for its own time-of-day insight

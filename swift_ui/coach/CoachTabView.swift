@@ -20,6 +20,14 @@ struct CoachTabView: View {
                     rankingSection
                 }
 
+                if !coordinator.categoryRanked.isEmpty {
+                    categorySection
+                }
+
+                if !coordinator.fastestRecovery.isEmpty {
+                    fastestSection
+                }
+
                 methodNote
             }
             .padding(Spacing.xl)
@@ -97,6 +105,83 @@ struct CoachTabView: View {
         }
     }
 
+    /// Category-level rollup, sitting above the per-technique list —
+    /// "meditation as a whole" versus "breathing as a whole," which the
+    /// per-technique ranking above can't show since it keeps every
+    /// individual technique separate.
+    private var categorySection: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            Text("By category")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.white)
+
+            ForEach(coordinator.categoryRanked) { item in
+                HStack(spacing: Spacing.md) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(item.category.label)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white)
+                        Text("\(item.attempts) uses · \(item.confidence.label)")
+                            .font(.system(size: 10))
+                            .foregroundStyle(item.confidence.color)
+                    }
+
+                    Spacer()
+
+                    Text(String(format: "%+.0f pts", item.averageDelta * 100))
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundStyle(item.averageDelta < 0 ? BrandColor.mint : BrandColor.amber)
+                        .monospacedDigit()
+                }
+                .padding(Spacing.md)
+                .background(Color.white.opacity(0.04))
+                .cornerRadius(10)
+            }
+        }
+    }
+
+    /// Same underlying data as `rankingSection`, reordered by how
+    /// quickly each technique's sessions tended to run rather than by
+    /// how much they helped. Magnitude and speed are genuinely different
+    /// questions — "which helps most" and "which helps fastest" can
+    /// have different answers — so this is a separate section rather
+    /// than folding a time column into the ranking above.
+    private var fastestSection: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            Text("Fastest to help")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(.white)
+
+            ForEach(coordinator.fastestRecovery) { item in
+                HStack(spacing: Spacing.md) {
+                    Image(systemName: item.kind.icon)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(BrandColor.teal)
+                        .frame(width: 20)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(item.kind.name)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white)
+                        Text("\(item.attempts) uses · \(item.confidence.label)")
+                            .font(.system(size: 10))
+                            .foregroundStyle(item.confidence.color)
+                    }
+
+                    Spacer()
+
+                    Text(DurationFormatter.mmss(item.averageDuration))
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundStyle(BrandColor.mint)
+                        .monospacedDigit()
+                }
+                .padding(Spacing.md)
+                .background(Color.white.opacity(0.04))
+                .cornerRadius(10)
+            }
+        }
+    }
+
     /// Permanent, not a one-time disclosure. "Coach" plus a ranked list
     /// with confidence badges reads as an ML feature whether or not it
     /// is one, so the tab says plainly what's actually behind the
@@ -113,6 +198,11 @@ struct CoachTabView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             Text("It can't see your calendar or what you were doing beforehand — only how your readings moved around each session.")
+                .font(.system(size: 10))
+                .foregroundStyle(.white.opacity(0.45))
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text("This only ranks what the app can actually see you do — breathing, meditation, and the game. It doesn't track exercise or anything else outside the app, so it can't include those in the comparison.")
                 .font(.system(size: 10))
                 .foregroundStyle(.white.opacity(0.45))
                 .fixedSize(horizontal: false, vertical: true)

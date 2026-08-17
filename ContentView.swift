@@ -28,6 +28,7 @@ struct ContentView: View {
     @State private var showGameFullscreen = false
     @State private var activeSidebarTab: SidebarTab = .controls
     @State private var activePracticeTab: PracticeTab = .breathing
+    @State private var activeWorkspaceTab: WorkspaceTab = .habits
 
     var body: some View {
         ZStack {
@@ -425,7 +426,7 @@ struct ContentView: View {
             HRVTabView(coordinator: model.hrv)
 
         case .desk:
-            ErgonomicsTabView(coordinator: model.ergonomics)
+            workspacePane
 
         case .rest:
             SleepTabView(coordinator: model.sleep)
@@ -504,6 +505,60 @@ struct ContentView: View {
             }
         }
     }
+
+    // MARK: - Workspace Pane
+
+    /// Desk habits (screen time, neck strain) and environment (lighting,
+    /// noise) grouped behind one tab, the same way Practice already
+    /// groups its three. Both are "things about your physical setup"
+    /// from the user's side, and this is a genuine consolidation, not
+    /// just a smaller version of the tab-count problem — it's one fewer
+    /// top-level entry than treating Environment separately would have
+    /// cost, on top of the two features (Practice, Provider Report)
+    /// that already applied the same restraint.
+    private var workspacePane: some View {
+        VStack(spacing: 0) {
+            Picker("", selection: $activeWorkspaceTab) {
+                ForEach(WorkspaceTab.allCases, id: \.self) { tab in
+                    Text(tab.label).tag(tab)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+
+            Divider().opacity(0.3)
+
+            // Not a shared outer ScrollView here: `ErgonomicsTabView`
+            // already scrolls itself, and wrapping it in a second one
+            // would nest two independently-scrolling regions. Each case
+            // below scrolls exactly the way its own view expects to.
+            switch activeWorkspaceTab {
+            case .habits:
+                ErgonomicsTabView(coordinator: model.ergonomics)
+            case .environment:
+                ScrollView {
+                    EnvironmentSectionView(coordinator: model.environment)
+                        .padding(Spacing.xl)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Workspace Tab
+
+enum WorkspaceTab: String, CaseIterable {
+    case habits
+    case environment
+
+    var label: String {
+        switch self {
+        case .habits:      return "Habits"
+        case .environment: return "Environment"
+        }
+    }
 }
 
 // MARK: - Sidebar Metrics
@@ -537,12 +592,13 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Sixteen tabs now. Provider Report already folds two sub-features
-/// behind one internal picker rather than adding a second top-level
-/// entry, the same restraint Practice applies to three — but that only
-/// slows the growth, it doesn't fix it. Sixth feature running to flag
-/// the same unaddressed consolidation: Stress, Emotions, Heart, Desk and
-/// Rest behind one "Signals" tab, the way Practice already groups its
+/// Sixteen tabs — unchanged by this round, because Environment didn't
+/// get one. It folds into the existing Workspace tab (renamed from
+/// "Desk") behind its own internal picker, the same restraint Practice
+/// and Provider Report already applied — three features now actively
+/// avoiding the problem rather than just naming it. That still doesn't
+/// fix the sixteen that already exist: Stress, Emotions, Heart, Desk
+/// and Rest behind one "Signals" tab, the way Practice groups its
 /// three, would bring this to twelve without hiding anything reachable
 /// today.
 enum SidebarTab: String, CaseIterable {
@@ -569,7 +625,7 @@ enum SidebarTab: String, CaseIterable {
         case .stress:         return "Stress"
         case .emotions:       return "Emotions"
         case .heart:          return "Heart"
-        case .desk:           return "Desk"
+        case .desk:           return "Workspace"
         case .rest:           return "Rest"
         case .practice:       return "Practice"
         case .game:           return "Game"
@@ -592,7 +648,7 @@ enum SidebarTab: String, CaseIterable {
         case .stress:   return "Live stress trajectory"
         case .emotions: return "Detected emotional state"
         case .heart:    return "Beat-to-beat variability from the pulse waveform"
-        case .desk:     return "Screen time and neck-strain reminders"
+        case .desk:     return "Screen time, breaks, lighting, and noise"
         case .rest:     return "Sleep log and how it lines up with your readings"
         case .practice: return "Breathing, meditation, and focus blocks"
         case .game:     return "Balloon Hunt eye-tracking game"

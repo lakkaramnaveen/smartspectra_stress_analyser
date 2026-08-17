@@ -12,6 +12,8 @@ final class CoachCoordinator: ObservableObject {
 
     @Published private(set) var recommendations: [CoachRecommendation] = []
     @Published private(set) var ranked: [TechniqueEffectiveness] = []
+    @Published private(set) var categoryRanked: [CategoryEffectiveness] = []
+    @Published private(set) var fastestRecovery: [TechniqueEffectiveness] = []
     @Published private(set) var totalRecords: Int = 0
     @Published private(set) var isAnalysing = false
 
@@ -72,15 +74,19 @@ final class CoachCoordinator: ObservableObject {
         let aggregator = self.sessionAggregator
 
         let result = await Task.detached(priority: .utility) {
-            () -> ([TechniqueEffectiveness], [CoachRecommendation]) in
+            () -> ([TechniqueEffectiveness], [CategoryEffectiveness], [TechniqueEffectiveness], [CoachRecommendation]) in
             let aggregates = aggregator.aggregate(recordings)
             let rankedResult = engine.effectiveness(from: currentRecords)
+            let categoryResult = engine.categoryEffectiveness(from: currentRecords)
+            let fastestResult = engine.fastestRecovery(from: currentRecords)
             let recs = engine.recommendations(from: currentRecords, hourBuckets: aggregates.hourBuckets)
-            return (rankedResult, recs)
+            return (rankedResult, categoryResult, fastestResult, recs)
         }.value
 
         ranked = result.0
-        recommendations = result.1
+        categoryRanked = result.1
+        fastestRecovery = result.2
+        recommendations = result.3
     }
 
     // MARK: - Private
