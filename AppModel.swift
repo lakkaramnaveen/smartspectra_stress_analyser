@@ -23,6 +23,8 @@ import SwiftUI
 ///   - `CoachCoordinator`            — technique effectiveness, ranked from real usage
 ///   - `HealthSyncCoordinator`       — buffers data for export toward Apple Health
 ///   - `WearableCoordinator`         — cross-checks camera readings against Oura/Watch
+///   - `SessionNotesCoordinator`     — personal journaling
+///   - `TherapistReportCoordinator`  — assembles and exports a provider-facing summary
 ///
 /// One thing this class does *not* own: which profile is active.
 /// `AppModel` is now scoped to a single `UserProfile` at construction
@@ -116,6 +118,8 @@ final class AppModel: ObservableObject {
     let coach: CoachCoordinator
     let healthSync: HealthSyncCoordinator
     let wearable: WearableCoordinator
+    let sessionNotes: SessionNotesCoordinator
+    let therapistReport: TherapistReportCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -177,7 +181,9 @@ final class AppModel: ObservableObject {
         hrv: HRVCoordinator? = nil,
         coach: CoachCoordinator? = nil,
         healthSync: HealthSyncCoordinator? = nil,
-        wearable: WearableCoordinator? = nil
+        wearable: WearableCoordinator? = nil,
+        sessionNotes: SessionNotesCoordinator? = nil,
+        therapistReport: TherapistReportCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -246,6 +252,19 @@ final class AppModel: ObservableObject {
         // shared like the SmartSpectra device license.
         self.wearable = wearable ?? WearableCoordinator(
             credentialStore: KeychainOuraCredentialStore(profileID: profile.id)
+        )
+
+        // One shared notes store, same reasoning as the shared session
+        // store above: the report builder and the notes tab must read
+        // and write the same file, not two coincidentally-matching ones.
+        let sharedNotesStore = FileSessionNoteStore(appSupportSubdirectory: profile.storageRoot)
+        self.sessionNotes = sessionNotes ?? SessionNotesCoordinator(store: sharedNotesStore)
+        self.therapistReport = therapistReport ?? TherapistReportCoordinator(
+            profile: profile,
+            sessionStore: resolvedSessionStore,
+            goalsStore: FileGoalsStore(appSupportSubdirectory: profile.storageRoot),
+            sleepStore: FileSleepStore(appSupportSubdirectory: profile.storageRoot),
+            notesStore: sharedNotesStore
         )
 
         // Deliberately NOT profile-scoped. The SmartSpectra API key is a
@@ -324,7 +343,8 @@ final class AppModel: ObservableObject {
     private func forwardChildChanges() {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
-            meditation, ergonomics, recovery, sleep, hrv, coach, healthSync, wearable
+            meditation, ergonomics, recovery, sleep, hrv, coach, healthSync, wearable,
+            sessionNotes, therapistReport
         ]
 
         for child in children {
