@@ -466,6 +466,9 @@ struct ContentView: View {
                 reportCoordinator: model.therapistReport,
                 notesCoordinator: model.sessionNotes
             )
+
+        case .triggers:
+            AppUsageView(coordinator: model.appUsage, focus: model.focus)
         }
     }
 
@@ -534,21 +537,14 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Fifteen tabs, ordered roughly live → deliberate → retrospective:
-/// Controls, Stress, Emotions, Heart, Desk and Rest are things happening
-/// now; Practice and Game are things you start; Coach, Goals, Insights,
-/// History, Health, Wearables and Provider Report look backwards, or
-/// prepare data to leave the app.
-///
-/// Provider Report itself folds two things (report config, personal
-/// notes) behind one internal picker rather than adding a second
-/// top-level entry — the same restraint Practice already applied to
-/// three sub-features. That keeps this from being worse than it is, but
-/// this is the fifth feature running to flag the fix that actually
-/// matters: grouping Stress, Emotions, Heart, Desk and Rest behind a
-/// single "Signals" tab the way Practice groups its three would bring
-/// this from fifteen entries to eleven without hiding anything a user
-/// can currently reach.
+/// Sixteen tabs now. Provider Report already folds two sub-features
+/// behind one internal picker rather than adding a second top-level
+/// entry, the same restraint Practice applies to three — but that only
+/// slows the growth, it doesn't fix it. Sixth feature running to flag
+/// the same unaddressed consolidation: Stress, Emotions, Heart, Desk and
+/// Rest behind one "Signals" tab, the way Practice already groups its
+/// three, would bring this to twelve without hiding anything reachable
+/// today.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
@@ -565,6 +561,7 @@ enum SidebarTab: String, CaseIterable {
     case health
     case wearables
     case providerReport
+    case triggers
 
     var label: String {
         switch self {
@@ -583,6 +580,7 @@ enum SidebarTab: String, CaseIterable {
         case .health:         return "Health"
         case .wearables:      return "Wearables"
         case .providerReport: return "Provider"
+        case .triggers:       return "Triggers"
         }
     }
 
@@ -605,6 +603,7 @@ enum SidebarTab: String, CaseIterable {
         case .health:   return "Prepare data for Apple Health export"
         case .wearables: return "Cross-check against Oura or Apple Watch"
         case .providerReport: return "Prepare a summary to share with your provider"
+        case .triggers: return "Which apps correlate with higher stress"
         }
     }
 
@@ -631,6 +630,7 @@ enum SidebarTab: String, CaseIterable {
         case .health:   return "tray.and.arrow.up"
         case .wearables: return "applewatch"
         case .providerReport: return "person.text.rectangle"
+        case .triggers: return "macwindow"
         }
     }
 }

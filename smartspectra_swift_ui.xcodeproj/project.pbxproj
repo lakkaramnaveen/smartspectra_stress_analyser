@@ -117,6 +117,12 @@
 		183B767B3032AB6B0078052F /* TherapistReportModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76733032AB6B0078052F /* TherapistReportModels.swift */; };
 		183B767C3032AB6B0078052F /* TherapistReportExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76723032AB6B0078052F /* TherapistReportExporter.swift */; };
 		183B767D3032AB6B0078052F /* TherapistReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76753032AB6B0078052F /* TherapistReportView.swift */; };
+		183B7685303366BE0078052F /* AppUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7684303366BE0078052F /* AppUsageView.swift */; };
+		183B7686303366BE0078052F /* AppStressAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B767F303366BE0078052F /* AppStressAnalyzer.swift */; };
+		183B7687303366BE0078052F /* AppUsageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7680303366BE0078052F /* AppUsageCoordinator.swift */; };
+		183B7688303366BE0078052F /* AppUsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7682303366BE0078052F /* AppUsageMonitor.swift */; };
+		183B7689303366BE0078052F /* AppUsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7683303366BE0078052F /* AppUsageStore.swift */; };
+		183B768A303366BE0078052F /* AppUsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7681303366BE0078052F /* AppUsageModels.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -238,6 +244,12 @@
 		183B76733032AB6B0078052F /* TherapistReportModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportModels.swift; sourceTree = "<group>"; };
 		183B76743032AB6B0078052F /* TherapistReportRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportRenderer.swift; sourceTree = "<group>"; };
 		183B76753032AB6B0078052F /* TherapistReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportView.swift; sourceTree = "<group>"; };
+		183B767F303366BE0078052F /* AppStressAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStressAnalyzer.swift; sourceTree = "<group>"; };
+		183B7680303366BE0078052F /* AppUsageCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageCoordinator.swift; sourceTree = "<group>"; };
+		183B7681303366BE0078052F /* AppUsageModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageModels.swift; sourceTree = "<group>"; };
+		183B7682303366BE0078052F /* AppUsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageMonitor.swift; sourceTree = "<group>"; };
+		183B7683303366BE0078052F /* AppUsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageStore.swift; sourceTree = "<group>"; };
+		183B7684303366BE0078052F /* AppUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -266,6 +278,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B767E303366B00078052F /* usage */,
 				183B766D3032AB5F0078052F /* rap */,
 				183B765C30321EB90078052F /* wearable */,
 				183B764D30321ADB0078052F /* profile */,
@@ -519,6 +532,19 @@
 			path = rap;
 			sourceTree = "<group>";
 		};
+		183B767E303366B00078052F /* usage */ = {
+			isa = PBXGroup;
+			children = (
+				183B767F303366BE0078052F /* AppStressAnalyzer.swift */,
+				183B7680303366BE0078052F /* AppUsageCoordinator.swift */,
+				183B7681303366BE0078052F /* AppUsageModels.swift */,
+				183B7682303366BE0078052F /* AppUsageMonitor.swift */,
+				183B7683303366BE0078052F /* AppUsageStore.swift */,
+				183B7684303366BE0078052F /* AppUsageView.swift */,
+			);
+			path = usage;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -646,6 +672,12 @@
 				183B758A302377A70078052F /* StressVisualizationView.swift in Sources */,
 				183B75D4302B7AC70078052F /* ProgressRing.swift in Sources */,
 				183B75D5302B7AC70078052F /* StreakCalculator.swift in Sources */,
+				183B7685303366BE0078052F /* AppUsageView.swift in Sources */,
+				183B7686303366BE0078052F /* AppStressAnalyzer.swift in Sources */,
+				183B7687303366BE0078052F /* AppUsageCoordinator.swift in Sources */,
+				183B7688303366BE0078052F /* AppUsageMonitor.swift in Sources */,
+				183B7689303366BE0078052F /* AppUsageStore.swift in Sources */,
+				183B768A303366BE0078052F /* AppUsageModels.swift in Sources */,
 				183B764730316E0B0078052F /* HealthSyncStore.swift in Sources */,
 				183B764830316E0B0078052F /* HealthSyncCoordinator.swift in Sources */,
 				183B764930316E0B0078052F /* HealthSyncView.swift in Sources */,

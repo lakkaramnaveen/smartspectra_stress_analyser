@@ -25,6 +25,7 @@ import SwiftUI
 ///   - `WearableCoordinator`         — cross-checks camera readings against Oura/Watch
 ///   - `SessionNotesCoordinator`     — personal journaling
 ///   - `TherapistReportCoordinator`  — assembles and exports a provider-facing summary
+///   - `AppUsageCoordinator`         — opt-in, session-scoped app-focus tracking
 ///
 /// One thing this class does *not* own: which profile is active.
 /// `AppModel` is now scoped to a single `UserProfile` at construction
@@ -120,6 +121,7 @@ final class AppModel: ObservableObject {
     let wearable: WearableCoordinator
     let sessionNotes: SessionNotesCoordinator
     let therapistReport: TherapistReportCoordinator
+    let appUsage: AppUsageCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
     /// into our own. See `forwardChildChanges()`.
@@ -183,7 +185,8 @@ final class AppModel: ObservableObject {
         healthSync: HealthSyncCoordinator? = nil,
         wearable: WearableCoordinator? = nil,
         sessionNotes: SessionNotesCoordinator? = nil,
-        therapistReport: TherapistReportCoordinator? = nil
+        therapistReport: TherapistReportCoordinator? = nil,
+        appUsage: AppUsageCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
         // Phase 1 — assign EVERY stored property.
@@ -267,6 +270,11 @@ final class AppModel: ObservableObject {
             notesStore: sharedNotesStore
         )
 
+        self.appUsage = appUsage ?? AppUsageCoordinator(
+            store: FileAppUsageStore(appSupportSubdirectory: profile.storageRoot),
+            sessionStore: resolvedSessionStore
+        )
+
         // Deliberately NOT profile-scoped. The SmartSpectra API key is a
         // household/device license, not personal data — every family
         // member sharing this Mac shares the same subscription, so it
@@ -344,7 +352,7 @@ final class AppModel: ObservableObject {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
             meditation, ergonomics, recovery, sleep, hrv, coach, healthSync, wearable,
-            sessionNotes, therapistReport
+            sessionNotes, therapistReport, appUsage
         ]
 
         for child in children {
@@ -389,6 +397,11 @@ final class AppModel: ObservableObject {
         seedRecoveryBaselineIfNeeded()
         hrv.startSession()
         healthSync.startSession()
+        // No-ops internally unless the person has explicitly enabled
+        // tracking — see the design note on `AppUsageCoordinator` for
+        // why this is tied to Composure's own session lifecycle rather
+        // than running independently.
+        appUsage.startMonitoring()
     }
 
     func stop() {
@@ -431,6 +444,7 @@ final class AppModel: ObservableObject {
         // partial data — a session cut short by "Stop" still happened.
         coach.flush()
         healthSync.endSession()
+        appUsage.stopMonitoring()
 
         // A new session gives the sleep association fresh data to join
         // against, so refresh it once the recording has landed.
