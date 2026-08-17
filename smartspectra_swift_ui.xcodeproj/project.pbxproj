@@ -109,6 +109,14 @@
 		183B766830321ECF0078052F /* WearableTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766230321ECF0078052F /* WearableTabView.swift */; };
 		183B766B30321ED80078052F /* AppleWatchImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766930321ED80078052F /* AppleWatchImporter.swift */; };
 		183B766C30321ED80078052F /* BiometricFusionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766A30321ED80078052F /* BiometricFusionEngine.swift */; };
+		183B76763032AB6B0078052F /* TherapistReportCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76713032AB6B0078052F /* TherapistReportCoordinator.swift */; };
+		183B76773032AB6B0078052F /* TherapistReportRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76743032AB6B0078052F /* TherapistReportRenderer.swift */; };
+		183B76783032AB6B0078052F /* SessionNotesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766F3032AB6B0078052F /* SessionNotesCoordinator.swift */; };
+		183B76793032AB6B0078052F /* SessionNoteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766E3032AB6B0078052F /* SessionNoteModels.swift */; };
+		183B767A3032AB6B0078052F /* TherapistReportBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76703032AB6B0078052F /* TherapistReportBuilder.swift */; };
+		183B767B3032AB6B0078052F /* TherapistReportModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76733032AB6B0078052F /* TherapistReportModels.swift */; };
+		183B767C3032AB6B0078052F /* TherapistReportExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76723032AB6B0078052F /* TherapistReportExporter.swift */; };
+		183B767D3032AB6B0078052F /* TherapistReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76753032AB6B0078052F /* TherapistReportView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -222,6 +230,14 @@
 		183B766230321ECF0078052F /* WearableTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WearableTabView.swift; sourceTree = "<group>"; };
 		183B766930321ED80078052F /* AppleWatchImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleWatchImporter.swift; sourceTree = "<group>"; };
 		183B766A30321ED80078052F /* BiometricFusionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricFusionEngine.swift; sourceTree = "<group>"; };
+		183B766E3032AB6B0078052F /* SessionNoteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionNoteModels.swift; sourceTree = "<group>"; };
+		183B766F3032AB6B0078052F /* SessionNotesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionNotesCoordinator.swift; sourceTree = "<group>"; };
+		183B76703032AB6B0078052F /* TherapistReportBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportBuilder.swift; sourceTree = "<group>"; };
+		183B76713032AB6B0078052F /* TherapistReportCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportCoordinator.swift; sourceTree = "<group>"; };
+		183B76723032AB6B0078052F /* TherapistReportExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportExporter.swift; sourceTree = "<group>"; };
+		183B76733032AB6B0078052F /* TherapistReportModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportModels.swift; sourceTree = "<group>"; };
+		183B76743032AB6B0078052F /* TherapistReportRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportRenderer.swift; sourceTree = "<group>"; };
+		183B76753032AB6B0078052F /* TherapistReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TherapistReportView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -250,6 +266,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B766D3032AB5F0078052F /* rap */,
 				183B765C30321EB90078052F /* wearable */,
 				183B764D30321ADB0078052F /* profile */,
 				183B764030316DF70078052F /* health */,
@@ -487,6 +504,21 @@
 			path = wearable;
 			sourceTree = "<group>";
 		};
+		183B766D3032AB5F0078052F /* rap */ = {
+			isa = PBXGroup;
+			children = (
+				183B766E3032AB6B0078052F /* SessionNoteModels.swift */,
+				183B766F3032AB6B0078052F /* SessionNotesCoordinator.swift */,
+				183B76703032AB6B0078052F /* TherapistReportBuilder.swift */,
+				183B76713032AB6B0078052F /* TherapistReportCoordinator.swift */,
+				183B76723032AB6B0078052F /* TherapistReportExporter.swift */,
+				183B76733032AB6B0078052F /* TherapistReportModels.swift */,
+				183B76743032AB6B0078052F /* TherapistReportRenderer.swift */,
+				183B76753032AB6B0078052F /* TherapistReportView.swift */,
+			);
+			path = rap;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -655,6 +687,14 @@
 				183B765530321AF60078052F /* ProfileModels.swift in Sources */,
 				183B765630321AF60078052F /* FamilyDashboardView.swift in Sources */,
 				183B765730321AF60078052F /* FamilyDashboardCoordinator.swift in Sources */,
+				183B76763032AB6B0078052F /* TherapistReportCoordinator.swift in Sources */,
+				183B76773032AB6B0078052F /* TherapistReportRenderer.swift in Sources */,
+				183B76783032AB6B0078052F /* SessionNotesCoordinator.swift in Sources */,
+				183B76793032AB6B0078052F /* SessionNoteModels.swift in Sources */,
+				183B767A3032AB6B0078052F /* TherapistReportBuilder.swift in Sources */,
+				183B767B3032AB6B0078052F /* TherapistReportModels.swift in Sources */,
+				183B767C3032AB6B0078052F /* TherapistReportExporter.swift in Sources */,
+				183B767D3032AB6B0078052F /* TherapistReportView.swift in Sources */,
 				183B765830321AF60078052F /* ProfileStore.swift in Sources */,
 				183B765A30321AF60078052F /* ProfileCoordinator.swift in Sources */,
 				183B765B30321AF60078052F /* ProfileSwitcherView.swift in Sources */,
