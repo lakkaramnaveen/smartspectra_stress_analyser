@@ -130,6 +130,13 @@
 		183B769D303399280078052F /* NoiseLevelMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7696303399280078052F /* NoiseLevelMonitor.swift */; };
 		183B769F303399280078052F /* LightingAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7695303399280078052F /* LightingAnalyzer.swift */; };
 		183B76A1303399280078052F /* EnvironmentSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7692303399280078052F /* EnvironmentSectionView.swift */; };
+		183B76AB3033FA310078052F /* WellnessPulseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76AA3033FA310078052F /* WellnessPulseView.swift */; };
+		183B76AC3033FA310078052F /* BiofeedbackArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A53033FA310078052F /* BiofeedbackArtView.swift */; };
+		183B76AD3033FA310078052F /* AmbientToneEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A33033FA310078052F /* AmbientToneEngine.swift */; };
+		183B76AE3033FA310078052F /* ParticleFieldEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A63033FA310078052F /* ParticleFieldEngine.swift */; };
+		183B76B03033FA310078052F /* WellnessPulseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A93033FA310078052F /* WellnessPulseModels.swift */; };
+		183B76B13033FA310078052F /* WellnessPulseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A83033FA310078052F /* WellnessPulseCoordinator.swift */; };
+		183B76B23033FA310078052F /* ArtModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A43033FA310078052F /* ArtModels.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -264,6 +271,13 @@
 		183B7694303399280078052F /* EnvironmentStressAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentStressAnalyzer.swift; sourceTree = "<group>"; };
 		183B7695303399280078052F /* LightingAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightingAnalyzer.swift; sourceTree = "<group>"; };
 		183B7696303399280078052F /* NoiseLevelMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseLevelMonitor.swift; sourceTree = "<group>"; };
+		183B76A33033FA310078052F /* AmbientToneEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbientToneEngine.swift; sourceTree = "<group>"; };
+		183B76A43033FA310078052F /* ArtModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtModels.swift; sourceTree = "<group>"; };
+		183B76A53033FA310078052F /* BiofeedbackArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiofeedbackArtView.swift; sourceTree = "<group>"; };
+		183B76A63033FA310078052F /* ParticleFieldEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleFieldEngine.swift; sourceTree = "<group>"; };
+		183B76A83033FA310078052F /* WellnessPulseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessPulseCoordinator.swift; sourceTree = "<group>"; };
+		183B76A93033FA310078052F /* WellnessPulseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessPulseModels.swift; sourceTree = "<group>"; };
+		183B76AA3033FA310078052F /* WellnessPulseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessPulseView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -292,6 +306,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B76A23033FA130078052F /* wellness */,
 				183B768B3033990F0078052F /* environ */,
 				183B767E303366B00078052F /* usage */,
 				183B766D3032AB5F0078052F /* rap */,
@@ -574,6 +589,20 @@
 			path = environ;
 			sourceTree = "<group>";
 		};
+		183B76A23033FA130078052F /* wellness */ = {
+			isa = PBXGroup;
+			children = (
+				183B76A33033FA310078052F /* AmbientToneEngine.swift */,
+				183B76A43033FA310078052F /* ArtModels.swift */,
+				183B76A53033FA310078052F /* BiofeedbackArtView.swift */,
+				183B76A63033FA310078052F /* ParticleFieldEngine.swift */,
+				183B76A83033FA310078052F /* WellnessPulseCoordinator.swift */,
+				183B76A93033FA310078052F /* WellnessPulseModels.swift */,
+				183B76AA3033FA310078052F /* WellnessPulseView.swift */,
+			);
+			path = wellness;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -710,6 +739,13 @@
 				183B764730316E0B0078052F /* HealthSyncStore.swift in Sources */,
 				183B764830316E0B0078052F /* HealthSyncCoordinator.swift in Sources */,
 				183B764930316E0B0078052F /* HealthSyncView.swift in Sources */,
+				183B76AB3033FA310078052F /* WellnessPulseView.swift in Sources */,
+				183B76AC3033FA310078052F /* BiofeedbackArtView.swift in Sources */,
+				183B76AD3033FA310078052F /* AmbientToneEngine.swift in Sources */,
+				183B76AE3033FA310078052F /* ParticleFieldEngine.swift in Sources */,
+				183B76B03033FA310078052F /* WellnessPulseModels.swift in Sources */,
+				183B76B13033FA310078052F /* WellnessPulseCoordinator.swift in Sources */,
+				183B76B23033FA310078052F /* ArtModels.swift in Sources */,
 				183B764A30316E0B0078052F /* HealthIdentifier.swift in Sources */,
 				183B764B30316E0B0078052F /* HealthSyncBatcher.swift in Sources */,
 				183B764C30316E0B0078052F /* HealthSyncModels.swift in Sources */,
@@ -797,6 +833,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv5";
+				OTHER_CPLUSPLUSFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";

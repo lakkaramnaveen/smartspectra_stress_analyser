@@ -465,7 +465,8 @@ struct ContentView: View {
         case .providerReport:
             TherapistReportView(
                 reportCoordinator: model.therapistReport,
-                notesCoordinator: model.sessionNotes
+                notesCoordinator: model.sessionNotes,
+                pulseCoordinator: model.wellnessPulse
             )
 
         case .triggers:
@@ -502,6 +503,9 @@ struct ContentView: View {
                 MeditationLibraryView(coordinator: model.meditation)
             case .focus:
                 FocusTabView(coordinator: model.focus)
+            case .art:
+                BiofeedbackArtView()
+                    .environmentObject(model)
             }
         }
     }
@@ -580,12 +584,14 @@ enum PracticeTab: String, CaseIterable {
     case breathing
     case meditation
     case focus
+    case art
 
     var label: String {
         switch self {
         case .breathing:  return "Breathe"
         case .meditation: return "Meditate"
         case .focus:      return "Focus"
+        case .art:        return "Art"
         }
     }
 }

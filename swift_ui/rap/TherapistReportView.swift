@@ -3,6 +3,7 @@ import SwiftUI
 struct TherapistReportView: View {
     @ObservedObject var reportCoordinator: TherapistReportCoordinator
     @ObservedObject var notesCoordinator: SessionNotesCoordinator
+    @ObservedObject var pulseCoordinator: WellnessPulseCoordinator
 
     @State private var activeTab: ProviderReportTab = .report
     @State private var showingPreviewSheet = false
@@ -24,13 +25,21 @@ struct TherapistReportView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.xl) {
-                    disclosureCard
+                    // Only for Report/Notes — the therapist-specific
+                    // wording ("HIPAA," "ask your provider") is the
+                    // wrong context for Wellness Pulse, which has its
+                    // own, differently-scoped notice built in below.
+                    if activeTab != .wellnessPulse {
+                        disclosureCard
+                    }
 
                     switch activeTab {
                     case .report:
                         reportBuilderSection
                     case .notes:
                         notesSection
+                    case .wellnessPulse:
+                        WellnessPulseView(coordinator: pulseCoordinator)
                     }
                 }
                 .padding(Spacing.xl)
@@ -319,18 +328,20 @@ private struct PreviewSheet: View {
 
 // MARK: - Sub-tab
 
-/// Report configuration and note-taking live behind one internal
-/// picker, the same way Practice groups Breathe/Meditate/Focus — one
-/// fewer top-level tab than treating these as separate entries would
-/// have cost.
+/// Report configuration, note-taking, and the opt-in Wellness Pulse
+/// export live behind one internal picker, the same way Practice groups
+/// Breathe/Meditate/Focus/Art — three fewer top-level tabs than treating
+/// these as separate entries would have cost.
 enum ProviderReportTab: String, CaseIterable {
     case report
     case notes
+    case wellnessPulse
 
     var label: String {
         switch self {
         case .report: return "Report"
         case .notes: return "Notes"
+        case .wellnessPulse: return "Org Pulse"
         }
     }
 }
@@ -347,7 +358,11 @@ enum ProviderReportTab: String, CaseIterable {
             sleepStore: InMemorySleepStore(),
             notesStore: InMemorySessionNoteStore()
         ),
-        notesCoordinator: SessionNotesCoordinator(store: InMemorySessionNoteStore())
+        notesCoordinator: SessionNotesCoordinator(store: InMemorySessionNoteStore()),
+        pulseCoordinator: WellnessPulseCoordinator(
+            store: InMemoryWellnessPulseStore(),
+            sessionStore: sessionStore
+        )
     )
     .frame(width: 440, height: 800)
     .background(BrandColor.slate)

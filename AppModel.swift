@@ -26,6 +26,7 @@ import SwiftUI
 ///   - `SessionNotesCoordinator`     — personal journaling
 ///   - `TherapistReportCoordinator`  — assembles and exports a provider-facing summary
 ///   - `AppUsageCoordinator`         — opt-in, session-scoped app-focus tracking
+///   - `WellnessPulseCoordinator`    — opt-in, identity-free coarse export for a workplace program
 ///   - `EnvironmentCoordinator`      — lighting always-on, noise opt-in, correlated with stress
 ///
 /// One thing this class does *not* own: which profile is active.
@@ -123,6 +124,7 @@ final class AppModel: ObservableObject {
     let sessionNotes: SessionNotesCoordinator
     let therapistReport: TherapistReportCoordinator
     let appUsage: AppUsageCoordinator
+    let wellnessPulse: WellnessPulseCoordinator
     let environment: EnvironmentCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
@@ -189,6 +191,7 @@ final class AppModel: ObservableObject {
         sessionNotes: SessionNotesCoordinator? = nil,
         therapistReport: TherapistReportCoordinator? = nil,
         appUsage: AppUsageCoordinator? = nil,
+        wellnessPulse: WellnessPulseCoordinator? = nil,
         environment: EnvironmentCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
@@ -278,6 +281,15 @@ final class AppModel: ObservableObject {
             sessionStore: resolvedSessionStore
         )
 
+        // Reads the same shared session store as everything else — no
+        // separate history of its own, since it only ever computes a
+        // fresh band on demand rather than tracking anything
+        // continuously.
+        self.wellnessPulse = wellnessPulse ?? WellnessPulseCoordinator(
+            store: FileWellnessPulseStore(appSupportSubdirectory: profile.storageRoot),
+            sessionStore: resolvedSessionStore
+        )
+
         self.environment = environment ?? EnvironmentCoordinator(
             store: FileEnvironmentStore(appSupportSubdirectory: profile.storageRoot),
             sessionStore: resolvedSessionStore
@@ -360,7 +372,7 @@ final class AppModel: ObservableObject {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
             meditation, ergonomics, recovery, sleep, hrv, coach, healthSync, wearable,
-            sessionNotes, therapistReport, appUsage, environment
+            sessionNotes, therapistReport, appUsage, environment, wellnessPulse
         ]
 
         for child in children {
