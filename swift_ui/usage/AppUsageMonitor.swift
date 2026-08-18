@@ -10,6 +10,25 @@ import AppKit
 /// it has no way to see what's inside that app. That ceiling isn't a
 /// restraint this class is choosing to honour — it's the only thing the
 /// framework can technically report.
+///
+/// ## A note on how this listens for activation
+///
+/// This uses `NotificationCenter`'s async-sequence API
+/// (`notifications(named:object:)`) rather than the older block-based
+/// `addObserver(forName:object:queue:using:)`. The block-based form
+/// takes a `@Sendable`, non-isolated closure — `queue: .main` only
+/// promises *where* it runs at runtime, but isolation checking goes by
+/// the closure's declared type, not that runtime guarantee. Calling a
+/// `@MainActor` method like `handleActivation` from inside it is a real
+/// compile-time isolation violation under strict concurrency, not a
+/// false positive.
+///
+/// The async-sequence form sidesteps this entirely: the whole
+/// `for await` loop runs inside one `@MainActor`-isolated `Task`, so
+/// calling `handleActivation` from within it is an ordinary same-actor
+/// call with no isolation boundary to cross. It also removes the
+/// `NSObjectProtocol` observer token bookkeeping in favour of a single
+/// cancellable `Task`.
 @MainActor
 final class AppUsageMonitor {
 
@@ -20,7 +39,7 @@ final class AppUsageMonitor {
     private var currentBundleID: String?
     private var currentAppName: String?
     private var currentStart: Date?
-    private var observer: NSObjectProtocol?
+    private var observationTask: Task<Void, Never>?
 
     func start() {
         stop()  // idempotent — safe to call while already running
@@ -33,23 +52,22 @@ final class AppUsageMonitor {
             beginTracking(app)
         }
 
-        observer = NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.didActivateApplicationNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
-                return
+        observationTask = Task { [weak self] in
+            let activations = NSWorkspace.shared.notificationCenter.notifications(
+                named: NSWorkspace.didActivateApplicationNotification
+            )
+            for await notification in activations {
+                guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
+                    continue
+                }
+                self?.handleActivation(app)
             }
-            self?.handleActivation(app)
         }
     }
 
     func stop() {
-        if let observer {
-            NSWorkspace.shared.notificationCenter.removeObserver(observer)
-        }
-        observer = nil
+        observationTask?.cancel()
+        observationTask = nil
         closeCurrentSession(at: Date())
     }
 
@@ -86,8 +104,6 @@ final class AppUsageMonitor {
     }
 
     deinit {
-        if let observer {
-            NSWorkspace.shared.notificationCenter.removeObserver(observer)
-        }
+        observationTask?.cancel()
     }
 }
