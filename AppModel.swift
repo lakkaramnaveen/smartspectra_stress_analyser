@@ -27,6 +27,7 @@ import SwiftUI
 ///   - `TherapistReportCoordinator`  — assembles and exports a provider-facing summary
 ///   - `AppUsageCoordinator`         — opt-in, session-scoped app-focus tracking
 ///   - `WellnessPulseCoordinator`    — opt-in, identity-free coarse export for a workplace program
+///   - `HomeAutomationCoordinator`   — triggers a user-built Shortcut on sustained stress or recovery
 ///   - `EnvironmentCoordinator`      — lighting always-on, noise opt-in, correlated with stress
 ///
 /// One thing this class does *not* own: which profile is active.
@@ -125,6 +126,7 @@ final class AppModel: ObservableObject {
     let therapistReport: TherapistReportCoordinator
     let appUsage: AppUsageCoordinator
     let wellnessPulse: WellnessPulseCoordinator
+    let homeAutomation: HomeAutomationCoordinator
     let environment: EnvironmentCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
@@ -192,6 +194,7 @@ final class AppModel: ObservableObject {
         therapistReport: TherapistReportCoordinator? = nil,
         appUsage: AppUsageCoordinator? = nil,
         wellnessPulse: WellnessPulseCoordinator? = nil,
+        homeAutomation: HomeAutomationCoordinator? = nil,
         environment: EnvironmentCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
@@ -290,6 +293,10 @@ final class AppModel: ObservableObject {
             sessionStore: resolvedSessionStore
         )
 
+        self.homeAutomation = homeAutomation ?? HomeAutomationCoordinator(
+            store: FileHomeAutomationStore(appSupportSubdirectory: profile.storageRoot)
+        )
+
         self.environment = environment ?? EnvironmentCoordinator(
             store: FileEnvironmentStore(appSupportSubdirectory: profile.storageRoot),
             sessionStore: resolvedSessionStore
@@ -372,7 +379,7 @@ final class AppModel: ObservableObject {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
             meditation, ergonomics, recovery, sleep, hrv, coach, healthSync, wearable,
-            sessionNotes, therapistReport, appUsage, environment, wellnessPulse
+            sessionNotes, therapistReport, appUsage, environment, wellnessPulse, homeAutomation
         ]
 
         for child in children {
@@ -750,6 +757,12 @@ final class AppModel: ObservableObject {
 
         prediction.ingest(score: score, interventionActive: attentionOccupied)
         recovery.ingest(score: score, suppressed: attentionOccupied)
+
+        // Reuses `recovery.hasSettled` as its own recovery signal
+        // rather than re-detecting "calmed down" independently — one
+        // definition of recovered in this app, not two that could
+        // quietly disagree.
+        homeAutomation.ingest(stressScore: score, hasSettled: recovery.hasSettled)
 
         // Coach needs to know *which* intervention is running, not just
         // whether one is — it's measuring per-technique effectiveness,

@@ -21,19 +21,23 @@ final class InsightsViewModel: ObservableObject {
     @Published private(set) var state: LoadState = .idle
     @Published private(set) var insights: [Insight] = []
     @Published private(set) var aggregates: InsightAggregates = .empty
+    @Published private(set) var sustainedPattern: SustainedPatternObservation?
 
     private let store: SessionStoring
     private let aggregator: SessionAggregator
     private let generator: InsightGenerator
+    private let trendAnalyzer: LongTermTrendAnalyzer
 
     init(
         store: SessionStoring? = nil,
         aggregator: SessionAggregator = SessionAggregator(),
-        generator: InsightGenerator = InsightGenerator()
+        generator: InsightGenerator = InsightGenerator(),
+        trendAnalyzer: LongTermTrendAnalyzer = LongTermTrendAnalyzer()
     ) {
         self.store = store ?? FileSessionStore()
         self.aggregator = aggregator
         self.generator = generator
+        self.trendAnalyzer = trendAnalyzer
     }
 
     func refresh() async {
@@ -59,15 +63,18 @@ final class InsightsViewModel: ObservableObject {
 
         let aggregator = self.aggregator
         let generator = self.generator
+        let trendAnalyzer = self.trendAnalyzer
 
-        let result = await Task.detached(priority: .userInitiated) { () -> (InsightAggregates, [Insight]) in
+        let result = await Task.detached(priority: .userInitiated) { () -> (InsightAggregates, [Insight], SustainedPatternObservation?) in
             let aggregates = aggregator.aggregate(recordings)
             let insights = generator.generate(from: aggregates)
-            return (aggregates, insights)
+            let pattern = trendAnalyzer.observe(from: aggregates.weeklyTrend)
+            return (aggregates, insights, pattern)
         }.value
 
         aggregates = result.0
         insights = result.1
+        sustainedPattern = result.2
         state = .ready
     }
 }

@@ -137,6 +137,12 @@
 		183B76B03033FA310078052F /* WellnessPulseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A93033FA310078052F /* WellnessPulseModels.swift */; };
 		183B76B13033FA310078052F /* WellnessPulseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A83033FA310078052F /* WellnessPulseCoordinator.swift */; };
 		183B76B23033FA310078052F /* ArtModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76A43033FA310078052F /* ArtModels.swift */; };
+		183B76BC3034C3290078052F /* HomeAutomationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76B53034C3290078052F /* HomeAutomationModels.swift */; };
+		183B76BD3034C3290078052F /* HomeAutomationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76B73034C3290078052F /* HomeAutomationView.swift */; };
+		183B76BF3034C3290078052F /* ShortcutsRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76BB3034C3290078052F /* ShortcutsRunner.swift */; };
+		183B76C03034C3290078052F /* HomeAutomationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76B63034C3290078052F /* HomeAutomationPolicy.swift */; };
+		183B76C23034C3290078052F /* HomeAutomationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76B43034C3290078052F /* HomeAutomationCoordinator.swift */; };
+		183B76C33034C3290078052F /* LongTermTrendAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76BA3034C3290078052F /* LongTermTrendAnalyzer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -278,6 +284,12 @@
 		183B76A83033FA310078052F /* WellnessPulseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessPulseCoordinator.swift; sourceTree = "<group>"; };
 		183B76A93033FA310078052F /* WellnessPulseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessPulseModels.swift; sourceTree = "<group>"; };
 		183B76AA3033FA310078052F /* WellnessPulseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessPulseView.swift; sourceTree = "<group>"; };
+		183B76B43034C3290078052F /* HomeAutomationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAutomationCoordinator.swift; sourceTree = "<group>"; };
+		183B76B53034C3290078052F /* HomeAutomationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAutomationModels.swift; sourceTree = "<group>"; };
+		183B76B63034C3290078052F /* HomeAutomationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAutomationPolicy.swift; sourceTree = "<group>"; };
+		183B76B73034C3290078052F /* HomeAutomationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAutomationView.swift; sourceTree = "<group>"; };
+		183B76BA3034C3290078052F /* LongTermTrendAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongTermTrendAnalyzer.swift; sourceTree = "<group>"; };
+		183B76BB3034C3290078052F /* ShortcutsRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsRunner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -306,6 +318,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B76B33034C3110078052F /* home */,
 				183B76A23033FA130078052F /* wellness */,
 				183B768B3033990F0078052F /* environ */,
 				183B767E303366B00078052F /* usage */,
@@ -603,6 +616,19 @@
 			path = wellness;
 			sourceTree = "<group>";
 		};
+		183B76B33034C3110078052F /* home */ = {
+			isa = PBXGroup;
+			children = (
+				183B76B43034C3290078052F /* HomeAutomationCoordinator.swift */,
+				183B76B53034C3290078052F /* HomeAutomationModels.swift */,
+				183B76B63034C3290078052F /* HomeAutomationPolicy.swift */,
+				183B76B73034C3290078052F /* HomeAutomationView.swift */,
+				183B76BA3034C3290078052F /* LongTermTrendAnalyzer.swift */,
+				183B76BB3034C3290078052F /* ShortcutsRunner.swift */,
+			);
+			path = home;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -711,6 +737,12 @@
 				183B7622302E34B60078052F /* SleepStore.swift in Sources */,
 				183B7583302377A70078052F /* BalloonHuntGameView.swift in Sources */,
 				183B7584302377A70078052F /* RollingBuffer.swift in Sources */,
+				183B76BC3034C3290078052F /* HomeAutomationModels.swift in Sources */,
+				183B76BD3034C3290078052F /* HomeAutomationView.swift in Sources */,
+				183B76BF3034C3290078052F /* ShortcutsRunner.swift in Sources */,
+				183B76C03034C3290078052F /* HomeAutomationPolicy.swift in Sources */,
+				183B76C23034C3290078052F /* HomeAutomationCoordinator.swift in Sources */,
+				183B76C33034C3290078052F /* LongTermTrendAnalyzer.swift in Sources */,
 				183B7586302377A70078052F /* StressScoringEngine.swift in Sources */,
 				183B76393031680B0078052F /* CoachEngine.swift in Sources */,
 				183B763A3031680B0078052F /* CoachStore.swift in Sources */,

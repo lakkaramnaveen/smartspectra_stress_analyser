@@ -104,7 +104,49 @@ struct InsightsDashboardView: View {
             WeeklyTrendChart(points: viewModel.aggregates.weeklyTrend)
         }
 
+        if let pattern = viewModel.sustainedPattern {
+            sustainedPatternCard(pattern)
+        }
+
         methodologyNote
+    }
+
+    /// Deliberately not styled as an alarm — no red banner, no
+    /// exclamation iconography. A sustained pattern over weeks is worth
+    /// noticing calmly, and the framing shouldn't itself become a
+    /// stressor. Resources only appear when `warrantsSupportPointer` is
+    /// true, gated in `LongTermTrendAnalyzer` on a real, sustained run —
+    /// not shown for an ordinarily demanding fortnight.
+    private func sustainedPatternCard(_ pattern: SustainedPatternObservation) -> some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            Text(pattern.headline)
+                .font(.callout.weight(.semibold))
+                .foregroundStyle(.white)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(pattern.detail)
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.7))
+                .fixedSize(horizontal: false, vertical: true)
+
+            if pattern.warrantsSupportPointer {
+                Divider().opacity(0.15)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("If this is weighing on you, you don't have to sort it out alone.")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.85))
+
+                    Text("You can put together a summary of your own readings to bring to a doctor or therapist from the Provider tab. And if things ever feel like more than you can manage, the 988 Suicide & Crisis Lifeline (call or text 988 in the US) is there any time, for any kind of struggle — not only a crisis in the narrowest sense.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.white.opacity(0.65))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+        .padding(Spacing.lg)
+        .background(Color.white.opacity(0.05))
+        .cornerRadius(12)
     }
 
     /// Sits at the bottom of the dashboard permanently. Someone acting on

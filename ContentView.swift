@@ -471,6 +471,9 @@ struct ContentView: View {
 
         case .triggers:
             AppUsageView(coordinator: model.appUsage, focus: model.focus)
+
+        case .homeAutomation:
+            HomeAutomationView(coordinator: model.homeAutomation)
         }
     }
 
@@ -598,15 +601,14 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Sixteen tabs — unchanged by this round, because Environment didn't
-/// get one. It folds into the existing Workspace tab (renamed from
-/// "Desk") behind its own internal picker, the same restraint Practice
-/// and Provider Report already applied — three features now actively
-/// avoiding the problem rather than just naming it. That still doesn't
-/// fix the sixteen that already exist: Stress, Emotions, Heart, Desk
-/// and Rest behind one "Signals" tab, the way Practice groups its
-/// three, would bring this to twelve without hiding anything reachable
-/// today.
+/// Seventeen tabs. Sixteen came from the previous round unchanged;
+/// this one adds exactly one, and honestly — Home Automation is a
+/// one-time integration setup, not a live signal, a deliberate
+/// practice, or a retrospective view, so it doesn't have a natural
+/// existing home the way the last four additions did. The Signals
+/// consolidation (Stress, Emotions, Heart, Desk, Rest → one tab) would
+/// still bring this to thirteen without hiding anything reachable
+/// today; it just hasn't happened yet.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
@@ -624,6 +626,7 @@ enum SidebarTab: String, CaseIterable {
     case wearables
     case providerReport
     case triggers
+    case homeAutomation
 
     var label: String {
         switch self {
@@ -643,6 +646,7 @@ enum SidebarTab: String, CaseIterable {
         case .wearables:      return "Wearables"
         case .providerReport: return "Provider"
         case .triggers:       return "Triggers"
+        case .homeAutomation: return "Home"
         }
     }
 
@@ -666,6 +670,7 @@ enum SidebarTab: String, CaseIterable {
         case .wearables: return "Cross-check against Oura or Apple Watch"
         case .providerReport: return "Prepare a summary to share with your provider"
         case .triggers: return "Which apps correlate with higher stress"
+        case .homeAutomation: return "Trigger a Shortcut from your stress readings"
         }
     }
 
@@ -693,6 +698,7 @@ enum SidebarTab: String, CaseIterable {
         case .wearables: return "applewatch"
         case .providerReport: return "person.text.rectangle"
         case .triggers: return "macwindow"
+        case .homeAutomation: return "house"
         }
     }
 }
