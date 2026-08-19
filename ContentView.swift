@@ -48,6 +48,14 @@ struct ContentView: View {
         }
         .animation(.easeInOut, value: showGameFullscreen)
         .animation(.spring(response: 0.4), value: model.prediction.activeAlert)
+        .onChange(of: model.prediction.activeAlert) { oldAlert, newAlert in
+            // Reacts to the same transition the visual banner already
+            // reacts to, rather than re-detecting stress peaks with a
+            // second, independent threshold check.
+            guard oldAlert == nil, newAlert != nil,
+                  model.appPreferences.preferences.soundAlertsEnabled else { return }
+            SoundAlertPlayer.playAlertSound()
+        }
         .animation(.easeInOut, value: model.breathing.activeTechnique)
         .animation(.easeInOut, value: model.focus.isActive)
         .animation(.easeInOut, value: model.meditation.activeMeditation)
@@ -474,6 +482,9 @@ struct ContentView: View {
 
         case .homeAutomation:
             HomeAutomationView(coordinator: model.homeAutomation)
+
+        case .settings:
+            SettingsView(coordinator: model.appPreferences)
         }
     }
 
@@ -601,14 +612,12 @@ enum PracticeTab: String, CaseIterable {
 
 // MARK: - Sidebar Tab
 
-/// Seventeen tabs. Sixteen came from the previous round unchanged;
-/// this one adds exactly one, and honestly — Home Automation is a
-/// one-time integration setup, not a live signal, a deliberate
-/// practice, or a retrospective view, so it doesn't have a natural
-/// existing home the way the last four additions did. The Signals
-/// consolidation (Stress, Emotions, Heart, Desk, Rest → one tab) would
-/// still bring this to thirteen without hiding anything reachable
-/// today; it just hasn't happened yet.
+/// Eighteen tabs. Settings is a genuinely new category — a one-time
+/// app-shell configuration screen, not a live signal, a practice, or a
+/// retrospective view — so unlike the last several additions it doesn't
+/// have a natural existing home to fold into. The Signals consolidation
+/// (Stress, Emotions, Heart, Desk, Rest → one tab) would still bring
+/// this to fourteen without hiding anything reachable today.
 enum SidebarTab: String, CaseIterable {
     case controls
     case stress
@@ -627,6 +636,7 @@ enum SidebarTab: String, CaseIterable {
     case providerReport
     case triggers
     case homeAutomation
+    case settings
 
     var label: String {
         switch self {
@@ -647,6 +657,7 @@ enum SidebarTab: String, CaseIterable {
         case .providerReport: return "Provider"
         case .triggers:       return "Triggers"
         case .homeAutomation: return "Home"
+        case .settings:       return "Settings"
         }
     }
 
@@ -671,6 +682,7 @@ enum SidebarTab: String, CaseIterable {
         case .providerReport: return "Prepare a summary to share with your provider"
         case .triggers: return "Which apps correlate with higher stress"
         case .homeAutomation: return "Trigger a Shortcut from your stress readings"
+        case .settings: return "Appearance, sound, and launch behavior"
         }
     }
 
@@ -699,6 +711,7 @@ enum SidebarTab: String, CaseIterable {
         case .providerReport: return "person.text.rectangle"
         case .triggers: return "macwindow"
         case .homeAutomation: return "house"
+        case .settings: return "slider.horizontal.3"
         }
     }
 }

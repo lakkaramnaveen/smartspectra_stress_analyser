@@ -28,6 +28,7 @@ import SwiftUI
 ///   - `AppUsageCoordinator`         — opt-in, session-scoped app-focus tracking
 ///   - `WellnessPulseCoordinator`    — opt-in, identity-free coarse export for a workplace program
 ///   - `HomeAutomationCoordinator`   — triggers a user-built Shortcut on sustained stress or recovery
+///   - `AppPreferencesCoordinator`   — appearance, accent, sound, dock badge, and launch behavior
 ///   - `EnvironmentCoordinator`      — lighting always-on, noise opt-in, correlated with stress
 ///
 /// One thing this class does *not* own: which profile is active.
@@ -127,6 +128,20 @@ final class AppModel: ObservableObject {
     let appUsage: AppUsageCoordinator
     let wellnessPulse: WellnessPulseCoordinator
     let homeAutomation: HomeAutomationCoordinator
+    let appPreferences: AppPreferencesCoordinator
+
+    /// Set by `ProfileScopedContentView` to bridge live stress updates
+    /// to the app-wide menu-bar status item, which lives above any
+    /// single profile's lifetime and so can't be composed in here the
+    /// way every other coordinator is. A closure rather than a direct
+    /// dependency on `AppDelegate`, so this file never needs to know
+    /// that type exists.
+    var onStressTick: ((StressLevel, Double) -> Void)?
+    /// Fired on `stop()`, separately from `onStressTick` — a session
+    /// ending isn't a reading of `.calm`, it's the absence of a
+    /// reading, and the status item should say so rather than show a
+    /// stale or misleading last value.
+    var onSessionStopped: (() -> Void)?
     let environment: EnvironmentCoordinator
 
     /// Subscriptions forwarding child coordinators' change notifications
@@ -195,6 +210,7 @@ final class AppModel: ObservableObject {
         appUsage: AppUsageCoordinator? = nil,
         wellnessPulse: WellnessPulseCoordinator? = nil,
         homeAutomation: HomeAutomationCoordinator? = nil,
+        appPreferences: AppPreferencesCoordinator? = nil,
         environment: EnvironmentCoordinator? = nil
     ) {
         // ---------------------------------------------------------------
@@ -297,6 +313,10 @@ final class AppModel: ObservableObject {
             store: FileHomeAutomationStore(appSupportSubdirectory: profile.storageRoot)
         )
 
+        self.appPreferences = appPreferences ?? AppPreferencesCoordinator(
+            store: FileAppPreferencesStore(appSupportSubdirectory: profile.storageRoot)
+        )
+
         self.environment = environment ?? EnvironmentCoordinator(
             store: FileEnvironmentStore(appSupportSubdirectory: profile.storageRoot),
             sessionStore: resolvedSessionStore
@@ -342,6 +362,13 @@ final class AppModel: ObservableObject {
             engine.delegate = self
         }
 
+        // `didSet` on `preferences` doesn't fire for the value it was
+        // just assigned during `AppPreferencesCoordinator.init` — only
+        // for changes after that. Without this call, a returning user's
+        // saved dark-mode/dock-badge preference would sit unapplied
+        // until they next touched a toggle.
+        self.appPreferences.applyOnLaunch()
+
         forwardChildChanges()
     }
 
@@ -379,7 +406,8 @@ final class AppModel: ObservableObject {
         let children: [any ObservableObject] = [
             prediction, goals, breathing, focus,
             meditation, ergonomics, recovery, sleep, hrv, coach, healthSync, wearable,
-            sessionNotes, therapistReport, appUsage, environment, wellnessPulse, homeAutomation
+            sessionNotes, therapistReport, appUsage, environment, wellnessPulse, homeAutomation,
+            appPreferences
         ]
 
         for child in children {
@@ -436,6 +464,11 @@ final class AppModel: ObservableObject {
         engine.stop()
         isRunning = false
         processingStatus = "stopped"
+
+        // So the dock badge and menu-bar item don't keep showing a
+        // reading from a session that's no longer running.
+        appPreferences.clearDockBadge()
+        onSessionStopped?()
 
         stopGame()
         stopSessionTimer()
@@ -763,6 +796,14 @@ final class AppModel: ObservableObject {
         // definition of recovered in this app, not two that could
         // quietly disagree.
         homeAutomation.ingest(stressScore: score, hasSettled: recovery.hasSettled)
+
+        // Local UI/UX side effects — dock badge is a per-profile
+        // coordinator so it's called directly; the menu-bar status item
+        // lives above any profile's lifetime, so it's reached through
+        // the closure `ProfileScopedContentView` wires up rather than a
+        // direct dependency.
+        appPreferences.updateDockBadge(for: stressLevel)
+        onStressTick?(stressLevel, score)
 
         // Coach needs to know *which* intervention is running, not just
         // whether one is — it's measuring per-technique effectiveness,

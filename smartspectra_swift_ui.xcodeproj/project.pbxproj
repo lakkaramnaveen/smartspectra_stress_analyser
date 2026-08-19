@@ -143,6 +143,11 @@
 		183B76C03034C3290078052F /* HomeAutomationPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76B63034C3290078052F /* HomeAutomationPolicy.swift */; };
 		183B76C23034C3290078052F /* HomeAutomationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76B43034C3290078052F /* HomeAutomationCoordinator.swift */; };
 		183B76C33034C3290078052F /* LongTermTrendAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76BA3034C3290078052F /* LongTermTrendAnalyzer.swift */; };
+		183B76CB3036463B0078052F /* SoundAlertPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76CA3036463B0078052F /* SoundAlertPlayer.swift */; };
+		183B76CC3036463B0078052F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76C53036463B0078052F /* AppDelegate.swift */; };
+		183B76CD3036463B0078052F /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76C63036463B0078052F /* AppPreferences.swift */; };
+		183B76CE3036463B0078052F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76C83036463B0078052F /* SettingsView.swift */; };
+		183B76CF3036463B0078052F /* AppPreferencesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76C73036463B0078052F /* AppPreferencesCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -290,6 +295,11 @@
 		183B76B73034C3290078052F /* HomeAutomationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAutomationView.swift; sourceTree = "<group>"; };
 		183B76BA3034C3290078052F /* LongTermTrendAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongTermTrendAnalyzer.swift; sourceTree = "<group>"; };
 		183B76BB3034C3290078052F /* ShortcutsRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsRunner.swift; sourceTree = "<group>"; };
+		183B76C53036463B0078052F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		183B76C63036463B0078052F /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
+		183B76C73036463B0078052F /* AppPreferencesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferencesCoordinator.swift; sourceTree = "<group>"; };
+		183B76C83036463B0078052F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		183B76CA3036463B0078052F /* SoundAlertPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundAlertPlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -318,6 +328,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B76C43036462E0078052F /* other */,
 				183B76B33034C3110078052F /* home */,
 				183B76A23033FA130078052F /* wellness */,
 				183B768B3033990F0078052F /* environ */,
@@ -629,6 +640,18 @@
 			path = home;
 			sourceTree = "<group>";
 		};
+		183B76C43036462E0078052F /* other */ = {
+			isa = PBXGroup;
+			children = (
+				183B76C53036463B0078052F /* AppDelegate.swift */,
+				183B76C63036463B0078052F /* AppPreferences.swift */,
+				183B76C73036463B0078052F /* AppPreferencesCoordinator.swift */,
+				183B76C83036463B0078052F /* SettingsView.swift */,
+				183B76CA3036463B0078052F /* SoundAlertPlayer.swift */,
+			);
+			path = other;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -814,6 +837,11 @@
 				183B758D302377A70078052F /* BiometricEngine.swift in Sources */,
 				183B7697303399280078052F /* EnvironmentModels.swift in Sources */,
 				183B7698303399280078052F /* EnvironmentCoordinator.swift in Sources */,
+				183B76CB3036463B0078052F /* SoundAlertPlayer.swift in Sources */,
+				183B76CC3036463B0078052F /* AppDelegate.swift in Sources */,
+				183B76CD3036463B0078052F /* AppPreferences.swift in Sources */,
+				183B76CE3036463B0078052F /* SettingsView.swift in Sources */,
+				183B76CF3036463B0078052F /* AppPreferencesCoordinator.swift in Sources */,
 				183B769B303399280078052F /* EnvironmentStore.swift in Sources */,
 				183B769C303399280078052F /* EnvironmentStressAnalyzer.swift in Sources */,
 				183B769D303399280078052F /* NoiseLevelMonitor.swift in Sources */,

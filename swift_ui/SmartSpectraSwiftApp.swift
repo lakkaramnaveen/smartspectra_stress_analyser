@@ -3,12 +3,36 @@ import SwiftUI
 @main
 struct SmartSpectraSwiftApp: App {
     @StateObject private var profiles = ProfileCoordinator()
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
         WindowGroup {
             RootSwitcherView()
                 .environmentObject(profiles)
+                .environmentObject(appDelegate)
                 .frame(minWidth: 1040, minHeight: 680)
+        }
+        .commands {
+            // A single, non-reactive label ("Toggle Session" rather than
+            // dynamically "Start"/"Stop") on purpose — `AppDelegate`
+            // doesn't republish `objectWillChange` when the active
+            // model's `isRunning` changes, so a label that tried to
+            // track that state live would risk drifting stale. The
+            // command itself always does the right thing regardless of
+            // what its label says; only the label would have been at
+            // risk, so removing the ambiguity there was the simpler and
+            // more honest fix.
+            CommandMenu("Session") {
+                Button("Toggle Session") {
+                    appDelegate.toggleSession()
+                }
+                .keyboardShortcut("r", modifiers: .command)
+
+                Button("Launch Balloon Hunt") {
+                    appDelegate.launchGame()
+                }
+                .keyboardShortcut("g", modifiers: .command)
+            }
         }
     }
 }
@@ -51,6 +75,7 @@ struct RootSwitcherView: View {
 /// stays active. Constructed fresh each time `.id(active.id)` above
 /// changes identity.
 private struct ProfileScopedContentView: View {
+    @EnvironmentObject private var appDelegate: AppDelegate
     @StateObject private var model: AppModel
 
     init(profile: UserProfile) {
@@ -60,5 +85,28 @@ private struct ProfileScopedContentView: View {
     var body: some View {
         ContentView()
             .environmentObject(model)
+            .onAppear(perform: connectToAppDelegate)
+            .task {
+                if model.appPreferences.preferences.autoStartOnLaunch {
+                    model.start()
+                }
+            }
+            .onChange(of: model.focus.isActive) { _, isActive in
+                guard model.appPreferences.preferences.alwaysOnTopDuringFocus else { return }
+                NSApp.keyWindow?.level = isActive ? .floating : .normal
+            }
+    }
+
+    /// Bridges this profile's live model to the app-wide menu-bar item
+    /// and dock menu, both of which are constructed once at launch and
+    /// outlive any single profile — see the design note on `AppDelegate`.
+    private func connectToAppDelegate() {
+        appDelegate.activeModel = model
+        model.onStressTick = { [weak appDelegate] level, score in
+            appDelegate?.updateStatusItem(level: level, score: score)
+        }
+        model.onSessionStopped = { [weak appDelegate] in
+            appDelegate?.clearStatusItem()
+        }
     }
 }
