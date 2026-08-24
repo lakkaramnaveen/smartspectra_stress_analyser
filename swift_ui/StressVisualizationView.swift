@@ -31,6 +31,8 @@ struct StressVisualizationView: View {
                         .foregroundStyle(model.stressLevel.color)
                 }
             }
+            
+            StressForecastCard(forecast: model.prediction.forecast)
 
             // Stress Level Indicator
             HStack {
@@ -249,7 +251,7 @@ struct StressGraph: View {
                 if let lastValue = data.last {
                     let x = width - 4
                     let y = height * (1.0 - CGFloat(lastValue)) - 4
-                    var circlePoint = Path(ellipseIn: CGRect(x: x - 4, y: y - 4, width: 8, height: 8))
+                    let circlePoint = Path(ellipseIn: CGRect(x: x - 4, y: y - 4, width: 8, height: 8))
                     context.fill(circlePoint, with: .color(color))
                 }
             }

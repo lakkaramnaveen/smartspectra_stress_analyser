@@ -8,7 +8,7 @@ import Foundation
 /// store at ~1Hz for an entire session without ballooning file size, but
 /// rich enough to fully reconstruct "what was happening" at any moment
 /// during replay.
-struct SessionSnapshot: Codable, Identifiable, Equatable {
+struct SessionSnapshot: Codable, Identifiable, Equatable, Sendable {
     let id: UUID
     let timestamp: Date
     let stressScore: Double
@@ -43,7 +43,7 @@ struct SessionSnapshot: Codable, Identifiable, Equatable {
 
 /// A complete recorded session: metadata plus every snapshot captured
 /// between `start()` and `stop()`.
-struct SessionRecording: Codable, Identifiable, Equatable {
+struct SessionRecording: Codable, Identifiable, Equatable, Sendable {
     let id: UUID
     let startedAt: Date
     var endedAt: Date?
