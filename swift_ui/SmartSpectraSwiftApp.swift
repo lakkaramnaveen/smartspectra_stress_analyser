@@ -3,12 +3,14 @@ import SwiftUI
 @main
 struct SmartSpectraSwiftApp: App {
     @StateObject private var profiles = ProfileCoordinator()
+    @StateObject private var appLock = AppLockCoordinator()
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
         WindowGroup {
-            RootSwitcherView()
+            AppLockGateView()
                 .environmentObject(profiles)
+                .environmentObject(appLock)
                 .environmentObject(appDelegate)
                 .frame(minWidth: 1040, minHeight: 680)
         }
@@ -32,8 +34,46 @@ struct SmartSpectraSwiftApp: App {
                     appDelegate.launchGame()
                 }
                 .keyboardShortcut("g", modifiers: .command)
+
+                Divider()
+
+                Button("Lock Composure") {
+                    // Same reasoning as `ContentView.switchProfile()`: a
+                    // running camera engine and live pacer overlay
+                    // shouldn't be left attached to a model the lock
+                    // screen is about to cover.
+                    if appDelegate.activeModel?.isRunning == true {
+                        appDelegate.activeModel?.stop()
+                    }
+                    appLock.lock()
+                }
+                .keyboardShortcut("l", modifiers: .command)
             }
         }
+    }
+}
+
+// MARK: - App-Lock Gate
+
+/// Covers `RootSwitcherView` with `AppLockView` while locked, rather than
+/// branching between them. `RootSwitcherView` (and the active profile's
+/// `ProfileScopedContentView` beneath it) stays mounted across a
+/// lock/unlock cycle — an `if/else` here would discard and rebuild its
+/// `@StateObject` `AppModel` on every lock, losing any in-progress state
+/// and re-running `ProfileScopedContentView`'s `autoStartOnLaunch` check
+/// as though the app had just launched, silently starting a new session
+/// on every unlock.
+struct AppLockGateView: View {
+    @EnvironmentObject private var appLock: AppLockCoordinator
+
+    var body: some View {
+        RootSwitcherView()
+            .allowsHitTesting(appLock.isUnlocked)
+            .overlay {
+                if !appLock.isUnlocked {
+                    AppLockView(coordinator: appLock)
+                }
+            }
     }
 }
 

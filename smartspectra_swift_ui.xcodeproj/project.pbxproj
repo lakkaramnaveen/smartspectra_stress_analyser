@@ -101,6 +101,10 @@
 		183B765830321AF60078052F /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765230321AF60078052F /* ProfileStore.swift */; };
 		183B765A30321AF60078052F /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765030321AF60078052F /* ProfileCoordinator.swift */; };
 		183B765B30321AF60078052F /* ProfileSwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765330321AF60078052F /* ProfileSwitcherView.swift */; };
+		AA72EFCC9D2CA52EB025BF2D /* AppLockCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C9E655BBFE6A0E977D0D53 /* AppLockCredentialStore.swift */; };
+		5FDBD731E5B4CFE65B056B68 /* DeviceAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE07B52AF29058BA122D769 /* DeviceAuthenticator.swift */; };
+		5DCD304450027BFD5EC6736B /* AppLockCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEC2548EBB8D808ABDDDC5E /* AppLockCoordinator.swift */; };
+		745C53E6377D8397C87379CF /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A4B009503C8625F0CDD2A6 /* AppLockView.swift */; };
 		183B766330321ECF0078052F /* OuraOAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765F30321ECF0078052F /* OuraOAuthClient.swift */; };
 		183B766430321ECF0078052F /* OuraCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765E30321ECF0078052F /* OuraCredentialStore.swift */; };
 		183B766530321ECF0078052F /* WearableModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B766130321ECF0078052F /* WearableModels.swift */; };
@@ -253,6 +257,10 @@
 		183B765130321AF60078052F /* ProfileModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModels.swift; sourceTree = "<group>"; };
 		183B765230321AF60078052F /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		183B765330321AF60078052F /* ProfileSwitcherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSwitcherView.swift; sourceTree = "<group>"; };
+		B2C9E655BBFE6A0E977D0D53 /* AppLockCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockCredentialStore.swift; sourceTree = "<group>"; };
+		DFE07B52AF29058BA122D769 /* DeviceAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticator.swift; sourceTree = "<group>"; };
+		FCEC2548EBB8D808ABDDDC5E /* AppLockCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockCoordinator.swift; sourceTree = "<group>"; };
+		23A4B009503C8625F0CDD2A6 /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
 		183B765D30321ECF0078052F /* OuraAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OuraAPIClient.swift; sourceTree = "<group>"; };
 		183B765E30321ECF0078052F /* OuraCredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OuraCredentialStore.swift; sourceTree = "<group>"; };
 		183B765F30321ECF0078052F /* OuraOAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OuraOAuthClient.swift; sourceTree = "<group>"; };
@@ -328,6 +336,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				E354DF7D256D80554D730B43 /* auth */,
 				183B76C43036462E0078052F /* other */,
 				183B76B33034C3110078052F /* home */,
 				183B76A23033FA130078052F /* wellness */,
@@ -541,6 +550,17 @@
 				183B764630316E0B0078052F /* HealthSyncView.swift */,
 			);
 			path = health;
+			sourceTree = "<group>";
+		};
+		E354DF7D256D80554D730B43 /* auth */ = {
+			isa = PBXGroup;
+			children = (
+				B2C9E655BBFE6A0E977D0D53 /* AppLockCredentialStore.swift */,
+				FCEC2548EBB8D808ABDDDC5E /* AppLockCoordinator.swift */,
+				23A4B009503C8625F0CDD2A6 /* AppLockView.swift */,
+				DFE07B52AF29058BA122D769 /* DeviceAuthenticator.swift */,
+			);
+			path = auth;
 			sourceTree = "<group>";
 		};
 		183B764D30321ADB0078052F /* profile */ = {
@@ -862,6 +882,10 @@
 				183B765830321AF60078052F /* ProfileStore.swift in Sources */,
 				183B765A30321AF60078052F /* ProfileCoordinator.swift in Sources */,
 				183B765B30321AF60078052F /* ProfileSwitcherView.swift in Sources */,
+				AA72EFCC9D2CA52EB025BF2D /* AppLockCredentialStore.swift in Sources */,
+				5FDBD731E5B4CFE65B056B68 /* DeviceAuthenticator.swift in Sources */,
+				5DCD304450027BFD5EC6736B /* AppLockCoordinator.swift in Sources */,
+				745C53E6377D8397C87379CF /* AppLockView.swift in Sources */,
 				183B766330321ECF0078052F /* OuraOAuthClient.swift in Sources */,
 				183B766430321ECF0078052F /* OuraCredentialStore.swift in Sources */,
 				183B766530321ECF0078052F /* WearableModels.swift in Sources */,
