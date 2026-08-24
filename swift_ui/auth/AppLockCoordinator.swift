@@ -1,4 +1,26 @@
-import Foundation
+import AppKit
+
+/// Errors surfaced by `AppLockCoordinator.changePasscode`. Kept separate
+/// from the shared `errorMessage` published property — that one drives the
+/// lock screen itself, and a routine passcode change happens from deep
+/// inside Settings while already unlocked, so the two shouldn't share one
+/// piece of state.
+enum ChangePasscodeError: LocalizedError {
+    case incorrectCurrentPasscode
+    case mismatch
+    case underlying(Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .incorrectCurrentPasscode:
+            return "Current passcode is incorrect."
+        case .mismatch:
+            return "New passcodes don't match."
+        case .underlying(let error):
+            return error.localizedDescription
+        }
+    }
+}
 
 /// Gates the whole app behind a passcode, shown by `AppLockGateView` above
 /// `RootSwitcherView` — before any profile is chosen, not per-profile. A
@@ -25,6 +47,19 @@ final class AppLockCoordinator: ObservableObject {
 
     @Published var errorMessage: String = ""
 
+    /// Whether Composure should lock itself the moment the Mac's screen
+    /// locks or the system sleeps, rather than staying unlocked
+    /// underneath until someone remembers ⌘L. Defaults on: a lock feature
+    /// nobody engages automatically only ever protects against someone
+    /// deliberately choosing to lock it, which defeats most of the point.
+    /// Not a secret, so it lives in `UserDefaults` rather than the
+    /// Keychain — same reasoning that keeps `AppPreferences` out of it.
+    @Published var autoLockOnSystemSleep: Bool {
+        didSet {
+            UserDefaults.standard.set(autoLockOnSystemSleep, forKey: Self.autoLockPreferenceKey)
+        }
+    }
+
     private let store: AppLockCredentialStoring
     private let deviceAuthenticator: DeviceAuthenticating
 
@@ -41,6 +76,18 @@ final class AppLockCoordinator: ObservableObject {
 
     private static let maxAttemptsBeforeLockout = 5
     private static let lockoutDuration: TimeInterval = 30
+    private static let autoLockPreferenceKey = "composure.applock.autoLockOnSystemSleep"
+
+    /// Tokens for the two system notifications that trigger an automatic
+    /// lock — held so `deinit` can unregister them. `NSWorkspace`'s own
+    /// notification center for sleep, `DistributedNotificationCenter` for
+    /// screen lock: the latter isn't a public API surface Apple documents
+    /// for this purpose, but `com.apple.screenIsLocked` is the
+    /// long-standing, widely-used mechanism apps rely on to notice the
+    /// screen saver's password lock specifically — sleep alone doesn't
+    /// fire it, and this app cares about both.
+    private var systemSleepObserver: NSObjectProtocol?
+    private var screenLockObserver: NSObjectProtocol?
 
     init(
         store: AppLockCredentialStoring = KeychainAppLockCredentialStore(),
@@ -49,6 +96,43 @@ final class AppLockCoordinator: ObservableObject {
         self.store = store
         self.deviceAuthenticator = deviceAuthenticator
         self.isConfigured = store.isConfigured
+        self.autoLockOnSystemSleep = (UserDefaults.standard.object(forKey: Self.autoLockPreferenceKey) as? Bool) ?? true
+        observeSystemLockEvents()
+    }
+
+    deinit {
+        if let systemSleepObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(systemSleepObserver)
+        }
+        if let screenLockObserver {
+            DistributedNotificationCenter.default().removeObserver(screenLockObserver)
+        }
+    }
+
+    private func observeSystemLockEvents() {
+        systemSleepObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.willSleepNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.lockIfAutoLockEnabled() }
+        }
+
+        screenLockObserver = DistributedNotificationCenter.default().addObserver(
+            forName: Notification.Name("com.apple.screenIsLocked"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in self?.lockIfAutoLockEnabled() }
+        }
+    }
+
+    private func lockIfAutoLockEnabled() {
+        // Skipped when never configured: there's no passcode to protect
+        // yet, so this would just be a no-op re-showing the setup flow
+        // rather than anything resembling a real lock.
+        guard autoLockOnSystemSleep, isConfigured else { return }
+        lock()
     }
 
     /// Creates the passcode and unlocks in one step — there's no separate
@@ -116,6 +200,60 @@ final class AppLockCoordinator: ObservableObject {
 
     func lock() {
         isUnlocked = false
+    }
+
+    /// Whether the unlock screen should offer a Touch ID button alongside
+    /// the passcode field. `false` on a Mac with no biometric sensor —
+    /// `deviceAuthenticator`'s `.deviceOwnerAuthentication` policy would
+    /// still succeed there via the account password, but that's exactly
+    /// what the passcode field already offers, so a redundant button
+    /// would just be confusing.
+    var supportsBiometricUnlock: Bool {
+        deviceAuthenticator.supportsBiometrics
+    }
+
+    /// Alternate unlock path for the button `supportsBiometricUnlock`
+    /// gates. A successful device-owner check is at least as strong a
+    /// proof of identity as the passcode, so it clears the same lockout
+    /// state a correct passcode would.
+    @discardableResult
+    func unlockWithDeviceOwnerAuthentication() async -> Bool {
+        guard await deviceAuthenticator.authenticateDeviceOwner(reason: "unlock Composure") else {
+            errorMessage = "Authentication failed."
+            return false
+        }
+
+        errorMessage = ""
+        failedAttempts = 0
+        lockedOutUntil = nil
+        isUnlocked = true
+        return true
+    }
+
+    /// Routine passcode change from Settings, distinct from
+    /// `resetPasscode()` — this is for someone who remembers their current
+    /// passcode and just wants a new one, so it verifies the current
+    /// passcode directly rather than reaching for Touch ID/the account
+    /// password. Throws instead of setting `errorMessage`: this runs from
+    /// deep inside Settings while already unlocked, and routing its
+    /// errors through the same property the lock screen reads would let
+    /// the two bleed into each other.
+    func changePasscode(current: String, new: String, confirmation: String) throws {
+        guard store.verify(current) else {
+            throw ChangePasscodeError.incorrectCurrentPasscode
+        }
+
+        let trimmedNew = new.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedConfirmation = confirmation.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedNew == trimmedConfirmation else {
+            throw ChangePasscodeError.mismatch
+        }
+
+        do {
+            try store.setPasscode(trimmedNew)
+        } catch {
+            throw ChangePasscodeError.underlying(error)
+        }
     }
 
     /// The "Forgot passcode?" escape hatch. Requires proving you're the

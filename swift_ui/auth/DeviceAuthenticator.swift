@@ -16,6 +16,12 @@ protocol DeviceAuthenticating {
     /// Prompts for Touch ID / the account password and returns whether the
     /// device owner was confirmed. `reason` is shown in the system prompt.
     func authenticateDeviceOwner(reason: String) async -> Bool
+
+    /// Whether this Mac actually has a biometric sensor enrolled — as
+    /// opposed to `authenticateDeviceOwner` succeeding via the password
+    /// fallback. Drives whether `AppLockView` offers a Touch ID button on
+    /// the unlock screen at all.
+    var supportsBiometrics: Bool { get }
 }
 
 struct LAContextDeviceAuthenticator: DeviceAuthenticating {
@@ -38,14 +44,20 @@ struct LAContextDeviceAuthenticator: DeviceAuthenticating {
             return false
         }
     }
+
+    var supportsBiometrics: Bool {
+        LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+    }
 }
 
 // MARK: - Test / Preview Doubles
 
 struct AlwaysSucceedsDeviceAuthenticator: DeviceAuthenticating {
+    var supportsBiometrics: Bool = true
     func authenticateDeviceOwner(reason: String) async -> Bool { true }
 }
 
 struct AlwaysFailsDeviceAuthenticator: DeviceAuthenticating {
+    var supportsBiometrics: Bool = true
     func authenticateDeviceOwner(reason: String) async -> Bool { false }
 }

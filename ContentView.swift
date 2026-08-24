@@ -723,6 +723,7 @@ enum SidebarTab: String, CaseIterable {
     ContentView()
         .environmentObject(AppModel())
         .environmentObject(ProfileCoordinator())
+        .environmentObject(AppLockCoordinator(store: InMemoryAppLockCredentialStore(preconfiguredPasscode: "1234")))
         .frame(width: 1100, height: 720)
 }
 #endif

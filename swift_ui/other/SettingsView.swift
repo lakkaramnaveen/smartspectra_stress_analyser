@@ -2,6 +2,13 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var coordinator: AppPreferencesCoordinator
+    // Not passed as a parameter, unlike `coordinator` above — `AppLockCoordinator`
+    // lives above any single profile (see its own design note), so every
+    // view in the tree already reaches it through the environment the
+    // same way `ContentView` reaches `profiles`.
+    @EnvironmentObject private var appLock: AppLockCoordinator
+
+    @State private var isChangingPasscode = false
 
     var body: some View {
         ScrollView {
@@ -11,8 +18,12 @@ struct SettingsView: View {
                 themeNote
                 behaviorCard
                 shortcutsNote
+                securityCard
             }
             .padding(Spacing.xl)
+        }
+        .sheet(isPresented: $isChangingPasscode) {
+            ChangePasscodeSheet(coordinator: appLock)
         }
     }
 
@@ -147,11 +158,51 @@ struct SettingsView: View {
         .background(Color.white.opacity(0.03))
         .cornerRadius(8)
     }
+
+    // MARK: - Security
+
+    /// The app-lock passcode is a household setting, not a per-profile
+    /// one (see `AppLockCoordinator`'s own design note) — same reasoning
+    /// as the API key on the Controls tab — so this card lives in
+    /// Settings rather than anywhere profile-scoped.
+    private var securityCard: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            Text("Security").font(.system(size: 13, weight: .semibold)).foregroundStyle(.white)
+
+            Toggle(isOn: $appLock.autoLockOnSystemSleep) {
+                Text("Lock automatically when your Mac sleeps or locks")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.85))
+            }
+            .toggleStyle(.switch)
+            .tint(BrandColor.primaryBlue)
+
+            Divider().opacity(0.15)
+
+            HStack {
+                Text("Passcode")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.85))
+                Spacer()
+                Button("Change…") { isChangingPasscode = true }
+                    .buttonStyle(.bordered)
+                    .tint(BrandColor.primaryBlue)
+            }
+
+            Text("⌘L locks Composure immediately from the Session menu.")
+                .font(.system(size: 10))
+                .foregroundStyle(.white.opacity(0.45))
+        }
+        .padding(Spacing.lg)
+        .background(Color.white.opacity(0.04))
+        .cornerRadius(12)
+    }
 }
 
 #if DEBUG
 #Preview {
     SettingsView(coordinator: AppPreferencesCoordinator(store: InMemoryAppPreferencesStore()))
+        .environmentObject(AppLockCoordinator(store: InMemoryAppLockCredentialStore(preconfiguredPasscode: "1234")))
         .frame(width: 420, height: 700)
         .background(BrandColor.slate)
 }

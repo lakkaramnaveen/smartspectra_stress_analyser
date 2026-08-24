@@ -17,6 +17,9 @@ struct AppLockView: View {
     /// in flight — disables the trigger so a second tap can't stack a
     /// second system auth prompt on top of the first.
     @State private var isAuthenticatingReset = false
+    /// Same idea as `isAuthenticatingReset`, for the Touch ID unlock
+    /// button rather than the reset flow.
+    @State private var isAuthenticatingUnlock = false
 
     var body: some View {
         VStack(spacing: Spacing.xxl) {
@@ -104,6 +107,15 @@ struct AppLockView: View {
                 .tint(BrandColor.primaryBlue)
                 .disabled(passcode.isEmpty)
                 .frame(maxWidth: .infinity)
+
+            if coordinator.supportsBiometricUnlock {
+                Button(action: requestBiometricUnlock) {
+                    Label("Unlock with Touch ID", systemImage: "touchid")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .disabled(isAuthenticatingUnlock)
+            }
         }
     }
 
@@ -130,6 +142,14 @@ struct AppLockView: View {
                 passcode = ""
                 confirmation = ""
             }
+        }
+    }
+
+    private func requestBiometricUnlock() {
+        isAuthenticatingUnlock = true
+        Task {
+            await coordinator.unlockWithDeviceOwnerAuthentication()
+            isAuthenticatingUnlock = false
         }
     }
 }
