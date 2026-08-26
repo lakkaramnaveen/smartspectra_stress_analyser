@@ -1,4 +1,30 @@
 import AppKit
+import CoreGraphics
+
+/// How long Composure waits with no keyboard or mouse activity anywhere on
+/// the system before locking itself — independent of, and in addition to,
+/// `autoLockOnSystemSleep`. That one only fires when the *Mac* sleeps or
+/// its screen locks; this one covers someone stepping away from a Mac that
+/// never does either because something is still keeping it awake (a
+/// download, a call, caffeinate), which is exactly the case
+/// `autoLockOnSystemSleep` alone can't catch.
+enum IdleLockTimeout: Int, CaseIterable, Sendable {
+    case never = 0
+    case oneMinute = 60
+    case fiveMinutes = 300
+    case fifteenMinutes = 900
+    case thirtyMinutes = 1800
+
+    var label: String {
+        switch self {
+        case .never: return "Never"
+        case .oneMinute: return "1 minute"
+        case .fiveMinutes: return "5 minutes"
+        case .fifteenMinutes: return "15 minutes"
+        case .thirtyMinutes: return "30 minutes"
+        }
+    }
+}
 
 /// Errors surfaced by `AppLockCoordinator.changePasscode`. Kept separate
 /// from the shared `errorMessage` published property — that one drives the
@@ -42,8 +68,13 @@ final class AppLockCoordinator: ObservableObject {
 
     /// Whether the app is currently past the lock screen. Starts `false`
     /// even when `isConfigured` is `false` — an unconfigured lock still
-    /// has to be *set* once before the rest of the app is reachable.
-    @Published private(set) var isUnlocked = false
+    /// has to be *set* once before the rest of the app is reachable. The
+    /// `didSet` starts or stops idle-timeout polling: there's nothing to
+    /// poll for while already locked, and no point spending a repeating
+    /// task on a state that isn't reachable yet.
+    @Published private(set) var isUnlocked = false {
+        didSet { refreshIdleMonitoring() }
+    }
 
     @Published var errorMessage: String = ""
 
@@ -60,23 +91,69 @@ final class AppLockCoordinator: ObservableObject {
         }
     }
 
+    /// Companion to `autoLockOnSystemSleep` — see `IdleLockTimeout`'s own
+    /// doc comment for why both exist. `.never` by default: an idle timer
+    /// that locks someone out mid-read of a stress chart is a real cost,
+    /// so this opts in rather than surprising anyone who never asked for it.
+    @Published var idleLockTimeout: IdleLockTimeout {
+        didSet {
+            UserDefaults.standard.set(idleLockTimeout.rawValue, forKey: Self.idleLockTimeoutKey)
+            refreshIdleMonitoring()
+        }
+    }
+
     private let store: AppLockCredentialStoring
     private let deviceAuthenticator: DeviceAuthenticating
 
+    /// Whether this Mac has a biometric sensor enrolled, computed once at
+    /// init rather than on every read. `LAContext().canEvaluatePolicy` talks
+    /// to a system daemon and does real work; `supportsBiometricUnlock` is
+    /// read from `AppLockView`'s `body`, which SwiftUI can re-evaluate on
+    /// every keystroke in the passcode field, so a naive pass-through would
+    /// redo that work dozens of times a second for a value that can't
+    /// change while the app is running.
+    private let biometricsAvailable: Bool
+
     /// Consecutive wrong-passcode guesses since the last success (or the
     /// last lockout). Reset by any successful unlock and by each lockout
-    /// window elapsing.
-    private var failedAttempts = 0
+    /// window elapsing. Persisted to `UserDefaults` alongside
+    /// `lockedOutUntil` so quitting and relaunching mid-lockout — or
+    /// mid-guessing, before the threshold is even reached — doesn't hand
+    /// back a clean slate; only a genuinely correct passcode (or the
+    /// device-owner-gated reset) should.
+    private var failedAttempts: Int {
+        didSet {
+            UserDefaults.standard.set(failedAttempts, forKey: Self.failedAttemptsKey)
+        }
+    }
 
     /// Set once `failedAttempts` crosses `maxAttemptsBeforeLockout` —
     /// `unlock(passcode:)` refuses to even check the passcode until this
     /// passes, so guesses can't be thrown at `store.verify` back-to-back
     /// with no cost.
-    private var lockedOutUntil: Date?
+    private var lockedOutUntil: Date? {
+        didSet {
+            if let lockedOutUntil {
+                UserDefaults.standard.set(lockedOutUntil.timeIntervalSince1970, forKey: Self.lockedOutUntilKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Self.lockedOutUntilKey)
+            }
+        }
+    }
 
     private static let maxAttemptsBeforeLockout = 5
     private static let lockoutDuration: TimeInterval = 30
     private static let autoLockPreferenceKey = "composure.applock.autoLockOnSystemSleep"
+    private static let idleLockTimeoutKey = "composure.applock.idleLockTimeout"
+    private static let failedAttemptsKey = "composure.applock.failedAttempts"
+    private static let lockedOutUntilKey = "composure.applock.lockedOutUntil"
+
+    /// How often the idle-timeout poll wakes up to check
+    /// `CGEventSource.secondsSinceLastEventType` against
+    /// `idleLockTimeout`. Coarse on purpose — this only needs to catch
+    /// "has it been N *minutes*," so a multi-second granularity costs
+    /// nothing real while keeping the loop itself cheap.
+    private static let idlePollInterval: Duration = .seconds(5)
 
     /// Tokens for the two system notifications that trigger an automatic
     /// lock — held so `deinit` can unregister them. `NSWorkspace`'s own
@@ -89,14 +166,39 @@ final class AppLockCoordinator: ObservableObject {
     private var systemSleepObserver: NSObjectProtocol?
     private var screenLockObserver: NSObjectProtocol?
 
+    /// The idle-timeout poll loop, running only while `isUnlocked` and
+    /// `idleLockTimeout != .never` — see `refreshIdleMonitoring()`, which
+    /// is the single place that starts, restarts, or tears this down.
+    private var idlePollTask: Task<Void, Never>?
+
     init(
         store: AppLockCredentialStoring = KeychainAppLockCredentialStore(),
         deviceAuthenticator: DeviceAuthenticating = LAContextDeviceAuthenticator()
     ) {
         self.store = store
         self.deviceAuthenticator = deviceAuthenticator
+        self.biometricsAvailable = deviceAuthenticator.supportsBiometrics
         self.isConfigured = store.isConfigured
         self.autoLockOnSystemSleep = (UserDefaults.standard.object(forKey: Self.autoLockPreferenceKey) as? Bool) ?? true
+        self.idleLockTimeout = IdleLockTimeout(
+            rawValue: UserDefaults.standard.object(forKey: Self.idleLockTimeoutKey) as? Int ?? IdleLockTimeout.never.rawValue
+        ) ?? .never
+
+        let defaults = UserDefaults.standard
+        self.failedAttempts = defaults.object(forKey: Self.failedAttemptsKey) as? Int ?? 0
+        if let stored = defaults.object(forKey: Self.lockedOutUntilKey) as? TimeInterval {
+            let restored = Date(timeIntervalSince1970: stored)
+            // A stale lockout that already elapsed while the app was
+            // quit is discarded here rather than carried forward as a
+            // zero-second one — `unlock(passcode:)` treats any non-nil
+            // `lockedOutUntil` as active until its own `remaining > 0`
+            // check, but restoring an already-past date would still cost
+            // one unnecessary UserDefaults write on the first attempt.
+            self.lockedOutUntil = restored > Date() ? restored : nil
+        } else {
+            self.lockedOutUntil = nil
+        }
+
         observeSystemLockEvents()
     }
 
@@ -107,6 +209,7 @@ final class AppLockCoordinator: ObservableObject {
         if let screenLockObserver {
             DistributedNotificationCenter.default().removeObserver(screenLockObserver)
         }
+        idlePollTask?.cancel()
     }
 
     private func observeSystemLockEvents() {
@@ -132,6 +235,38 @@ final class AppLockCoordinator: ObservableObject {
         // yet, so this would just be a no-op re-showing the setup flow
         // rather than anything resembling a real lock.
         guard autoLockOnSystemSleep, isConfigured else { return }
+        lock()
+    }
+
+    /// Starts, restarts, or stops the idle poll loop so it's running
+    /// exactly when it needs to be: called from `isUnlocked`'s and
+    /// `idleLockTimeout`'s own `didSet`s rather than scattered across
+    /// every place either one changes, so there's one place that can't
+    /// fall out of sync with the two conditions it depends on.
+    private func refreshIdleMonitoring() {
+        idlePollTask?.cancel()
+        idlePollTask = nil
+
+        guard isUnlocked, idleLockTimeout != .never else { return }
+
+        idlePollTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: Self.idlePollInterval)
+                guard !Task.isCancelled else { return }
+                self?.checkIdleTimeout()
+            }
+        }
+    }
+
+    /// `CGEventSource.secondsSinceLastEventType` reports system-wide idle
+    /// time from the last keyboard or mouse event, not just events this
+    /// app received — the same public, unprivileged API macOS's own
+    /// screen saver uses, so it needs no Accessibility/Input Monitoring
+    /// permission prompt.
+    private func checkIdleTimeout() {
+        guard isUnlocked, idleLockTimeout != .never else { return }
+        let idleSeconds = CGEventSource.secondsSinceLastEventType(.combinedSessionState, eventType: .null)
+        guard idleSeconds >= Double(idleLockTimeout.rawValue) else { return }
         lock()
     }
 
@@ -207,9 +342,10 @@ final class AppLockCoordinator: ObservableObject {
     /// `deviceAuthenticator`'s `.deviceOwnerAuthentication` policy would
     /// still succeed there via the account password, but that's exactly
     /// what the passcode field already offers, so a redundant button
-    /// would just be confusing.
+    /// would just be confusing. Backed by `biometricsAvailable`, computed
+    /// once at init rather than re-checked on every read.
     var supportsBiometricUnlock: Bool {
-        deviceAuthenticator.supportsBiometrics
+        biometricsAvailable
     }
 
     /// Alternate unlock path for the button `supportsBiometricUnlock`

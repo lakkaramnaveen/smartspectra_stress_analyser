@@ -177,6 +177,21 @@ struct SettingsView: View {
             .toggleStyle(.switch)
             .tint(BrandColor.primaryBlue)
 
+            HStack {
+                Text("Lock after inactivity")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.85))
+                Spacer()
+                Picker("", selection: $appLock.idleLockTimeout) {
+                    ForEach(IdleLockTimeout.allCases, id: \.self) { option in
+                        Text(option.label).tag(option)
+                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+                .frame(width: 130)
+            }
+
             Divider().opacity(0.15)
 
             HStack {

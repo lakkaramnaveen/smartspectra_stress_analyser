@@ -13,6 +13,8 @@ struct ChangePasscodeSheet: View {
     @State private var newPasscode = ""
     @State private var confirmation = ""
     @State private var errorMessage = ""
+    @State private var shakeTrigger: CGFloat = 0
+    @FocusState private var currentPasscodeFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.lg) {
@@ -22,6 +24,8 @@ struct ChangePasscodeSheet: View {
 
             SecureField("Current passcode", text: $currentPasscode)
                 .textFieldStyle(.roundedBorder)
+                .focused($currentPasscodeFocused)
+                .shake(trigger: shakeTrigger)
 
             Divider().opacity(0.15)
 
@@ -29,6 +33,10 @@ struct ChangePasscodeSheet: View {
                 .textFieldStyle(.roundedBorder)
             SecureField("Confirm new passcode", text: $confirmation)
                 .textFieldStyle(.roundedBorder)
+
+            Text("At least \(AppLockPolicy.minimumPasscodeLength) characters.")
+                .font(.system(size: 10))
+                .foregroundStyle(.white.opacity(0.4))
 
             if !errorMessage.isEmpty {
                 Text(errorMessage)
@@ -51,6 +59,7 @@ struct ChangePasscodeSheet: View {
         .padding(Spacing.xl)
         .frame(minWidth: 360)
         .background(BrandColor.slate)
+        .onAppear { currentPasscodeFocused = true }
     }
 
     private func save() {
@@ -59,6 +68,16 @@ struct ChangePasscodeSheet: View {
             dismiss()
         } catch {
             errorMessage = error.localizedDescription
+
+            // Only the current-passcode field shakes for a wrong current
+            // passcode; a mismatch between the two *new* fields is a
+            // different mistake in a different place, so shaking this
+            // field for it would misdirect the eye.
+            if case ChangePasscodeError.incorrectCurrentPasscode = error {
+                withAnimation(.default) { shakeTrigger += 1 }
+                currentPasscode = ""
+                currentPasscodeFocused = true
+            }
         }
     }
 }

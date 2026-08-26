@@ -104,6 +104,9 @@
 		AA72EFCC9D2CA52EB025BF2D /* AppLockCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C9E655BBFE6A0E977D0D53 /* AppLockCredentialStore.swift */; };
 		5FDBD731E5B4CFE65B056B68 /* DeviceAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE07B52AF29058BA122D769 /* DeviceAuthenticator.swift */; };
 		2D0E30A5E1FDF903B945561F /* ChangePasscodeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9363BFE2BA7332EB4ADB0949 /* ChangePasscodeSheet.swift */; };
+		8F5E33F4E71E2DF6402A1840 /* AppLockCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540AF8AB96B3894DB809EF3B /* AppLockCoordinatorTests.swift */; };
+		2BE80BAB031586BCCC5EB379 /* AppLockCredentialStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6162A624B13FBEE6B078BBB3 /* AppLockCredentialStoreTests.swift */; };
+		BD22859E6E047B058969E24C /* DeviceAuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEFA6AF547D65B9C2AAA410 /* DeviceAuthenticatorTests.swift */; };
 		5DCD304450027BFD5EC6736B /* AppLockCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCEC2548EBB8D808ABDDDC5E /* AppLockCoordinator.swift */; };
 		745C53E6377D8397C87379CF /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A4B009503C8625F0CDD2A6 /* AppLockView.swift */; };
 		183B766330321ECF0078052F /* OuraOAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B765F30321ECF0078052F /* OuraOAuthClient.swift */; };
@@ -155,6 +158,16 @@
 		183B76CF3036463B0078052F /* AppPreferencesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B76C73036463B0078052F /* AppPreferencesCoordinator.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		AD33D0E30B74677B9087EE81 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 100000000000000000000801 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 100000000000000000000501;
+			remoteInfo = smartspectra_swift_ui;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		100000000000000000000201 /* SmartSpectraSwiftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartSpectraSwiftApp.swift; sourceTree = "<group>"; };
 		100000000000000000000204 /* SmartSpectraRunner.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SmartSpectraRunner.mm; sourceTree = "<group>"; };
@@ -164,6 +177,7 @@
 		100000000000000000000208 /* smartspectra_swift_ui.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = smartspectra_swift_ui.entitlements; sourceTree = SOURCE_ROOT; };
 		100000000000000000000212 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		100000000000000000000213 /* smartspectra_swift_ui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = smartspectra_swift_ui.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D87D5015C14A91058E771FAF /* smartspectra_swift_uiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = smartspectra_swift_uiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		183B7572302377A70078052F /* BalloonHuntGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonHuntGameView.swift; sourceTree = "<group>"; };
 		183B7573302377A70078052F /* BiometricEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricEngine.swift; sourceTree = "<group>"; };
 		183B7576302377A70078052F /* ControlsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsTabView.swift; sourceTree = "<group>"; };
@@ -308,12 +322,22 @@
 		183B76C53036463B0078052F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		183B76C63036463B0078052F /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
 		183B76C73036463B0078052F /* AppPreferencesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferencesCoordinator.swift; sourceTree = "<group>"; };
+		540AF8AB96B3894DB809EF3B /* AppLockCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockCoordinatorTests.swift; sourceTree = "<group>"; };
+		6162A624B13FBEE6B078BBB3 /* AppLockCredentialStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockCredentialStoreTests.swift; sourceTree = "<group>"; };
+		ADEFA6AF547D65B9C2AAA410 /* DeviceAuthenticatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticatorTests.swift; sourceTree = "<group>"; };
 		183B76C83036463B0078052F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		183B76CA3036463B0078052F /* SoundAlertPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundAlertPlayer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		100000000000000000000301 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8030FC88BA7DC4F87A1DBF80 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -329,10 +353,21 @@
 				183B75B8302A6E5F0078052F /* AppModel.swift */,
 				183B75B9302A6E5F0078052F /* ContentView.swift */,
 				100000000000000000000402 /* swift_ui */,
+				FD344F3A0B6950001F919B49 /* smartspectra_swift_uiTests */,
 				100000000000000000000208 /* smartspectra_swift_ui.entitlements */,
 				100000000000000000000212 /* README.md */,
 				100000000000000000000404 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		FD344F3A0B6950001F919B49 /* smartspectra_swift_uiTests */ = {
+			isa = PBXGroup;
+			children = (
+				540AF8AB96B3894DB809EF3B /* AppLockCoordinatorTests.swift */,
+				6162A624B13FBEE6B078BBB3 /* AppLockCredentialStoreTests.swift */,
+				ADEFA6AF547D65B9C2AAA410 /* DeviceAuthenticatorTests.swift */,
+			);
+			path = smartspectra_swift_uiTests;
 			sourceTree = "<group>";
 		};
 		100000000000000000000402 /* swift_ui */ = {
@@ -386,6 +421,7 @@
 			isa = PBXGroup;
 			children = (
 				100000000000000000000213 /* smartspectra_swift_ui.app */,
+				D87D5015C14A91058E771FAF /* smartspectra_swift_uiTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -695,6 +731,23 @@
 			productReference = 100000000000000000000213 /* smartspectra_swift_ui.app */;
 			productType = "com.apple.product-type.application";
 		};
+		95C37313A6BB68ABB3E4A52B /* smartspectra_swift_uiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 72AD68667C3FF749033BBD97 /* Build configuration list for PBXNativeTarget "smartspectra_swift_uiTests" */;
+			buildPhases = (
+				5A73D59E10EC159EE4169E76 /* Sources */,
+				8030FC88BA7DC4F87A1DBF80 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				16DED54B612C00178116C55C /* PBXTargetDependency */,
+			);
+			name = smartspectra_swift_uiTests;
+			productName = smartspectra_swift_uiTests;
+			productReference = D87D5015C14A91058E771FAF /* smartspectra_swift_uiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -707,6 +760,10 @@
 				TargetAttributes = {
 					100000000000000000000501 = {
 						CreatedOnToolsVersion = 26.0.1;
+					};
+					95C37313A6BB68ABB3E4A52B = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = 100000000000000000000501;
 					};
 				};
 			};
@@ -724,6 +781,7 @@
 			projectRoot = "";
 			targets = (
 				100000000000000000000501 /* smartspectra_swift_ui */,
+				95C37313A6BB68ABB3E4A52B /* smartspectra_swift_uiTests */,
 			);
 		};
 /* End PBXProject section */
@@ -904,7 +962,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5A73D59E10EC159EE4169E76 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F5E33F4E71E2DF6402A1840 /* AppLockCoordinatorTests.swift in Sources */,
+				2BE80BAB031586BCCC5EB379 /* AppLockCredentialStoreTests.swift in Sources */,
+				BD22859E6E047B058969E24C /* DeviceAuthenticatorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		16DED54B612C00178116C55C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 100000000000000000000501 /* smartspectra_swift_ui */;
+			targetProxy = AD33D0E30B74677B9087EE81 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		100000000000000000001001 /* Debug */ = {
@@ -1130,6 +1206,48 @@
 			};
 			name = Release;
 		};
+		A96F6EFA341FA56127BA4296 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				// Overrides at this target's own level, not appends — a
+				// pure-Swift test bundle that reaches app internals only
+				// through `@testable import` (resolved at runtime via
+				// `BUNDLE_LOADER`) needs neither the app's Objective-C++
+				// bridging header nor its direct SmartSpectra/OpenCV/protobuf
+				// link flags, and pulling those in here would make this
+				// target's build depend on native SDK setup it has no actual
+				// use for.
+				CODE_SIGN_ENTITLEMENTS = "";
+				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/native_build/$(CONFIGURATION)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.presagetech.smartspectra-swift-ui.Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/smartspectra_swift_ui.app/Contents/MacOS/smartspectra_swift_ui";
+			};
+			name = Debug;
+		};
+		28DB7C382C1526DFE99112F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_ENTITLEMENTS = "";
+				CONFIGURATION_BUILD_DIR = "$(PROJECT_DIR)/native_build/$(CONFIGURATION)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.presagetech.smartspectra-swift-ui.Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/smartspectra_swift_ui.app/Contents/MacOS/smartspectra_swift_ui";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1147,6 +1265,15 @@
 			buildConfigurations = (
 				100000000000000000001101 /* Debug */,
 				100000000000000000001102 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		72AD68667C3FF749033BBD97 /* Build configuration list for PBXNativeTarget "smartspectra_swift_uiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A96F6EFA341FA56127BA4296 /* Debug */,
+				28DB7C382C1526DFE99112F1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

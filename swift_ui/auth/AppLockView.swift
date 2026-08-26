@@ -8,6 +8,16 @@ import SwiftUI
 /// states, rather than a separate first-run screen elsewhere in the app
 /// that could drift out of sync with this one.
 struct AppLockView: View {
+    /// Which field currently has keyboard focus. Set on appear so the
+    /// screen is ready to type into immediately — this view is rebuilt
+    /// fresh every time it's shown (`AppLockGateView` overlays it in and
+    /// out rather than keeping one instance around), so there's no stale
+    /// focus state to preserve, only a first field to land in.
+    private enum Field: Hashable {
+        case primary
+        case secondary
+    }
+
     @ObservedObject var coordinator: AppLockCoordinator
 
     @State private var passcode = ""
@@ -20,6 +30,10 @@ struct AppLockView: View {
     /// Same idea as `isAuthenticatingReset`, for the Touch ID unlock
     /// button rather than the reset flow.
     @State private var isAuthenticatingUnlock = false
+    /// Bumped on a failed unlock attempt to trigger `.shake(trigger:)` —
+    /// see `submitUnlock()`.
+    @State private var shakeTrigger: CGFloat = 0
+    @FocusState private var focusedField: Field?
 
     var body: some View {
         VStack(spacing: Spacing.xxl) {
@@ -67,6 +81,7 @@ struct AppLockView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(BrandColor.slate)
+        .onAppear { focusedField = .primary }
         .alert(
             "Reset your passcode?",
             isPresented: $isConfirmingReset
@@ -82,11 +97,18 @@ struct AppLockView: View {
         VStack(spacing: Spacing.sm) {
             SecureField("Passcode", text: $passcode)
                 .textFieldStyle(.roundedBorder)
+                .focused($focusedField, equals: .primary)
                 .onSubmit(submitSetup)
 
             SecureField("Confirm passcode", text: $confirmation)
                 .textFieldStyle(.roundedBorder)
+                .focused($focusedField, equals: .secondary)
                 .onSubmit(submitSetup)
+
+            Text("At least \(AppLockPolicy.minimumPasscodeLength) characters.")
+                .font(.system(size: 10))
+                .foregroundStyle(.white.opacity(0.4))
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             Button("Set Passcode", action: submitSetup)
                 .buttonStyle(.borderedProminent)
@@ -100,7 +122,9 @@ struct AppLockView: View {
         VStack(spacing: Spacing.sm) {
             SecureField("Passcode", text: $passcode)
                 .textFieldStyle(.roundedBorder)
+                .focused($focusedField, equals: .primary)
                 .onSubmit(submitUnlock)
+                .shake(trigger: shakeTrigger)
 
             Button("Unlock", action: submitUnlock)
                 .buttonStyle(.borderedProminent)
@@ -126,11 +150,20 @@ struct AppLockView: View {
     }
 
     private func submitUnlock() {
-        coordinator.unlock(passcode: passcode)
+        let succeeded = coordinator.unlock(passcode: passcode)
         // Cleared either way: a wrong attempt shouldn't leave the failed
         // guess sitting in the field for a shoulder-surfer to read after
         // the error appears.
         passcode = ""
+
+        if !succeeded {
+            withAnimation(.default) { shakeTrigger += 1 }
+            // The field keeps focus through `onSubmit` already; re-asserting
+            // it here covers the button-click path too, so a wrong guess
+            // always leaves the cursor ready for another attempt instead of
+            // requiring a re-click.
+            focusedField = .primary
+        }
     }
 
     private func requestReset() {

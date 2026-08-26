@@ -337,3 +337,33 @@ struct GradientText: View {
             )
     }
 }
+
+// MARK: - Shake Feedback
+
+/// Horizontal shake for negative feedback — e.g. `AppLockView` on an
+/// incorrect passcode. `animatableData` is what SwiftUI actually
+/// interpolates: wrap a change to the `trigger` value passed into
+/// `.shake(trigger:)` in `withAnimation`, and the intermediate values
+/// this receives during that animation produce the oscillation.
+private struct ShakeEffect: GeometryEffect {
+    var amount: CGFloat = 8
+    var shakesPerUnit = 3
+    var animatableData: CGFloat
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        ProjectionTransform(CGAffineTransform(
+            translationX: amount * sin(animatableData * .pi * CGFloat(shakesPerUnit)),
+            y: 0
+        ))
+    }
+}
+
+extension View {
+    /// Shakes horizontally whenever `trigger` changes. Callers animate the
+    /// change themselves — e.g. `withAnimation(.default) { shakeCount += 1 }`
+    /// — rather than this modifier owning the animation, so a caller that
+    /// wants a different curve or duration isn't fighting a baked-in one.
+    func shake(trigger: CGFloat) -> some View {
+        modifier(ShakeEffect(animatableData: trigger))
+    }
+}

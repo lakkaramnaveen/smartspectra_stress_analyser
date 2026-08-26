@@ -2,6 +2,16 @@ import Foundation
 import Security
 import CryptoKit
 
+/// The one place the app-lock passcode's length rule is spelled out.
+/// `AppLockCredentialStoring` implementations enforce it; `AppLockView` and
+/// `ChangePasscodeSheet` read it too, so the hint on screen and the rule
+/// that actually rejects a too-short passcode can't silently drift apart —
+/// which is exactly what happened before this existed, when only the
+/// store knew "4" and the UI never told anyone until they'd already failed.
+enum AppLockPolicy {
+    static let minimumPasscodeLength = 4
+}
+
 /// Errors surfaced by `AppLockCredentialStoring`. Kept small and specific
 /// so `AppLockView` can show an actionable message instead of a generic
 /// "something went wrong" — same convention as `CredentialError`.
@@ -15,7 +25,7 @@ enum AppLockError: LocalizedError {
         case .emptyPasscode:
             return "Passcode cannot be empty."
         case .tooShort:
-            return "Passcode must be at least 4 characters."
+            return "Passcode must be at least \(AppLockPolicy.minimumPasscodeLength) characters."
         case .keychainWrite(let status):
             return "Failed to securely store passcode (status \(status))."
         }
@@ -61,7 +71,7 @@ final class KeychainAppLockCredentialStore: AppLockCredentialStoring {
     func setPasscode(_ passcode: String) throws {
         let trimmed = passcode.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw AppLockError.emptyPasscode }
-        guard trimmed.count >= 4 else { throw AppLockError.tooShort }
+        guard trimmed.count >= AppLockPolicy.minimumPasscodeLength else { throw AppLockError.tooShort }
 
         let salt = Self.randomSalt()
         let payload = salt + Self.digest(passcode: trimmed, salt: salt)
@@ -164,7 +174,7 @@ final class InMemoryAppLockCredentialStore: AppLockCredentialStoring {
     func setPasscode(_ passcode: String) throws {
         let trimmed = passcode.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw AppLockError.emptyPasscode }
-        guard trimmed.count >= 4 else { throw AppLockError.tooShort }
+        guard trimmed.count >= AppLockPolicy.minimumPasscodeLength else { throw AppLockError.tooShort }
         storedPasscode = trimmed
     }
 
