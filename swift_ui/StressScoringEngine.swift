@@ -18,6 +18,33 @@ struct StressScoringConfig {
     var extremeStressThreshold: Double = 0.95
 
     static let `default` = StressScoringConfig()
+
+    /// Rescales the fixed defaults around a user's own resting baseline
+    /// instead of using the same absolute thresholds for everyone.
+    ///
+    /// Multipliers below are a starting point, not a clinically validated
+    /// model — how far above *this person's own* resting reading counts
+    /// as "maximally stressed." Each is floored at half the population
+    /// default so an unusually low resting reading (e.g. EDA near zero)
+    /// can't collapse a threshold to near-zero and make the factor
+    /// saturate to 1.0 permanently.
+    static func personalized(from baseline: StressBaseline, fallback: StressScoringConfig = .default) -> StressScoringConfig {
+        var config = fallback
+
+        config.edaStressThreshold = max(baseline.edaRestingMean * 1.6, fallback.edaStressThreshold * 0.5)
+        config.erraticBreathingThreshold = max(baseline.breathingRestingMean * 1.5, fallback.erraticBreathingThreshold * 0.5)
+        config.edaNormalizationCeiling = max(baseline.edaRestingMean * 2.0, fallback.edaNormalizationCeiling * 0.5)
+        config.breathingNormalizationCeiling = max(baseline.breathingRestingMean * 1.8, fallback.breathingNormalizationCeiling * 0.5)
+
+        // Pulse wasn't reliably sampled in every calibration run (face
+        // tracking can drop briefly) — only override the population
+        // default if calibration actually captured a usable reading.
+        if baseline.pulseRestingMean > 0 {
+            config.pulseNormalizationCeiling = max(baseline.pulseRestingMean * 1.5, fallback.pulseNormalizationCeiling * 0.5)
+        }
+
+        return config
+    }
 }
 
 /// Stateless calculator that turns raw vitals into a stress score and an

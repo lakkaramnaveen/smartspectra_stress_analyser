@@ -32,6 +32,11 @@ final class AppModel: ObservableObject {
 
     @Published var apiKeyInput: String = ""
 
+    // Personal baseline calibration
+    @Published private(set) var baseline: StressBaseline?
+    @Published private(set) var isCalibrating = false
+    @Published private(set) var calibrationProgress: Double = 0
+
     // Stress & emotion
     @Published private(set) var stressScore: Double = 0.0
     @Published private(set) var stressLevel: StressLevel = .calm
@@ -63,9 +68,12 @@ final class AppModel: ObservableObject {
 
     private let engine: BiometricEngineProviding
     private let credentialStore: CredentialStoring
-    private let scoringEngine: StressScoringEngine
+    private var scoringEngine: StressScoringEngine
     private let sessionRecorder: SessionRecorder   // ← was missing as a stored property
     let prediction: StressPredictionCoordinator     // not private: views read it
+    private let baselineStore: BaselineStoring
+    private var calibrator = BaselineCalibrator()
+    private var calibrationTimerTask: Task<Void, Never>?
 
     // MARK: - Internal buffers / state not exposed directly to views
 
@@ -98,18 +106,28 @@ final class AppModel: ObservableObject {
         credentialStore: CredentialStoring = KeychainCredentialStore(),
         scoringEngine: StressScoringEngine = StressScoringEngine(),
         sessionRecorder: SessionRecorder? = nil,
-        prediction: StressPredictionCoordinator? = nil
+        prediction: StressPredictionCoordinator? = nil,
+        baselineStore: BaselineStoring? = nil
     ) {
         self.engine = engine
         self.credentialStore = credentialStore
         self.scoringEngine = scoringEngine
         self.sessionRecorder = sessionRecorder ?? SessionRecorder()
         self.prediction = prediction ?? StressPredictionCoordinator()
+        self.baselineStore = baselineStore ?? BaselineStore()
 
         // Pre-fill the input field from Keychain so returning users don't
         // have to re-enter their key every launch — but never store it
         // anywhere insecure ourselves.
         self.apiKeyInput = credentialStore.loadAPIKey() ?? ""
+
+        // If a baseline was already captured in a previous launch,
+        // personalize scoring from the start rather than waiting for the
+        // user to recalibrate every session.
+        if let savedBaseline = self.baselineStore.load() {
+            self.baseline = savedBaseline
+            self.scoringEngine = .init(config: .personalized(from: savedBaseline))
+        }
 
         if let engine = engine as? BiometricEngine {
             engine.delegate = self
@@ -121,6 +139,7 @@ final class AppModel: ObservableObject {
         gameTimerTask?.cancel()
         blinkResetTask?.cancel()
         biofeedbackResetTask?.cancel()
+        calibrationTimerTask?.cancel()
     }
 
     // MARK: - Lifecycle Controls
@@ -157,6 +176,7 @@ final class AppModel: ObservableObject {
         stopGame()
         stopSessionTimer()
         sessionRecorder.stop()
+        if isCalibrating { cancelCalibration() }
     }
 
     // MARK: - Game Controls
@@ -212,9 +232,78 @@ final class AppModel: ObservableObject {
         triggerBiofeedback()
     }
 
+    // MARK: - Baseline Calibration
+
+    /// Begins a ~60s "sit still and breathe normally" calibration run.
+    /// Requires a live session (camera + SDK already running) — while
+    /// calibrating, incoming vitals feed the calibrator instead of the
+    /// normal stress-scoring path (see `recomputeDerivedState`), so
+    /// scoring against not-yet-personalized thresholds doesn't flash a
+    /// misleading score or trigger a breathing intervention mid-run.
+    func startCalibration() {
+        guard isRunning, !isCalibrating else { return }
+
+        calibrator = BaselineCalibrator()
+        calibrator.start()
+        isCalibrating = true
+        calibrationProgress = 0
+
+        calibrationTimerTask?.cancel()
+        calibrationTimerTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(200))
+                guard !Task.isCancelled, let self else { return }
+                self.calibrationProgress = self.calibrator.progress
+                if self.calibrator.isComplete {
+                    self.finishCalibration()
+                    return
+                }
+            }
+        }
+    }
+
+    func cancelCalibration() {
+        calibrationTimerTask?.cancel()
+        calibrationTimerTask = nil
+        isCalibrating = false
+        calibrationProgress = 0
+    }
+
+    /// Discards the saved baseline and reverts to population-default
+    /// thresholds. Exposed so a bad calibration (e.g. run while
+    /// distracted) can be undone without reinstalling the app.
+    func resetBaseline() {
+        baseline = nil
+        scoringEngine = StressScoringEngine()
+        baselineStore.clear()
+    }
+
+    private func finishCalibration() {
+        calibrationTimerTask?.cancel()
+        calibrationTimerTask = nil
+        isCalibrating = false
+
+        guard let newBaseline = calibrator.finish() else {
+            errorMessage = "Calibration needs more data — make sure your face stays visible and try again."
+            calibrationProgress = 0
+            return
+        }
+
+        baseline = newBaseline
+        scoringEngine = StressScoringEngine(config: .personalized(from: newBaseline))
+        calibrationProgress = 1.0
+
+        do {
+            try baselineStore.save(newBaseline)
+        } catch {
+            errorMessage = "Baseline captured but couldn't be saved: \(error.localizedDescription)"
+        }
+    }
+
     // MARK: - Private: Session Lifecycle
 
     private func resetSessionState() {
+        if isCalibrating { cancelCalibration() }
         errorMessage = ""
         vitalsDisplay = VitalsDisplay()
         hasLiveMetrics = false
@@ -339,6 +428,11 @@ final class AppModel: ObservableObject {
     // MARK: - Private: Stress & Emotion
 
     private func recomputeDerivedState() {
+        if isCalibrating {
+            calibrator.ingest(pulseBPM: latestPulse, eda: latestEDA, breathingRPM: latestBreathing)
+            return
+        }
+
         guard let score = scoringEngine.stressScore(eda: latestEDA, breathingRPM: latestBreathing) else {
             return
         }

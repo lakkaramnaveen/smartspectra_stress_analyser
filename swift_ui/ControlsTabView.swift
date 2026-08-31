@@ -77,6 +77,8 @@ struct ControlsTabView: View {
                     .disabled(!model.isRunning)
                 }
 
+                BaselineCalibrationCard()
+
                 // Error Display
                 if !model.errorMessage.isEmpty {
                     VStack(alignment: .leading, spacing: 4) {
