@@ -6,3 +6,4 @@
 !/smartspectra_swift_ui.xcodeproj/
 /native_build/
 DerivedData/
+*.profraw

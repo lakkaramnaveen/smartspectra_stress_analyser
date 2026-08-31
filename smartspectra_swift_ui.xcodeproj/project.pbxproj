@@ -230,6 +230,7 @@
 				100000000000000000000702 /* Validate Setup */,
 				100000000000000000000701 /* Sources */,
 				100000000000000000000301 /* Frameworks */,
+				C8FC26180534CE1C90401CE3 /* Embed Dependencies */,
 			);
 			buildRules = (
 			);
@@ -312,6 +313,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "set -euo pipefail\n\nfail() {\n  echo \"error: $1\" >&2\n  exit 1\n}\n\nsdk_root=\"${SMARTSPECTRA_SDK_ROOT:-}\"\nif [[ -z \"$sdk_root\" ]]; then\n  fail \"SmartSpectra SDK not found: SMARTSPECTRA_SDK_ROOT is empty. Set it to the Homebrew prefix that contains SmartSpectra, or to a local SDK install prefix.\"\nfi\n\nif [[ ! -d \"$sdk_root\" ]]; then\n  fail \"SmartSpectra SDK not found: SMARTSPECTRA_SDK_ROOT does not exist: $sdk_root\"\nfi\n\nif [[ ! -f \"$sdk_root/include/smartspectra/smartspectra.h\" ]]; then\n  fail \"SmartSpectra SDK not found at SMARTSPECTRA_SDK_ROOT=$sdk_root. Expected SDK header at $sdk_root/include/smartspectra/smartspectra.h.\"\nfi\n\nif [[ ! -d \"$sdk_root/include/smartspectra/interface\" ]]; then\n  fail \"SmartSpectra SDK not found at SMARTSPECTRA_SDK_ROOT=$sdk_root. Expected SDK interface headers at $sdk_root/include/smartspectra/interface.\"\nfi\n\nif [[ ! -f \"$sdk_root/lib/libsmartspectra.dylib\" ]]; then\n  fail \"SmartSpectra SDK not found at SMARTSPECTRA_SDK_ROOT=$sdk_root. Expected SDK library at $sdk_root/lib/libsmartspectra.dylib.\"\nfi\n\nopencv_include=\"${OPENCV_INCLUDE_DIR:-}\"\nif [[ -z \"$opencv_include\" || ! -f \"$opencv_include/opencv2/opencv.hpp\" ]]; then\n  fail \"Missing OpenCV headers under OPENCV_INCLUDE_DIR=$opencv_include. Install OpenCV with Homebrew or set HOMEBREW_PREFIX to the prefix that contains it.\"\nfi\n";
+		};
+		C8FC26180534CE1C90401CE3 /* Embed Dependencies */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Dependencies";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "set -euo pipefail\n\nif [[ \"${CONFIGURATION:-}\" != \"Release\" ]]; then\n  echo \"Skipping dependency embedding for $CONFIGURATION build.\"\n  exit 0\nfi\n\nDYLIBBUNDLER=\"$(command -v dylibbundler || true)\"\nif [[ -z \"$DYLIBBUNDLER\" ]]; then\n  echo \"warning: dylibbundler not found (brew install dylibbundler) -- this Release build still dynamically depends on Homebrew at ${HOMEBREW_PREFIX:-/opt/homebrew} and will not run on a machine without it.\" >&2\n  exit 0\nfi\n\nAPP=\"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\"\nEXECUTABLE=\"${APP}/Contents/MacOS/${EXECUTABLE_NAME}\"\nFRAMEWORKS_DIR=\"${APP}/Contents/Frameworks\"\nmkdir -p \"$FRAMEWORKS_DIR\"\n\necho \"Embedding native dependencies into ${WRAPPER_NAME} for a self-contained build...\"\n\n\"$DYLIBBUNDLER\" -od -b \\\n  -x \"$EXECUTABLE\" \\\n  -d \"$FRAMEWORKS_DIR/\" \\\n  -p \"@executable_path/../Frameworks/\" \\\n  -s \"${HOMEBREW_PREFIX:-/opt/homebrew}/lib\" \\\n  -s \"${HOMEBREW_PREFIX:-/opt/homebrew}/opt/opencv/lib\" \\\n  -s \"${HOMEBREW_PREFIX:-/opt/homebrew}/opt/smartspectra-rc/lib\" \\\n  -s \"${HOMEBREW_PREFIX:-/opt/homebrew}/opt/protobuf/lib\"\n\ndedup_rpath() {\n  local f=\"$1\"\n  local target=\"@executable_path/../Frameworks/\"\n  local count\n  count=$(otool -l \"$f\" 2>/dev/null | grep -A2 \"cmd LC_RPATH\" | grep -c \"path $target \" || true)\n  local i=1\n  while [[ \"$i\" -lt \"$count\" ]]; do\n    install_name_tool -delete_rpath \"$target\" \"$f\" 2>/dev/null || true\n    i=$((i + 1))\n  done\n}\n\ndedup_rpath \"$EXECUTABLE\"\nfor lib in \"$FRAMEWORKS_DIR\"/*.dylib; do\n  [[ -f \"$lib\" ]] || continue\n  dedup_rpath \"$lib\"\ndone\n\nfor lib in \"$FRAMEWORKS_DIR\"/*.dylib; do\n  [[ -f \"$lib\" ]] || continue\n  codesign --force --sign - \"$lib\"\ndone\ncodesign --force --sign - \"$EXECUTABLE\"\n\necho \"Embedded $(find \"$FRAMEWORKS_DIR\" -name '*.dylib' | wc -l | tr -d ' ') dependency dylib(s) into Contents/Frameworks.\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
