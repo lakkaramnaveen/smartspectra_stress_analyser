@@ -54,6 +54,8 @@
 		1E10B9FBD7B858C9B08F9724 /* SessionCSVExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58255609A7AB0A183D84BFEB /* SessionCSVExporterTests.swift */; };
 		D7F14D312C49A74CD7E31C3E /* SessionCSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759A302A43580078052F /* SessionCSVExporter.swift */; };
 		8256A27E3CB74A4A2483F752 /* SessionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759C302A43580078052F /* SessionModels.swift */; };
+		60BFA2CFEACE6A6D3C4E015D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 660FCAE0E0B37E998BED08DC /* Assets.xcassets */; };
+		4413F61CA3B489E8EC572D34 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE453DA45E37BE692A3E60B6 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +110,8 @@
 		C86D117F45597655DF147378 /* PredictionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionTests.swift; sourceTree = "<group>"; };
 		F19B698D4929E1AC5853C6DE /* smartspectra_swift_uiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = smartspectra_swift_uiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		58255609A7AB0A183D84BFEB /* SessionCSVExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCSVExporterTests.swift; sourceTree = "<group>"; };
+		660FCAE0E0B37E998BED08DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CE453DA45E37BE692A3E60B6 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +153,7 @@
 				100000000000000000000205 /* SmartSpectraRunner.h */,
 				100000000000000000000206 /* SmartSpectraSwiftBridge.h */,
 				100000000000000000000207 /* Info.plist */,
+				660FCAE0E0B37E998BED08DC /* Assets.xcassets */,
 				183B7571302377A70078052F /* ARCHITECTURE.md */,
 				183B7572302377A70078052F /* BalloonHuntGameView.swift */,
 				183B7573302377A70078052F /* BiometricEngine.swift */,
@@ -159,6 +164,7 @@
 				73F21637216DC0CEFE169926 /* BaselineCalibrator.swift */,
 				7FA6FF01A3A411E18681886E /* BaselineStore.swift */,
 				F4FCC370EEA470C4155536DE /* BaselineCalibrationView.swift */,
+				CE453DA45E37BE692A3E60B6 /* OnboardingView.swift */,
 				183B7574302377A70078052F /* BreathingPacerView.swift */,
 				183B7575302377A70078052F /* ContentView.swift */,
 				183B7576302377A70078052F /* ControlsTabView.swift */,
@@ -235,6 +241,7 @@
 				100000000000000000000702 /* Validate Setup */,
 				100000000000000000000701 /* Sources */,
 				100000000000000000000301 /* Frameworks */,
+				4D7DC5499C364BB52467A8E6 /* Resources */,
 				C8FC26180534CE1C90401CE3 /* Embed Dependencies */,
 			);
 			buildRules = (
@@ -298,6 +305,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4D7DC5499C364BB52467A8E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60BFA2CFEACE6A6D3C4E015D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		100000000000000000000702 /* Validate Setup */ = {
@@ -377,6 +395,7 @@
 				8C5F6641BF6BC6FF0486234E /* BaselineCalibrator.swift in Sources */,
 				E31E070724D57334438B2EA5 /* BaselineStore.swift in Sources */,
 				36BDF907E7D5B18E5E8B0E29 /* BaselineCalibrationView.swift in Sources */,
+				4413F61CA3B489E8EC572D34 /* OnboardingView.swift in Sources */,
 				100000000000000000000104 /* SmartSpectraRunner.mm in Sources */,
 				100000000000000000000101 /* SmartSpectraSwiftApp.swift in Sources */,
 			);
@@ -455,6 +474,7 @@
 				CODE_SIGN_ENTITLEMENTS = smartspectra_swift_ui.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "$(SMARTSPECTRA_DEVELOPMENT_TEAM)";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -517,6 +537,7 @@
 				CODE_SIGN_ENTITLEMENTS = smartspectra_swift_ui.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "$(SMARTSPECTRA_DEVELOPMENT_TEAM)";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
