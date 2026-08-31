@@ -1,4 +1,7 @@
 import Foundation
+import os
+
+private let logger = Logger(subsystem: "com.presagetech.smartspectra-swift-ui", category: "SessionRecorder")
 
 /// Records a live session as a series of throttled snapshots, then hands
 /// the finished recording to a `SessionStoring` implementation.
@@ -98,7 +101,7 @@ final class SessionRecorder: ObservableObject {
             // thrown error to AppModel would turn a "nice to have"
             // feature into something that can break the main start/stop
             // flow, which isn't the right tradeoff here.
-            print("SessionRecorder: failed to save recording — \(error.localizedDescription)")
+            logger.error("Failed to save recording: \(error.localizedDescription, privacy: .public)")
         }
 
         return finished

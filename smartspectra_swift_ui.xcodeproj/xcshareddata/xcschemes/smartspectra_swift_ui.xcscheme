@@ -21,6 +21,20 @@
                ReferencedContainer = "container:smartspectra_swift_ui.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1D47D0EAC30C3A54D12D7075"
+               BuildableName = "smartspectra_swift_uiTests.xctest"
+               BlueprintName = "smartspectra_swift_uiTests"
+               ReferencedContainer = "container:smartspectra_swift_ui.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -29,6 +43,18 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1D47D0EAC30C3A54D12D7075"
+               BuildableName = "smartspectra_swift_uiTests.xctest"
+               BlueprintName = "smartspectra_swift_uiTests"
+               ReferencedContainer = "container:smartspectra_swift_ui.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

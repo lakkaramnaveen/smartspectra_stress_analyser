@@ -66,7 +66,7 @@ After selecting the app target, use this `Signing & Capabilities` view:
 
 ### 4. Run the app
 
-Enter `SMARTSPECTRA_API_KEY` in the app and press Start. On first launch, allow camera access when macOS prompts.
+The app opens to a lock screen and prompts for Touch ID (or your Mac's account password if Touch ID isn't available) before showing any camera feed or vitals — see [App Lock (Touch ID / Passcode)](swift_ui/README.md#app-lock-touch-id--passcode) for details. After unlocking, enter `SMARTSPECTRA_API_KEY` in the app and press Start. On first launch, allow camera access when macOS prompts.
 
 ## Requirements
 
@@ -76,6 +76,7 @@ Enter `SMARTSPECTRA_API_KEY` in the app and press Start. On first launch, allow 
   - OpenCV
 - Apple Development signing in Xcode.
 - A SmartSpectra API key.
+- A macOS user account with a login password set (Touch ID is optional but recommended) — required by the app's lock screen.
 
 This SDK build requires macOS 14.0 or newer at runtime.
 

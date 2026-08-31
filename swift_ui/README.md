@@ -57,6 +57,7 @@ Total Swift: ~2,800 lines (all production-grade)
 - Collision detection with confidence-based feedback
 
 ### ✅ Security & Privacy
+- Touch ID / Mac password lock screen gates all camera and vitals UI (`LocalAuthentication`)
 - Keychain-based credential storage (encrypted at rest)
 - No plaintext passwords or env vars
 - Thread-safe state management (@MainActor)
@@ -76,7 +77,11 @@ Total Swift: ~2,800 lines (all production-grade)
 ### Layered Design
 
 ```
-┌─ Views Layer ─────────────────────────────────────────┐
+┌─ App Entry ─────────────────────────────────────────────┐
+│ SmartSpectraSwiftApp: shows LockScreenView until         │
+│ AppLockService authenticates, then swaps in ContentView  │
+└──────────────────────┬─────────────────────────────────┘
+┌─ Views Layer ─────────▼────────────────────────────────┐
 │ ContentView, StressVisualizationView, BalloonHuntGame │
 │ (Dumb, reactive, declarative)                         │
 └──────────────────────┬────────────────────────────────┘
@@ -106,6 +111,14 @@ Total Swift: ~2,800 lines (all production-grade)
 ---
 
 ## 🛡️ Security & Reliability
+
+### App Lock (Touch ID / Passcode)
+- ✅ App launches straight into `LockScreenView`; `ContentView` (camera + vitals) is never constructed until unlocked
+- ✅ Authenticates via `LocalAuthentication`'s `.deviceOwnerAuthentication` policy — Touch ID first, falling back to the Mac's account password automatically
+- ✅ No separate app passcode invented or stored — piggybacks on whatever already secures the Mac, so there's nothing new to leak or brute-force
+- ✅ Re-locks (and stops any running capture session) on sleep, display sleep, or fast user switching — not just on quit
+- ✅ Fails closed: if the Mac has no login password configured at all, the app refuses to unlock rather than silently granting access
+- See `AppLockService.swift` (auth logic, behind the `AppLocking` protocol for testability) and `LockScreenView.swift` (UI)
 
 ### Credential Management
 - ✅ Stored in macOS Keychain (encrypted)

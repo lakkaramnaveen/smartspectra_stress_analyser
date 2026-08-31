@@ -1,8 +1,11 @@
 import Foundation
+import os
 #if os(macOS)
 import AppKit
 import UniformTypeIdentifiers
 #endif
+
+private let logger = Logger(subsystem: "com.presagetech.smartspectra-swift-ui", category: "SessionCSVExporter")
 
 /// Converts a `SessionRecording` into CSV and, on macOS, offers a native
 /// save panel so the user picks where it goes.
@@ -47,7 +50,7 @@ enum SessionCSVExporter {
             do {
                 try csv.write(to: url, atomically: true, encoding: .utf8)
             } catch {
-                print("SessionCSVExporter: failed to write CSV — \(error.localizedDescription)")
+                logger.error("Failed to write CSV: \(error.localizedDescription, privacy: .public)")
             }
         }
     }

@@ -13,7 +13,7 @@
 		183B7582302377A70078052F /* SharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757E302377A70078052F /* SharedComponents.swift */; };
 		183B7583302377A70078052F /* BalloonHuntGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7572302377A70078052F /* BalloonHuntGameView.swift */; };
 		183B7584302377A70078052F /* RollingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757D302377A70078052F /* RollingBuffer.swift */; };
-		183B7585302377A70078052F /* ContentView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7575302377A70078052F /* ContentView 2.swift */; };
+		183B7585302377A70078052F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7575302377A70078052F /* ContentView.swift */; };
 		183B7586302377A70078052F /* StressScoringEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757F302377A70078052F /* StressScoringEngine.swift */; };
 		183B7587302377A70078052F /* DomainModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7578302377A70078052F /* DomainModels.swift */; };
 		183B7588302377A70078052F /* ControlsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7576302377A70078052F /* ControlsTabView.swift */; };
@@ -28,6 +28,21 @@
 		183B75A3302A43580078052F /* SessionCSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759A302A43580078052F /* SessionCSVExporter.swift */; };
 		183B75A4302A43580078052F /* SessionRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759D302A43580078052F /* SessionRecorder.swift */; };
 		183B75A5302A43580078052F /* SessionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759C302A43580078052F /* SessionModels.swift */; };
+		183B75B1302A50660078052F /* StressForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AC302A50660078052F /* StressForecast.swift */; };
+		183B75B2302A50660078052F /* StressPredictionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AE302A50660078052F /* StressPredictionCoordinator.swift */; };
+		183B75B3302A50660078052F /* StressPredictionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AF302A50660078052F /* StressPredictionViews.swift */; };
+		183B75B4302A50660078052F /* StressTrendAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75B0302A50660078052F /* StressTrendAnalyzer.swift */; };
+		183B75B5302A50660078052F /* StressNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AD302A50660078052F /* StressNotificationService.swift */; };
+		183B75B6302A50660078052F /* InterventionAlertPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AB302A50660078052F /* InterventionAlertPolicy.swift */; };
+		478ADA16CF0E95B070192D74 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD22D61D90E8D1DB57DB3D6D /* AppModel.swift */; };
+		FD0673F14CD1D499CCC5315F /* AppLockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5223CF0ABBA69BD0D4FD537D /* AppLockService.swift */; };
+		8B20031A96032F83FDCD70D6 /* LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E282509FEA7F2FFBCE4558 /* LockScreenView.swift */; };
+		5F1D6D29A9CABA7A89F1C7C4 /* PredictionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C86D117F45597655DF147378 /* PredictionTests.swift */; };
+		91B0D1B8E720C913A7FB3D86 /* RollingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757D302377A70078052F /* RollingBuffer.swift */; };
+		826203E27852A2CA1510A672 /* DomainModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B7578302377A70078052F /* DomainModels.swift */; };
+		AE061539D7E542C5CDC23ECC /* StressForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AC302A50660078052F /* StressForecast.swift */; };
+		6BBD1DCEF5AB350B25407791 /* StressTrendAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75B0302A50660078052F /* StressTrendAnalyzer.swift */; };
+		4408811B65A3B94907AC9193 /* InterventionAlertPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B75AB302A50660078052F /* InterventionAlertPolicy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +58,7 @@
 		183B7572302377A70078052F /* BalloonHuntGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonHuntGameView.swift; sourceTree = "<group>"; };
 		183B7573302377A70078052F /* BiometricEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricEngine.swift; sourceTree = "<group>"; };
 		183B7574302377A70078052F /* BreathingPacerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingPacerView.swift; sourceTree = "<group>"; };
-		183B7575302377A70078052F /* ContentView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView 2.swift"; sourceTree = "<group>"; };
+		183B7575302377A70078052F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		183B7576302377A70078052F /* ControlsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsTabView.swift; sourceTree = "<group>"; };
 		183B7577302377A70078052F /* DEPLOYMENT.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DEPLOYMENT.md; sourceTree = "<group>"; };
 		183B7578302377A70078052F /* DomainModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainModels.swift; sourceTree = "<group>"; };
@@ -64,10 +79,29 @@
 		183B759D302A43580078052F /* SessionRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionRecorder.swift; sourceTree = "<group>"; };
 		183B759E302A43580078052F /* SessionReplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionReplayView.swift; sourceTree = "<group>"; };
 		183B759F302A43580078052F /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
+		183B75AB302A50660078052F /* InterventionAlertPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterventionAlertPolicy.swift; sourceTree = "<group>"; };
+		183B75AC302A50660078052F /* StressForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressForecast.swift; sourceTree = "<group>"; };
+		183B75AD302A50660078052F /* StressNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressNotificationService.swift; sourceTree = "<group>"; };
+		183B75AE302A50660078052F /* StressPredictionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressPredictionCoordinator.swift; sourceTree = "<group>"; };
+		183B75AF302A50660078052F /* StressPredictionViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressPredictionViews.swift; sourceTree = "<group>"; };
+		183B75B0302A50660078052F /* StressTrendAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressTrendAnalyzer.swift; sourceTree = "<group>"; };
+		183B75B7302A50730078052F /* INTEGRATION_GUIDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = INTEGRATION_GUIDE.md; sourceTree = "<group>"; };
+		DD22D61D90E8D1DB57DB3D6D /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		5223CF0ABBA69BD0D4FD537D /* AppLockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockService.swift; sourceTree = "<group>"; };
+		D0E282509FEA7F2FFBCE4558 /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenView.swift; sourceTree = "<group>"; };
+		C86D117F45597655DF147378 /* PredictionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionTests.swift; sourceTree = "<group>"; };
+		F19B698D4929E1AC5853C6DE /* smartspectra_swift_uiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = smartspectra_swift_uiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		100000000000000000000301 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6B93DEFE8EB205B54C40784E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -81,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				100000000000000000000402 /* swift_ui */,
+				0FB13A9574F506C380D91298 /* smartspectra_swift_uiTests */,
 				100000000000000000000208 /* smartspectra_swift_ui.entitlements */,
 				100000000000000000000212 /* README.md */,
 				100000000000000000000404 /* Products */,
@@ -90,6 +125,7 @@
 		100000000000000000000402 /* swift_ui */ = {
 			isa = PBXGroup;
 			children = (
+				183B75AA302A50450078052F /* forecast */,
 				183B75A6302A43FB0078052F /* SessionRecording */,
 				100000000000000000000201 /* SmartSpectraSwiftApp.swift */,
 				100000000000000000000204 /* SmartSpectraRunner.mm */,
@@ -99,8 +135,11 @@
 				183B7571302377A70078052F /* ARCHITECTURE.md */,
 				183B7572302377A70078052F /* BalloonHuntGameView.swift */,
 				183B7573302377A70078052F /* BiometricEngine.swift */,
+				DD22D61D90E8D1DB57DB3D6D /* AppModel.swift */,
+				5223CF0ABBA69BD0D4FD537D /* AppLockService.swift */,
+				D0E282509FEA7F2FFBCE4558 /* LockScreenView.swift */,
 				183B7574302377A70078052F /* BreathingPacerView.swift */,
-				183B7575302377A70078052F /* ContentView 2.swift */,
+				183B7575302377A70078052F /* ContentView.swift */,
 				183B7576302377A70078052F /* ControlsTabView.swift */,
 				183B75953027D29C0078052F /* BLINK_DETECTION_IMPLEMENTATION.md */,
 				183B75963027D29C0078052F /* COMPLETE_STEP_BY_STEP_GUIDE.md */,
@@ -123,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				100000000000000000000213 /* smartspectra_swift_ui.app */,
+				F19B698D4929E1AC5853C6DE /* smartspectra_swift_uiTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,6 +178,28 @@
 				183B759F302A43580078052F /* SessionStore.swift */,
 			);
 			path = SessionRecording;
+			sourceTree = "<group>";
+		};
+		183B75AA302A50450078052F /* forecast */ = {
+			isa = PBXGroup;
+			children = (
+				183B75AB302A50660078052F /* InterventionAlertPolicy.swift */,
+				183B75AC302A50660078052F /* StressForecast.swift */,
+				183B75AD302A50660078052F /* StressNotificationService.swift */,
+				183B75AE302A50660078052F /* StressPredictionCoordinator.swift */,
+				183B75AF302A50660078052F /* StressPredictionViews.swift */,
+				183B75B0302A50660078052F /* StressTrendAnalyzer.swift */,
+				183B75B7302A50730078052F /* INTEGRATION_GUIDE.md */,
+			);
+			path = forecast;
+			sourceTree = "<group>";
+		};
+		0FB13A9574F506C380D91298 /* smartspectra_swift_uiTests */ = {
+			isa = PBXGroup;
+			children = (
+				C86D117F45597655DF147378 /* PredictionTests.swift */,
+			);
+			path = smartspectra_swift_uiTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,6 +222,22 @@
 			productReference = 100000000000000000000213 /* smartspectra_swift_ui.app */;
 			productType = "com.apple.product-type.application";
 		};
+		1D47D0EAC30C3A54D12D7075 /* smartspectra_swift_uiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4A0C1AD7AE839E2EF720714F /* Build configuration list for PBXNativeTarget "smartspectra_swift_uiTests" */;
+			buildPhases = (
+				1212C9A98A85EB8A823BB1F5 /* Sources */,
+				6B93DEFE8EB205B54C40784E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = smartspectra_swift_uiTests;
+			productName = smartspectra_swift_uiTests;
+			productReference = F19B698D4929E1AC5853C6DE /* smartspectra_swift_uiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -171,6 +249,9 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					100000000000000000000501 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					1D47D0EAC30C3A54D12D7075 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
@@ -189,6 +270,7 @@
 			projectRoot = "";
 			targets = (
 				100000000000000000000501 /* smartspectra_swift_ui */,
+				1D47D0EAC30C3A54D12D7075 /* smartspectra_swift_uiTests */,
 			);
 		};
 /* End PBXProject section */
@@ -228,9 +310,15 @@
 				183B75A4302A43580078052F /* SessionRecorder.swift in Sources */,
 				183B75A5302A43580078052F /* SessionModels.swift in Sources */,
 				183B7582302377A70078052F /* SharedComponents.swift in Sources */,
+				183B75B1302A50660078052F /* StressForecast.swift in Sources */,
+				183B75B2302A50660078052F /* StressPredictionCoordinator.swift in Sources */,
+				183B75B3302A50660078052F /* StressPredictionViews.swift in Sources */,
+				183B75B4302A50660078052F /* StressTrendAnalyzer.swift in Sources */,
+				183B75B5302A50660078052F /* StressNotificationService.swift in Sources */,
+				183B75B6302A50660078052F /* InterventionAlertPolicy.swift in Sources */,
 				183B7583302377A70078052F /* BalloonHuntGameView.swift in Sources */,
 				183B7584302377A70078052F /* RollingBuffer.swift in Sources */,
-				183B7585302377A70078052F /* ContentView 2.swift in Sources */,
+				183B7585302377A70078052F /* ContentView.swift in Sources */,
 				183B7586302377A70078052F /* StressScoringEngine.swift in Sources */,
 				183B7587302377A70078052F /* DomainModels.swift in Sources */,
 				183B7588302377A70078052F /* ControlsTabView.swift in Sources */,
@@ -239,8 +327,24 @@
 				183B758B302377A70078052F /* BreathingPacerView.swift in Sources */,
 				183B758C302377A70078052F /* KeychainCredentialStore.swift in Sources */,
 				183B758D302377A70078052F /* BiometricEngine.swift in Sources */,
+				478ADA16CF0E95B070192D74 /* AppModel.swift in Sources */,
+				FD0673F14CD1D499CCC5315F /* AppLockService.swift in Sources */,
+				8B20031A96032F83FDCD70D6 /* LockScreenView.swift in Sources */,
 				100000000000000000000104 /* SmartSpectraRunner.mm in Sources */,
 				100000000000000000000101 /* SmartSpectraSwiftApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1212C9A98A85EB8A823BB1F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F1D6D29A9CABA7A89F1C7C4 /* PredictionTests.swift in Sources */,
+				91B0D1B8E720C913A7FB3D86 /* RollingBuffer.swift in Sources */,
+				826203E27852A2CA1510A672 /* DomainModels.swift in Sources */,
+				AE061539D7E542C5CDC23ECC /* StressForecast.swift in Sources */,
+				6BBD1DCEF5AB350B25407791 /* StressTrendAnalyzer.swift in Sources */,
+				4408811B65A3B94907AC9193 /* InterventionAlertPolicy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,7 +423,7 @@
 					"$(HOMEBREW_PREFIX)/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv4";
+				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv5";
 				OPENCV_LIB_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/lib";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -381,7 +485,7 @@
 					"$(HOMEBREW_PREFIX)/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv4";
+				OPENCV_INCLUDE_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/include/opencv5";
 				OPENCV_LIB_DIR = "$(HOMEBREW_PREFIX)/opt/opencv/lib";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -409,6 +513,53 @@
 			};
 			name = Release;
 		};
+		F52E2B81D72981ADB33D16FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.presagetech.smartspectra-swift-ui.Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		513A75EE3440F465C55F4471 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_OPTIMIZATION_LEVEL = s;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.presagetech.smartspectra-swift-ui.Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -426,6 +577,15 @@
 			buildConfigurations = (
 				100000000000000000001101 /* Debug */,
 				100000000000000000001102 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4A0C1AD7AE839E2EF720714F /* Build configuration list for PBXNativeTarget "smartspectra_swift_uiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F52E2B81D72981ADB33D16FA /* Debug */,
+				513A75EE3440F465C55F4471 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

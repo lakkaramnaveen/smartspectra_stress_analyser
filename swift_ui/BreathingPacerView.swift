@@ -247,47 +247,57 @@ struct BreathingPacerView: View {
 
     // MARK: - Animation Loop
 
+    /// Runs the breathing cycles as a single cancellable `Task` rather than
+    /// a chain of `DispatchQueue.asyncAfter` calls. The old asyncAfter chain
+    /// had no cancellation handle at all — dismissing this view (or the
+    /// user tapping "Exit") left already-scheduled callbacks armed, and
+    /// since SwiftUI reuses the same `@State` storage for this view's
+    /// position in the tree across re-appearances, a stale callback from a
+    /// previous session could mutate cycle state — or silently dismiss —
+    /// a session that started after it.
     private func startBreathing() {
+        animationTask?.cancel()
         cycleCount = 0
-        performBreathCycle()
+        animationTask = Task { @MainActor in
+            await runBreathingCycles()
+        }
     }
 
-    private func performBreathCycle() {
-        cycleCount += 1
+    private func runBreathingCycles() async {
+        while cycleCount < 6 {
+            guard !Task.isCancelled else { return }
+            cycleCount += 1
 
-        // Inhale (4 seconds)
-        withAnimation(.easeInOut(duration: 4.0)) {
-            scale = 1.2
-            opacity = 1.0
-            instruction = "Breathe In..."
-            breathCycleProgress = 0.4
-        }
+            // Inhale (4 seconds)
+            withAnimation(.easeInOut(duration: 4.0)) {
+                scale = 1.2
+                opacity = 1.0
+                instruction = "Breathe In..."
+                breathCycleProgress = 0.4
+            }
 
-        // Exhale (6 seconds)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+            try? await Task.sleep(for: .seconds(4))
+            guard !Task.isCancelled else { return }
+
+            // Exhale (6 seconds)
             withAnimation(.easeInOut(duration: 6.0)) {
                 scale = 0.5
                 opacity = 0.3
                 instruction = "Breathe Out..."
                 breathCycleProgress = 1.0
             }
-        }
 
-        // Reset for next cycle or auto-exit
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            try? await Task.sleep(for: .seconds(6))
+            guard !Task.isCancelled else { return }
+
             breathCycleProgress = 0.0
-
-            if cycleCount >= 6 {
-                stopBreathing()
-            } else {
-                performBreathCycle()
-            }
         }
+
+        stopBreathing()
     }
 
     private func resetCycles() {
         animationTask?.cancel()
-        cycleCount = 0
         breathCycleProgress = 0.0
         startBreathing()
     }

@@ -27,8 +27,37 @@ struct ContentView: View {
                     .transition(.opacity.combined(with: .scale(scale: 0.9)))
                     .zIndex(1000)
             }
+
+            // Critical-stress breathing intervention — takes priority over
+            // the game overlay since it's a safety response, not a feature.
+            if model.isBiofeedbackActive {
+                BreathingPacerView(isActive: $model.isBiofeedbackActive)
+                    .environmentObject(model)
+                    .transition(.opacity)
+                    .zIndex(2000)
+            }
+
+            // Predictive stress alert banner
+            if let alert = model.prediction.activeAlert {
+                VStack {
+                    StressAlertBanner(
+                        alert: alert,
+                        onDismiss: { model.prediction.dismissAlert() },
+                        onStartBreathing: { model.beginBreathingManually() }
+                    )
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .frame(maxWidth: 520)
+
+                    Spacer()
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(500)
+            }
         }
         .animation(.easeInOut, value: showGameFullscreen)
+        .animation(.easeInOut, value: model.isBiofeedbackActive)
+        .animation(.spring(response: 0.4), value: model.prediction.activeAlert)
     }
 
     // MARK: - Main Workspace
@@ -56,6 +85,7 @@ struct ContentView: View {
                 HStack {
                     validationPill
                     Spacer()
+                    StressTrendPill(forecast: model.prediction.forecast)
                 }
                 .padding(18)
 
@@ -83,6 +113,7 @@ struct ContentView: View {
                         VStack(spacing: 4) {
                             Image(systemName: tab.icon)
                                 .font(.system(size: 16, weight: .semibold))
+                                .accessibilityHidden(true)
                             Text(tab.label)
                                 .font(.system(size: 8, weight: .semibold))
                         }
@@ -94,6 +125,8 @@ struct ContentView: View {
                         activeSidebarTab == tab ? Color.white.opacity(0.1) : Color.clear
                     )
                     .cornerRadius(8)
+                    .accessibilityLabel(tab.label)
+                    .accessibilityAddTraits(activeSidebarTab == tab ? [.isSelected] : [])
                 }
             }
             .padding(8)

@@ -442,23 +442,23 @@ Button(action: { showFeedbackSheet = true }) {
 
 ## Production Readiness Checklist
 
-- [ ] All Swift files compile without warnings
-- [ ] All tests pass
+- [x] All Swift files compile without warnings (verified via `xcodebuild build`)
+- [x] All tests pass (`smartspectra_swift_uiTests`, 8/8)
 - [ ] Performance profiled (memory < 5 MB)
-- [ ] Security review done (Keychain setup correct)
-- [ ] API key management flow tested
-- [ ] End-to-end session tested (start → collect vitals → trigger intervention → game)
-- [ ] Accessibility labels added to key UI elements
-- [ ] App icon and metadata correct
+- [x] Security review done (Keychain setup correct; app now also gates launch behind Touch ID/passcode via `AppLockService`)
+- [x] API key management flow tested (verified live: Keychain save/load, empty-key error path)
+- [x] End-to-end session tested (start → collect vitals → trigger intervention → game) — verified live this session
+- [ ] Accessibility labels added to key UI elements (a handful of icon-only controls fixed; most of the app still has none — see production-readiness audit)
+- [ ] App icon and metadata correct (no `.xcassets`/`AppIcon` exists yet — ships with Xcode's default icon)
 - [ ] Privacy policy and terms of service prepared
 - [ ] Release notes written
 - [ ] Beta testing completed (if applicable)
-- [ ] Crash reporting configured
+- [ ] Crash reporting configured (none integrated)
+
+This list previously showed every box unchecked directly above a "✅ Ready for Deployment" status — those two statements contradicted each other. The status below now reflects what's actually been verified.
 
 ---
 
-**Version:** 3.0 (Production)  
-**Status:** ✅ Ready for Deployment  
-**Support:** Refer to ARCHITECTURE.md for detailed design docs
-
-**Let's ship! 🚀**
+**Version:** 3.0  
+**Status:** ⚠️ Functionally verified (build, tests, and core flows confirmed working) — not yet customer-facing-ready. See the unchecked items above, plus `native_build`'s runtime dependency on the *build machine's own* Homebrew install of `smartspectra`/`opencv` (the app is not yet packaged to run on a machine without them).  
+**Support:** `ARCHITECTURE.md` is referenced here but does not exist in this repo — either write it or remove the pointer.

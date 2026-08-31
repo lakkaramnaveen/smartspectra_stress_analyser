@@ -209,8 +209,8 @@ struct BalloonHuntGameView: View {
         .onDisappear {
             stopGame()
         }
-        .onChange(of: model.blinkDetected) { newValue in
-            if newValue {
+        .onChange(of: model.blinkDetected) {
+            if model.blinkDetected {
                 handleBlink()
             }
         }

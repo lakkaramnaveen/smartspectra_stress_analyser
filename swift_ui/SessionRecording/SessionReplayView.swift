@@ -82,6 +82,7 @@ struct SessionReplayView: View {
                     .foregroundStyle(.white.opacity(0.5))
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Close")
         }
     }
 
