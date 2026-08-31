@@ -63,7 +63,13 @@ final class KeychainCredentialStore: CredentialStoring {
         if updateStatus == errSecItemNotFound {
             var addQuery = baseQuery
             addQuery[kSecValueData as String] = data
-            addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+            // ThisDeviceOnly + WhenUnlocked rather than the more common
+            // AfterFirstUnlock: the app already gates all access behind
+            // Touch ID/passcode (AppLockService), so the key is never
+            // needed while the device is locked or before first unlock —
+            // no reason to also let it sync via iCloud Keychain or stay
+            // readable on a machine that's merely been unlocked since boot.
+            addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
             let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
             guard addStatus == errSecSuccess else {
                 throw CredentialError.keychainWrite(addStatus)

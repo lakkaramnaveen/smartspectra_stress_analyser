@@ -27,13 +27,33 @@ enum SessionCSVExporter {
                 String(format: "%.1f", snapshot.heartRate),
                 String(format: "%.1f", snapshot.breathingRate),
                 String(format: "%.4f", snapshot.eda),
-                snapshot.emotionalState,
+                csvField(snapshot.emotionalState),
                 String(format: "%.2f", snapshot.gazeConfidence)
             ].joined(separator: ",")
             lines.append(row)
         }
 
         return lines.joined(separator: "\n")
+    }
+
+    /// Quotes/escapes a CSV field per RFC 4180 and neutralizes spreadsheet
+    /// formula injection (a field starting with `=`, `+`, `-`, or `@` gets
+    /// interpreted as a formula by Excel/Numbers/Sheets on open).
+    ///
+    /// Every field passed through here today is either numeric or a fixed
+    /// `EmotionalState` label — none of it is user- or attacker-controlled,
+    /// so this is defense-in-depth rather than a fix for a live exploit.
+    /// It exists so that if a free-text field (session notes, custom
+    /// tags) is ever added to `SessionSnapshot`, it's already routed
+    /// through something that won't silently produce a broken or
+    /// formula-injectable CSV.
+    private static func csvField(_ value: String) -> String {
+        var field = value
+        if let first = field.unicodeScalars.first, "=+-@".unicodeScalars.contains(first) {
+            field = "'" + field
+        }
+        guard field.contains(where: { ",\"\n\r".contains($0) }) else { return field }
+        return "\"" + field.replacingOccurrences(of: "\"", with: "\"\"") + "\""
     }
 
     #if os(macOS)

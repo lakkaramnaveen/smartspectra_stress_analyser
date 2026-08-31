@@ -51,6 +51,9 @@
 		FEE8F17003BEC389A8769BD0 /* StressBaseline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1168B2FB2835E98A78B25E01 /* StressBaseline.swift */; };
 		DCC00ABA6853C04DB2208524 /* BaselineCalibrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F21637216DC0CEFE169926 /* BaselineCalibrator.swift */; };
 		B3DCBEA91AD61210CA1DC218 /* StressScoringEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B757F302377A70078052F /* StressScoringEngine.swift */; };
+		1E10B9FBD7B858C9B08F9724 /* SessionCSVExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58255609A7AB0A183D84BFEB /* SessionCSVExporterTests.swift */; };
+		D7F14D312C49A74CD7E31C3E /* SessionCSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759A302A43580078052F /* SessionCSVExporter.swift */; };
+		8256A27E3CB74A4A2483F752 /* SessionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 183B759C302A43580078052F /* SessionModels.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +107,7 @@
 		9F4A13A1CAA9DCEE1C7CA211 /* BaselineCalibrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaselineCalibrationTests.swift; sourceTree = "<group>"; };
 		C86D117F45597655DF147378 /* PredictionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionTests.swift; sourceTree = "<group>"; };
 		F19B698D4929E1AC5853C6DE /* smartspectra_swift_uiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = smartspectra_swift_uiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		58255609A7AB0A183D84BFEB /* SessionCSVExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionCSVExporterTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +220,7 @@
 			children = (
 				C86D117F45597655DF147378 /* PredictionTests.swift */,
 				9F4A13A1CAA9DCEE1C7CA211 /* BaselineCalibrationTests.swift */,
+				58255609A7AB0A183D84BFEB /* SessionCSVExporterTests.swift */,
 			);
 			path = smartspectra_swift_uiTests;
 			sourceTree = "<group>";
@@ -391,6 +396,9 @@
 				FEE8F17003BEC389A8769BD0 /* StressBaseline.swift in Sources */,
 				DCC00ABA6853C04DB2208524 /* BaselineCalibrator.swift in Sources */,
 				B3DCBEA91AD61210CA1DC218 /* StressScoringEngine.swift in Sources */,
+				1E10B9FBD7B858C9B08F9724 /* SessionCSVExporterTests.swift in Sources */,
+				D7F14D312C49A74CD7E31C3E /* SessionCSVExporter.swift in Sources */,
+				8256A27E3CB74A4A2483F752 /* SessionModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
